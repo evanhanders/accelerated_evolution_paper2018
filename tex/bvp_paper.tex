@@ -47,12 +47,33 @@ one line long so we know what the formatting looks like, ok?
 
 \section{Introduction}
 \label{sec:intro}
+Here we introduce why the timescale problem is hard, and how the choice of initial conditions
+vastly effects the amount of time it takes for a solution to get to a meaningful solution
 
 \section{Experiment} 
 \label{sec:experiment}
+Here we talk about how to set up the RB problem that we're going to solve, and exactly what
+we're going to compare (how long the run is going to go from base and from bvp, how much time
+we're going to compare over after that, etc.)  We need to compare over a short enough timescale
+that the effects of BVPs don't get washed away, and we also need to compare over long enough
+timescales that we get the rare events we expect.  This is where we put a figure showing the
+time evolution of energy in IVP / BVP side-by-side.
 
 \section{Results \& Discussion}
 \label{sec:results}
+Here we talk about how the solutions are different, or similar.  This includes:
+\begin{enumerate}
+\item Showing that the flow fields look similar
+\item Showing how the temperature / flux profiles look similar/different
+\item showing how Nu and Re scale with Ra in BVP / IVP.
+\item showing how the PDFs of $w$, $wT$, and $T$ change.
+\end{enumerate}
+
+Then we need to make some comments about whether this is good or bad
+
+Then we need to mention how the same thing can be done in stratified, just there you don't
+assume symmetrical boundary layers.
+
 
 
 
