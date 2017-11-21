@@ -81,10 +81,15 @@ So, put simply, the BVP that we need to solve in RBC is
 \end{equation}
 These three equations, coupled with two properl thermal boundary conditions, retrieve the full
 thermodynamic state of the atmosphere.  I've written the equations in their dedalus-like form,
-for clarity.
+for clarity.  I'll solve using fixed temp (top) and fixed flux (temp gradient, bottom) boundary
+conditions.  Dual fixed-flux boundary conditions will work as well, but then the integrated temperature
+profile's constant is actually not unique, so that system has degenerate answers that work for
+the BVP.
 
 In a real way, the profile of the enthalpy flux thus sets the profile of the thermal structure of
-the atmosphere.
+the atmosphere.  In order for this method to work, the profile of the enthalpy flux fed into the
+BVP must be the enthalpy flux profile that we expect in the fully evolved atmosphere.  Getting
+this profile properly is really the subtle part of this method, so let's talk about that.
 
 
 
