@@ -77,19 +77,82 @@ So, put simply, the BVP that we need to solve in RBC is
 \frac{\partial T_1}{\partial z} - T_{1z} &= 0 \\
 \kappa \frac{\partial T_{1z}}{\partial z} &= \frac{\partial}{\partial z} \angles{w T}  - \kappa \frac{\partial^2 T_0}{\partial z^2}\\
 \frac{\partial p}{\partial z} - T_1 &= 0.
+\label{eqn:RB_BVP_eqns}
 \end{split}
 \end{equation}
-These three equations, coupled with two properl thermal boundary conditions, retrieve the full
+These three equations, coupled with two proper thermal boundary conditions, retrieve the full
 thermodynamic state of the atmosphere.  I've written the equations in their dedalus-like form,
 for clarity.  I'll solve using fixed temp (top) and fixed flux (temp gradient, bottom) boundary
 conditions.  Dual fixed-flux boundary conditions will work as well, but then the integrated temperature
-profile's constant is actually not unique, so that system has degenerate answers that work for
+profile's constant offset is actually not unique, so that system has degenerate answers that work for
 the BVP.
 
 In a real way, the profile of the enthalpy flux thus sets the profile of the thermal structure of
 the atmosphere.  In order for this method to work, the profile of the enthalpy flux fed into the
 BVP must be the enthalpy flux profile that we expect in the fully evolved atmosphere.  Getting
 this profile properly is really the subtle part of this method, so let's talk about that.
+
+\subsection{Adjusting the enthalpy flux profile}
+One subtlety of the mixed flux (bot) / temperature (top) boundary conditions is that they are,
+by definition, asymmetrical (at least during the transient).  The non-adiabatic (large) temperature
+gradient in the system means that the system starts with too much energy, and it wants to relax
+to a constant temperature gradient.  To do that, flux needs to leave through the top, and this takes
+a long time when the diffusivities are small.
+
+To illustrate what's happening in our system, I've plotted some fluxes in Fig. \ref{fig:flux_fig}. 
+In the top panel of Fig.
+\ref{fig:flux_fig}, the fluxes of a rayleigh-benard system at Ra = $10^8$ are shown.  This
+plot shows the total flux in the IVP (blue), the convective flux (green), and the conductive flux
+(orange/yellow).  The dashed-dot black line is the flux being sent through the system at the
+bottom boundary.  The short red line is the profile that we get when we divide the enthalpy flux
+by the total flux, and then multiply that normalized profile by the flux entering the lower boundary.
+
+The bottom panel of Fig. \ref{fig:flux_fig} shows a zoom-in on the bottom part of the top panel.
+Here, we show the same "properly normalized" enthalpy flux that we just described in the top panel,
+but it is now shown in green.  This properly normalized profile is used as the enthalpy flux profile
+for the BVP, and this sets the temperature gradient (and thus the conductive flux) that we get
+out of the BVP, which is shown in yellow.  We then feed the temperature profile defined by
+the yellow line back into the IVP, and let the velocities in the IVP naturally react to the abrupt
+change in the background atmosphere.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./figs/bvp_fluxes.png}
+\caption{(top) The evolved fluxes from a 2-D rayleigh-benard convection experiment.  The upper
+(fixed temp) boundary is leaking out much more flux than the bottom boundary (fixed flux) supplies
+while the atmosphere equilibrates.  However, we know that the evolved solution should only carry
+the amount of flux supplied at the lower plate.  In the bottom panel, we show the enthalpy flux
+in the IVP, divided by the total flux, and then multiplied by the flux at the bottom boundary. This
+gives us an idea of what the enthalpy flux should be like in the evolved state, including the
+boundary layers.  The corresponding conductive flux that the temperature profile would have to
+carry is shown in yellow. \label{fig:flux_fig}}
+\end{figure}
+
+\subsection{The actual procedure, and open questions}
+So basically what we do is:
+\begin{enumerate}
+\item Run the IVP to get average fluxes, as in the top panel of Fig. \ref{fig:flux_fig}.
+\item Normalize the enthalpy flux profile properly to get the enthalpy flux profile as shown
+in the bottom panel of Fig. \ref{fig:flux_fig}
+\item Use that normalized enthalpy flux profile as a RHS constant forcing term in the BVP equations
+(Eqns. \ref{eqn:RB_BVP_eqns}), and solve for the consistent temperature profile that satisfies
+those equations under the proper boundary conditions
+\item Update the full fields in the IVP such that the mean pressure and temperature profiles are
+the pressure / temperature profiles that come out of the BVP.
+\item Run the IVP so that the velocity field relaxes in the presence of the new atmosphere.
+\end{enumerate}
+
+This seems to work well.  Open questions:
+\begin{enumerate}
+\item How long do we average over?  What's the right criterion for having a converged profile?
+\item How many times do we need to do the BVP to get to the right answer?  If we get the right
+converged profile, I think we're only going to need one BVP.
+\item How long does it take the velocity field to fully equilibrate post-BVP?
+\item How similar is the BVP final state to the IVP final state?
+\end{enumerate}
+
+Note: this is not hard to implement in fully compressible, too!
+
 
 
 
