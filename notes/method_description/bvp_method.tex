@@ -153,6 +153,40 @@ converged profile, I think we're only going to need one BVP.
 
 Note: this is not hard to implement in fully compressible, too!
 
+\section{Extension to Stratified convection and FC equation}
+This method is, fortunately, not hard to extend to the fully compressible equations. For
+a system whose full energy equation is of the form
+$$
+\frac{\partial E}{\partial t} + \Div{\bm{F}} = \kappa (\text{IH}),
+$$
+which is true of both polytropes and internally heated atmospheres, we find that the time
+stationary, vertically averaged profile is, once again,
+\begin{equation}
+\kappa\frac{\partial \angles{T_{1z}}}{\partial z} = 
+\frac{\partial}{\partial z}(\angles{\bm{F}_{\text{conv}} - \kappa T_{0z}} - \kappa (IH)
+\end{equation}
+And, for a properly constructed atmosphere where the initial profile carries the internal
+heating, the last two terms of this expression perfectly cancel each other out (at least,
+for constant $\kappa$, and for the atmospheres we're worried about right now).  So, with that,
+the full set of BVP equations for fully compressible atmospheres is
+\begin{equation}
+\begin{split}
+\frac{\partial T_1}{\partial z} - T_{1z} &= 0 \\
+\kappa \frac{\partial T_{1z}}{\partial z} &= \frac{\partial \bm{F}_{\text{conv}}}{\partial z} \\
+T_0 \partial_z \rho_1 + T_1 \partial_z \rho_0 + \rho_0 T_{1z} + \rho_1 T_{0z} &= - T_1 \partial_z \rho_1 - \rho_1 T_{1z} \\
+\frac{\partial M_1}{\partial z} - \rho_1 &= 0.
+\label{eqn:FC_BVP_eqns}
+\end{split}
+\end{equation}
+Here the first two equations are just the energy equation, the third equation is that the
+fluctuating components must be in hydrostatic equilibrium ($\grad P = \grad (\rho T) = 
+\rho \grad T + T \grad \rho = 0$, and assuming that the background is in hydrostatic equilibrium
+such that gravity drops out of the system), and the fourth equation is our mass conservation equation.
+This requires four boundary conditions: two thermal ones (fixed flux bot, fixed temp top), and
+two mass ones ($M_1 = 0$ at top and bottom).  Once again, by specifying the appropriate profile
+for the convective flux, the rest of the atmosphere follows.  This is also nice, because this
+formulation should also work with minor tweaks for more complicated forms of $\kappa$.
+
 
 
 
