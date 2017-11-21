@@ -1,0 +1,92 @@
+%\documentclass[iop]{emulateapj}
+\documentclass[aps, pre, onecolumn, nofootinbib, notitlepage, groupedaddress, amsfonts, amssymb, amsmath, longbibliography]{revtex4-1}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+\usepackage{bm}
+\usepackage{natbib}
+\usepackage{longtable}
+\LTcapwidth=0.87\textwidth
+
+\newcommand{\Div}[1]{\ensuremath{\nabla\cdot\left( #1\right)}}
+\newcommand{\angles}[1]{\ensuremath{\left\langle #1 \right\rangle}}
+\newcommand{\grad}{\ensuremath{\nabla}}
+\newcommand{\RB}{Rayleigh-B\'{e}nard }
+\newcommand{\stressT}{\ensuremath{\bm{\bar{\bar{\Pi}}}}}
+\newcommand{\lilstressT}{\ensuremath{\bm{\bar{\bar{\sigma}}}}}
+\newcommand{\nrho}{\ensuremath{n_{\rho}}}
+\newcommand{\approptoinn}[2]{\mathrel{\vcenter{
+	\offinterlineskip\halign{\hfil$##$\cr
+	#1\propto\cr\noalign{\kern2pt}#1\sim\cr\noalign{\kern-2pt}}}}}
+
+\newcommand{\appropto}{\mathpalette\approptoinn\relax}
+
+\newcommand\mnras{{MNRAS}}%
+
+\begin{document}
+\title{BVP Methods}
+
+\maketitle
+
+
+\section{Brief description of method}
+In a really simple sense, this is the procedure that is being done when I do the
+``BVP solve'' for getting a more converged atmosphere.
+\begin{enumerate}
+\item Start up IVP, and run it.
+\item Once the flows hit Re = 1, wait some time, $t_{\text{transient}}$.
+\item After $t_{\text{transient}}$, start taking horizontal and time averages of
+specified profiles in the atmosphere.
+\item Once the profiles are converged (the change in the profiles at the next timestep
+change, on average, less than $f$, where $f$ is a fraction.  If $f=0.01$, the profiles
+change no more than 1\% from the previous timestep.), feed them into a 1D problem. 
+\item In the 1D problem, adjust the profiles from the atmosphere intelligently.  Feed
+those profiles into a BVP that obeys the same thermal boundary conditions as the IVP,
+then adjust the mean thermal profile of the IVP atmosphere with the result of the BVP.
+\item Keep running the IVP.  If desired, wait some time, $t_{\text{equil}}$, and then restart
+from step 3.
+
+\section{More thorough write-up, Boussinesq convection}
+In boussinesq convection, the time-steady energy equation can be written as
+$$
+\Div{ \bm{u} T - \kappa \grad T} = 0
+$$
+When we take horizontal averages and time averages, and assume constant $\kappa$,
+this equation reduces to
+$$
+\partial_z \angles{(w T)} - \kappa \partial^2_z \angles{(T_0 + T_1)} = 0,
+$$
+where angles represent a time- and horizontal average.  Further, due to symmetry,
+when we take a time- and horizontal average, we find that most of the terms in the 
+Rayleigh-Benard momentum equation go away.  Even if they hadn't, the main thing we want
+from the momentum equation is an update to the hydrostatic balance of the atmosphere, and
+that means that we need to update
+$$
+\partial_z \angles{p} = \angles{T_1}.
+$$
+
+So, put simply, the BVP that we need to solve in RBC is 
+\begin{equation}
+\begin{split}
+\frac{\partial T_1}{\partial z} - T_{1z} &= 0 \\
+\kappa \frac{\partial T_{1z}}{\partial z} &= \frac{\partial}{\partial z} \angles{w T}  - \kappa \frac{\partial^2 T_0}{\partial z^2}\\
+\frac{\partial p}{\partial z} - T_1 &= 0.
+\end{split}
+\end{equation}
+These three equations, coupled with two properl thermal boundary conditions, retrieve the full
+thermodynamic state of the atmosphere.  I've written the equations in their dedalus-like form,
+for clarity.
+
+In a real way, the profile of the enthalpy flux thus sets the profile of the thermal structure of
+the atmosphere.
+
+
+
+\end{enumerate}
+\end{document}
