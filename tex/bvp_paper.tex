@@ -84,12 +84,73 @@ for long enough to resolve the fast dynamical timescales of convection.
 
 \section{Experiment} 
 \label{sec:experiment}
-Here we talk about how to set up the RB problem that we're going to solve, and exactly what
-we're going to compare (how long the run is going to go from base and from bvp, how much time
-we're going to compare over after that, etc.)  We need to compare over a short enough timescale
-that the effects of BVPs don't get washed away, and we also need to compare over long enough
-timescales that we get the rare events we expect.  This is where we put a figure showing the
-time evolution of energy in IVP / BVP side-by-side.
+\subsection{Incompressible, Boussinesq \RB Convection}
+In studies of convection, it is natural to nondimensionalize the flows on the freefall velocity.
+Under the Boussinesq approximation, where $\rho = \rho_0 (1 - \alpha T_1)$ on the gravitational term in the momentum
+equation and $\rho = \rho_0$ on all other terms, the freefall velocity is $v_{\text{ff}} = \sqrt{\alpha g L^2 (dT/dz)_0}$.
+where $L$ is the depth of the domain, $g$ is the gravitational acceleration, and $(dT/dz)_0$ is the initial temperature
+gradient of the atmosphere, which controls the flux through the system.  The typical timescale and length scale
+then relate to each other according to $t_{\text{ff}} = L/v_{\text{ff}}$.
+Under this nondimensionalization, the Boussinsq, incompressible equations of motion are
+\begin{gather}
+\Div{\bm{u}} = 0, 
+	\label{eqn:incompressible}
+\\
+\frac{\partial \bm{u}}{\partial t} + \bm{u}\cdot\grad\bm{u} =
+-\grad\varpi + T_1\hat{z} + \frac{\text{Pr}}{\text{Ra}}\grad^2\bm{u}, 
+	\label{eqn:bouss_momentum_eqn}
+\\
+\frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \frac{1}{\text{Pr}\,\text{Ra}}\grad^2 T_1,
+	\label{eqn:bouss_energy_eqn}
+\end{gather}
+where
+\begin{equation}
+\text{Ra} = \frac{g \alpha L^4 \left(\frac{dT}{dz}\right)_0}{\nu\chi} = \frac{(L\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}
+\end{equation}
+are the nondimensional Rayleigh and Prandtl numbers, where $\nu$ is the viscous diffusivity and $\chi$ is
+the thermal diffusivity.
+
+One hallmark of Boussinesq convection is that upflows and downflows are symmetric, and thus the long time- and horizontal-
+average of the velocity field is exactly zero.  Assuming that the velocity field has perfect symmetry over a long time
+average, the horizontally-averaged, steady state momentum equation is just
+\begin{equation}
+\frac{\partial}{\partial z}\angles{\varpi} = \angles{T_1}\hat{z},
+	\label{eqn:simple_momentum}
+\end{equation}
+where $\angles{A}$ represent the horizontal- and time- average of the quantity $A$.  Thus, in the evolved solution, the
+vertical profile of the pressure perturbations are directly determined by the temperature field. 
+Under the Boussinesq approximation, $\bm{u}\cdot\grad(A) = \Div{\bm{u}A}$, and thus the steady state energy equation
+is just
+\begin{equation}
+\frac{\partial}{\partial z}\angles{w(T_0 + T_1)} = \frac{1}{\text{Pr}\text{Ra}}\frac{\partial^2}{\partial z^2} \angles{T_1}.
+	\label{eqn:simple_energy}
+\end{equation}
+Eqns (\ref{eqn:simple_momentum}) \& (\ref{eqn:simple_energy}) combine to form a second-order ODE which specifies the
+mean vertical profile of the temperature and pressure fields in the evolved solution.  These fields are completely specified
+by a set of two thermal boundary conditions and the evolved 
+profile of the convective flux, $F_{\text{conv}} = \angles{w(T_0 + T_1)}$.
+
+Under the choice of mixed thermal boundary conditions ($dT_1/dz = 0$ at $z = -1/2$, $T_1 = 0$ at $z = +1/2$), the initial
+atmosphere starts off with much more thermal energy ($\propto T$) than the evolved adiabatic solution pegged by the
+top temperature boundary condition.  This excess energy must leave the system through the upper (fixed $T$) boundary
+during the convective transient, and this results in an asymmetric flux profile during the slow thermal evolution of the
+atmosphere.  Furthermore, the convective flux (and the flux at the upper boundary layer) are O(1) during the convective
+transient, whereas the flux entering the atmosphere at the lower boundary is O(Ra$^{-1/2}$), so the asymmetry of the fluxes
+becomes increasingly pronounced as Ra is increased into the turbulent realm. 
+
+In order to find the evolved temperature profile of the atmosphere, the evolved profile of the convective flux must
+be known.  We know that the evolved solution should be in flux equilibrium, and we know that the evolved flux through
+the atmosphere is the flux entering through the bottom.  Thus, the steady-state profile of the convective flux can be
+approximated as
+\begin{equation}
+F_{\text{conv, steady}} = F_{\text{bot}}\frac{\angles{w(T_0 + T_1)}}{\angles{w(T_0 + T_1) - \kappa \partial_z (T_0 + T_1)}}
+= F_{\text{bot}}\frac{\angles{F_{\text{conv, IVP}}}}{\angles{F_{\text{tot, IVP}}}}.
+\end{equation}
+Or, put simply, the steady state convective flux is what you get get rid of the asymmetry in the flux profile.
+This flux defined here is used in a 1D boundary value problem solve of 
+eqns (\ref{eqn:simple_momentum}) \& (\ref{eqn:simple_energy}) along with the appropriate boundary values.  The solution
+to that BVP is then used as new initial conditions, convection restarts, and so on.
+
 
 \section{Results \& Discussion}
 \label{sec:results}
