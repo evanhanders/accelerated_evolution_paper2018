@@ -47,8 +47,38 @@ one line long so we know what the formatting looks like, ok?
 
 \section{Introduction}
 \label{sec:intro}
-Here we introduce why the timescale problem is hard, and how the choice of initial conditions
-vastly effects the amount of time it takes for a solution to get to a meaningful solution
+In many simple studies of convection, the choice of boundary conditions greatly influences the dynamics
+of the evolved state.  In studies of incompressible, Boussinesq, \RB convection (RBC), many studies
+employ fixed temperature (Dirichlet) boundary conditions at the top and bottom, or fixed heat flux
+(Neumann) boundary conditions at both plates.  The former case represents plates of infinite conductivity,
+whereas the latter plates of finite conductivity.  In both cases, the choice of symmetric boundary
+conditions maintains overall system symettry, and both have been shown to transport heat in nearly the
+same manner \cite{johnston&doering2009}.
+
+Studies of convection in stratified systems which aim to model convection in natural, astrophysical systems,
+such as that in the outer envelope of low-to-moderate mass stars like the Sun, often employ a mixture of these
+two types of boundary conditions (references, references).  The flux at the lower boundary is fixed, modeling
+the constant energy generation of the stellar core, while the outer boundary condition is held at a fixed temperature,
+effectively allowing all heat generated to escape.  
+
+While this setup is a useful model for understanding natural
+systems, simulations which employ this setup often suffer from a long convective transient as the thermodynamic structure
+of the atmosphere relaxes to the adiabatic profile specified by the fixed temperature upper boundary condition.
+This long evolution occurs on the ``Kelvin-Helmholtz,'' or thermal diffusion timescale of the atmosphere, 
+$t_{\text{KH}} \approx L_z^2 / \chi$, where $L_z$ is the domain depth and $\chi$ is the thermal diffusivity.
+Interesting convection happens as high values of the Rayleigh number, which scales like $\chi^{-1/2}$, such that
+in the astrophysically interesting regime of high-Ra, highly stratified convection, evolving a simulation for a
+KH time becomes numerically intractable.  As the Rayleigh number increases, the KH time increases while the average
+timestep required to resolve the more turbulent flows decreases.  The net result is that under standard initial conditions
+of hydrostatic- and thermal- equilibrium, the desired convective solution cannot be obtained and the dynamics of convection
+there cannot be studied.
+
+Here we present a method for using simple boundary value problems, along with information about the evolved flow fields,
+to fast-forward the slow thermal evolution of convecting simulations.  We present this method in the context of RBC, and
+then demonstrate that it applies to stratified, compressible convection under a simple modification.  These methods allow
+us to study the convective flows driven by the evolved thermal profile while only requiring initial value problems to run
+for long enough to resolve the fast dynamical timescales of convection.
+
 
 \section{Experiment} 
 \label{sec:experiment}
@@ -93,5 +123,5 @@ with allocations GID s1647 and GID g26133.
 \section{Process for setting enthalpy flux}
 
 
-%\bibliography{../biblio.bib}
+\bibliography{biblio.bib}
 \end{document}
