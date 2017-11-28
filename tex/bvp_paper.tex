@@ -15,6 +15,7 @@
 \LTcapwidth=0.87\textwidth
 
 \newcommand{\Div}[1]{\ensuremath{\nabla\cdot\left( #1\right)}}
+\newcommand{\DivU}{\ensuremath{\nabla\cdot\bm{u}}}
 \newcommand{\angles}[1]{\ensuremath{\left\langle #1 \right\rangle}}
 \newcommand{\grad}{\ensuremath{\nabla}}
 \newcommand{\RB}{Rayleigh-B\'{e}nard }
@@ -93,7 +94,7 @@ gradient of the atmosphere, which controls the flux through the system.  The typ
 then relate to each other according to $t_{\text{ff}} = L/v_{\text{ff}}$.
 Under this nondimensionalization, the Boussinsq, incompressible equations of motion are
 \begin{gather}
-\Div{\bm{u}} = 0, 
+\DivU = 0, 
 	\label{eqn:incompressible}
 \\
 \frac{\partial \bm{u}}{\partial t} + \bm{u}\cdot\grad\bm{u} =
@@ -151,6 +152,33 @@ This flux defined here is used in a 1D boundary value problem solve of
 eqns (\ref{eqn:simple_momentum}) \& (\ref{eqn:simple_energy}) along with the appropriate boundary values.  The solution
 to that BVP is then used as new initial conditions, convection restarts, and so on.
 
+\subsection{Fully Compressible Convection}
+We study stratified convection in an ideal gas whose adiabatic index is $\gamma = 5/3$.
+The initial atmospheric stratification is polytropic \cite{anders&brown2017}.
+We assume a Newtonian radiative conduction term \cite{lecoanet&all2014}, and solve the
+fully compressible Navier-Stokes equations of the form
+\begin{gather}
+\frac{\partial \ln \rho}{\partial t} + \bm{u}\cdot\grad\ln\rho + \DivU = 0
+	\label{eqn:FC_continuity}
+\\
+\frac{D \bm{u}}{Dt} = -T\grad\ln\rho - \grad T + \bm{g} - \Div{\stressT}
+	\label{eqn:FC_momentum}
+\\
+\frac{D T}{D t} + (\gamma-1)T\DivU = 
+\frac{1}{\rho c_V}\left(\kappa\grad^2 T - [\stressT\cdot\grad]\cdot\bm{u}\right),
+	\label{eqn:FC_energy}
+\end{gather}
+where $D/Dt \equiv \partial/\partial t + \bm{u}\cdot\grad$ and the viscous stress
+tensor is defined as
+\begin{equation}
+\Pi_{ij} \equiv -\mu\left(\frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i} - \frac{2}{3}\delta_{ij
+}\DivU\right)
+\label{eqn:stress_tensor}
+\end{equation}
+and $\delta_{ij}$ is the Kronecker delta function.
+
+
+
 
 \section{Results \& Discussion}
 \label{sec:results}
@@ -183,7 +211,11 @@ with allocations GID s1647 and GID g26133.
 
 
 \appendix
-\section{Process for setting enthalpy flux}
+\section{Table of Boussinesq Runs}
+
+
+
+\section{Table of stratified runs}
 
 
 \bibliography{biblio.bib}
