@@ -76,6 +76,15 @@ timestep required to resolve the more turbulent flows decreases.  The net result
 of hydrostatic- and thermal- equilibrium, the desired convective solution cannot be obtained and the dynamics of convection
 there cannot be studied.
 
+Knowledge of Mixing Length theory and the nature of evolved convection has been used in some 
+previous studies (e.g., \cite{brandenburg&all2005}) to choose smarter initial conditions than
+the hydrostatic polytropic states.  However, these assumptions work best in convective regions
+which are bounded by stable layers.  In simple atmospheres where boundary layers form to meet
+boundary conditions at the upper and lower edge of the atmosphere, we cannot know 
+\emph{a priori} what the extent or shape of the boundary layer will be, as that must be chosen
+by the convective dynamics, and specification of the proper boundary layer is essential for
+placing the atmosphere along the proper adiabat.
+
 Here we present a method for using simple boundary value problems, along with information about the evolved flow fields,
 to fast-forward the slow thermal evolution of convecting simulations.  We present this method in the context of RBC, and
 then demonstrate that it applies to stratified, compressible convection under a simple modification.  These methods allow
@@ -176,6 +185,35 @@ tensor is defined as
 \label{eqn:stress_tensor}
 \end{equation}
 and $\delta_{ij}$ is the Kronecker delta function.
+
+\subsubsection{The Boundary Value Equations}
+In studies of fully compressible convection, the flux carried by the adiabatic temperature gradient
+is not available for convection.  Thus, only the flux \emph{in excess} of the adiabat will drive
+convection and be carried by convection.  As such, this is the only portion of the flux which
+must be examined to determine if the solution is in a converged state.  In a system with
+a fixed flux boundary condition, the available superadiabatic flux is
+\begin{equation}
+F_{\text{avail}} = -\kappa(\grad T_0 - \grad T_{\text{ad}}) = \kappa\frac{\epsilon}{c_P}\grad T_0,
+\end{equation}
+which is small when $\epsilon$ is small and only requires low Mach number convective flows
+to carry it.  In a perfectly evolved solution, there will be thin boundary layers in which
+conduction carries this flux in addition to the adiabatic flux, but in an efficient convective
+interior, convective fluxes must carry this full amount.
+
+The BVP equations are inspired by equations of stellar modeling  \cite{paxton&all2011} but adapted to these simulations
+of fully compressible convection.  Here, rather than parameterizing convection, we can get the
+convective fluxes directly from our simulation adn use them to solve for the appropriate structure
+of the atmosphere.  The FC BVP equations are
+\begin{gather}
+\frac{d M_1}{dz} = \rho_1 \\
+T_0 \grad \rho_1 + T_1 \grad \rho_0 + \rho_1 g = - T_0 \grad \rho_0 - T_1 \grad \rho_1 - \rho_0 g \\
+\kappa \frac{d^2 T_1}{d z^2} = -\frac{d}{dz}F_{\text{conv, z}},
+\end{gather}
+which ensure mass conservation, thermal equilibrium, and that the atmosphere is, on average,
+in hydrostatic equilibrium.  We couple these equations with four boundary conditions (mixed
+flux / temperature boundary conditions, as well as setting $M_1 = 0$ at the top and bottom
+of the atmosphere).
+
 
 
 
