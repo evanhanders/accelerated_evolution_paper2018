@@ -1,7 +1,15 @@
 syntax: glob
 
-*.out
-*.log
-*.bbl
+*.png
 *.aux
-*.bib
+*.bbl
+*.blg
+*.log
+*.out
+*.pyc
+*.mp4
+*s*.h5
+low_S_mach_scripts/*
+*.o*
+run_scripts/*
+tools/__pycache__/*
