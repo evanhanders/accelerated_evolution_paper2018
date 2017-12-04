@@ -217,6 +217,15 @@ class BoussinesqEquations2D(Equations):
     equations.   
     """
     def __init__(self, *args,  dimensions=2, **kwargs):
+        """ 
+        Initialize class and set up variables that will be used in eqns:
+            T1 - Temperature fluctuations from static state
+            T1_z - z-derivative of T1
+            p    - Pressure, magic
+            u    - Horizontal velocity
+            w    - Vertical velocity
+            Oy   - y-vorticity (out of plane)
+        """
         super(BoussinesqEquations2D, self).__init__(dimensions=dimensions)
         self.variables=['T1_z','T1','p','u','w','Oy']
 
@@ -252,8 +261,10 @@ class BoussinesqEquations2D(Equations):
         self.problem.parameters['Lx'] = self.Lx
         self.problem.parameters['Lz'] = self.Lz
        
-    def _set_subs(self, viscous_heating=False):
-
+    def _set_subs(self):
+        """
+        Sets up substitutions that are useful for the Boussinesq equations or for outputs
+        """
         if self.dimensions == 1:
             self.problem.substitutions['plane_avg(A)'] = 'A'
             self.problem.substitutions['plane_std(A)'] = '0'
@@ -291,12 +302,14 @@ class BoussinesqEquations2D(Equations):
         self.problem.substitutions['delta_T']      = '(right(T1 + T0) - left(T1 + T0))' 
         self.problem.substitutions['Nu']           = '(conv_flux_z/(-P*delta_T))'
 
-
-       
     def set_BC(self,
                fixed_flux=None, fixed_temperature=None, mixed_flux_temperature=None, mixed_temperature_flux=None,
                stress_free=None, no_slip=None):
-
+        """
+        Sets the velocity and thermal boundary conditions at the upper and lower boundaries.  Choose
+        one thermal type of BC and one velocity type of BC to set those conditions.  See
+        set_thermal_BC() and set_velocity_BC() functions for default choices and specific formulations.
+        """
         self.dirichlet_set = []
 
         self.set_thermal_BC(fixed_flux=fixed_flux, fixed_temperature=fixed_temperature,
@@ -308,10 +321,19 @@ class BoussinesqEquations2D(Equations):
             self.problem.meta[key]['z']['dirichlet'] = True
             
     def set_thermal_BC(self, fixed_flux=None, fixed_temperature=None, mixed_flux_temperature=None, mixed_temperature_flux=None):
+        """
+        Sets the thermal boundary conditions at the top and bottom of the atmosphere.  If no choice is made, then the
+        default BC is fixed flux (bottom), fixed temperature (top).
+
+        Choices:
+            fixed_flux              - T1_z = 0 at top and bottom
+            fixed_temperature       - T1 = 0 at top and bottom
+            mixed_flux_temperature  - T1_z = 0 at bottom, T1 = 0 at top
+            mixed_temperature_flux  - T1 = 0 at bottom, T1_z = 0 at top.
+        """
         if not(fixed_flux) and not(fixed_temperature) and not(mixed_temperature_flux) and not(mixed_flux_temperature):
             mixed_flux_temperature = True
 
-        # thermal boundary conditions
         if fixed_flux:
             logger.info("Thermal BC: fixed flux (full form)")
             self.problem.add_bc( "left(T1_z) = 0")
@@ -340,6 +362,19 @@ class BoussinesqEquations2D(Equations):
             raise
 
     def set_velocity_BC(self, stress_free=None, no_slip=None):
+        """
+        Sets the velocity boundary conditions at the top and bottom of the atmosphere.  If no choice is made, then the
+        default BC is no slip (top and bottom)
+
+        Boundaries are, by default, impenetrable (w = 0 at top and bottom)
+
+        Choices:
+            stress_free         - Oy = 0 at top and bottom [note: Oy = dz(u) - dx(w). With
+                                    impenetrable boundaries at top and bottom, dx(w) = 0, so
+                                    really these are dz(u) = 0 boundary conditions]
+            no_slip             - u = 0 at top and bottom.
+        """
+
         if not(stress_free) and not(no_slip):
             stress_free = True
             
@@ -369,6 +404,12 @@ class BoussinesqEquations2D(Equations):
         self.dirichlet_set.append('w')
         
     def set_IC(self, solver, A0=1e-6, **kwargs):
+        """
+        Set initial conditions as random noise.  I *think* characteristic
+        temperature perturbutations are on the order of P, as in the energy
+        equation, so our perturbations should be small, comparably (to start
+        at a low Re even at large Ra, this is necessary)
+        """
         # initial conditions
         T_IC = solver.state['T1']
         T_z_IC = solver.state['T1_z']
@@ -377,35 +418,58 @@ class BoussinesqEquations2D(Equations):
         noise.set_scales(self.domain.dealias, keep_data=True)
         T_IC.set_scales(self.domain.dealias, keep_data=True)
         self.T0.set_scales(self.domain.dealias, keep_data=True)
-        T_IC['g'] = A0*np.sin(np.pi*self.z_dealias/self.Lz)*noise['g']*self.T0['g']
+        T_IC['g'] = A0*self.P*np.sin(np.pi*self.z_dealias/self.Lz)*noise['g']*self.T0['g']
         T_IC.differentiate('z', out=T_z_IC)
         logger.info("Starting with T1 perturbations of amplitude A0 = {:g}".format(A0))
 
 
-    def set_equations(self, Rayleigh, Prandtl, kx = 0, viscous_heating = False):
-        # 2D Boussinesq hydrodynamics
+    def set_equations(self, Rayleigh, Prandtl, kx = 0):
+        """
+        Set the Boussinesq, Incompressible equations:
+
+            ∇ · u = 0
+            d_t u - u ⨯ ω = - ∇ p + T1 (zhat) - √(Pr/Ra) * ∇ ⨯ ω
+            d_t T1 + u · ∇ (T0 + T1) = 1/(√[Pr Ra]) * ∇ ² T1
+
+        Here, the form of the momentum equation has been recovered from a more
+        familiar form:
+            d_t u + u · ∇ u = - ∇ p + T1 (zhat) + √(Pr/Ra) * ∇ ² u,
+        where vector operations have been used to express the equation mostly in terms
+        of vorticity.  There is a leftover term in
+            u · ∇ u = (1/2) ∇ u² - u ⨯ ω,
+        but this u² term gets swept into the ∇ p term in boussinesq convection, where p 
+        enforces ∇ · u = 0
+        """
         if self.dimensions == 1:
             self.problem.parameters['j'] = 1j
             self.problem.substitutions['dx(f)'] = "j*kx*(f)"
             self.problem.parameters['kx'] = kx
  
         self._set_parameters(Rayleigh, Prandtl)
-        self._set_subs(viscous_heating=viscous_heating)
+        self._set_subs()
 
-        # This formulation is numerically faster to run.
+        # This formulation is numerically faster to run than the standard form.
+        # 2D Boussinesq hydrodynamics
 
+        logger.debug('Adding Eqn: Incompressibility constraint')
         self.problem.add_equation("dx(u) + dz(w) = 0")
+        logger.debug('Adding Eqn: T1_z defn')
         self.problem.add_equation("T1_z - dz(T1) = 0")
+        logger.debug('Adding Eqn: Vorticity defn')
         self.problem.add_equation("Oy - dz(u) + dx(w) = 0")
-
+        logger.debug('Adding Eqn: Momentum, x')
         self.problem.add_equation("dt(u)  - R*dz(Oy)  + dx(p)              =  v*Oz - w*Oy ")
+        logger.debug('Adding Eqn: Momentum, z')
         self.problem.add_equation("dt(w)  + R*dx(Oy)  + dz(p)    - T1      =  u*Oy - v*Ox ")
-        
+        logger.debug('Adding Eqn: Energy')
         self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z   = -UdotGrad(T1, T1_z)")
 
     def initialize_output(self, solver, data_dir, coeff_output=False,
                           max_writes=20, max_slice_writes=20, output_dt=0.25,
                           mode="overwrite", **kwargs):
+        """
+        Sets up output from runs.
+        """
 
         # Analysis
         analysis_tasks = []
@@ -434,12 +498,12 @@ class BoussinesqEquations2D(Equations):
         profiles.add_task("plane_avg(u)", name="u")
         profiles.add_task("plane_avg(w)", name="w")
         profiles.add_task("plane_avg(enstrophy)", name="enstrophy")
-        # This may have an error:
         profiles.add_task("plane_avg(Nu)", name="Nu")
         profiles.add_task("plane_avg(Re)", name="Re")
         profiles.add_task("plane_avg(Pe)", name="Pe")
         profiles.add_task("plane_avg(enth_flux_z)", name="enth_flux")
         profiles.add_task("plane_avg(kappa_flux_z)", name="kappa_flux")
+        profiles.add_task("plane_avg(kappa_flux_z + enth_flux_z)", name="tot_flux")
 
         analysis_tasks.append(profiles)
 

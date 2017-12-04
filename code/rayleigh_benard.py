@@ -13,11 +13,10 @@ Options:
     --nz=<nz>                  Vertical resolution [default: 128]
     --nx=<nx>                  Horizontal resolution; if not set, nx=aspect*nz_cz
     --aspect=<aspect>          Aspect ratio of problem [default: 4]
-    --viscous_heating          Include viscous heating
 
     --fixed_flux               Fixed flux boundary conditions top/bottom
-    --mixed_flux_T             Fixed flux (bot) and fixed temp (top) bcs
-    --fixed_T                  Fixed temperature boundary conditions top/bottom; default if no choice is made
+    --fixed_T                  Fixed temperature boundary conditions top/bottom
+    --mixed_flux_T             Fixed flux (bot) and fixed temp (top) bcs; default is no choice is made
 
     --stress_free              Stress free boundary conditions top/bottom
     --no_slip                  no slip boundary conditions top/bottom; default if no choice is made
@@ -64,9 +63,9 @@ from tools.checkpointing import Checkpoint
 checkpoint_min = 30
     
 def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, aspect=4,
-                    fixed_flux=False, fixed_T=True, mixed_flux_T = False,
+                    fixed_flux=False, fixed_T=False, mixed_flux_T = True,
                     stress_free=False, no_slip=True,
-                    viscous_heating=False, restart=None,
+                    restart=None,
                     run_time=23.5, run_time_buoyancy=None, run_time_iter=np.inf, run_time_therm=1,
                     max_writes=20, max_slice_writes=20,
                     data_dir='./', coeff_output=True, verbose=False, no_join=False,
@@ -105,7 +104,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, aspect=4,
     logger.info("resolution: [{}x{}]".format(nx, nz))
 
     equations = BoussinesqEquations2D(nx=nx, nz=nz, Lx=Lx, Lz=Lz)
-    equations.set_IVP(Rayleigh, Prandtl, viscous_heating=viscous_heating)
+    equations.set_IVP(Rayleigh, Prandtl)
 
     bc_dict = { 'fixed_flux'              :   None,
                 'fixed_temperature'       :   None,
@@ -113,12 +112,12 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, aspect=4,
                 'mixed_temperature_flux'  :   None,
                 'stress_free'             :   None,
                 'no_slip'                 :   None }
-    if fixed_flux:
-        bc_dict['fixed_flux'] = True
+    if mixed_flux_T:
+        bc_dict['mixed_flux_temperature'] = True
     elif fixed_T:
         bc_dict['fixed_temperature'] = True
-    elif mixed_flux_T:
-        bc_dict['mixed_flux_temperature'] = True
+    elif fixed_flux:
+        bc_dict['fixed_flux'] = True
 
     if stress_free:
         bc_dict['stress_free'] = True
@@ -208,8 +207,6 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, aspect=4,
                                    }
                     diff_args = [Rayleigh, Prandtl]
                     bvp_solver.solve_BVP(atmo_kwargs, diff_args, bc_dict)
-#                    u['g'] *= 0
-#                    w['g'] *= 0
                 if bvp_solver.terminate_IVP():
                     continue_bvps = False
 
@@ -305,8 +302,6 @@ if __name__ == "__main__":
         data_dir += '_mixed'
 
 
-    if args['--viscous_heating']:
-        data_dir += '_visc'
     data_dir += "_Ra{}_Pr{}_a{}".format(args['--Rayleigh'], args['--Prandtl'], args['--aspect'])
     if args['--label'] is not None:
         data_dir += "_{}".format(args['--label'])
@@ -343,7 +338,6 @@ if __name__ == "__main__":
                     fixed_flux=fixed_flux, fixed_T=fixed_T,
                     mixed_flux_T=mixed_flux_T,
                     no_slip=no_slip, stress_free=stress_free,
-                    viscous_heating=args['--viscous_heating'],
                     run_time=float(args['--run_time']),
                     run_time_buoyancy=run_time_buoy,
                     run_time_therm=run_time_therm,
