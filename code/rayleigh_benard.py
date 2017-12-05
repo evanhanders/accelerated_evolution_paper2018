@@ -317,6 +317,8 @@ if __name__ == "__main__":
         data_dir += '_flux'
     elif mixed_flux_T:
         data_dir += '_mixed'
+    else:
+        data_dir += '_fixed'
 
 
     data_dir += "_Ra{}_Pr{}_a{}".format(args['--Rayleigh'], args['--Prandtl'], args['--aspect'])
