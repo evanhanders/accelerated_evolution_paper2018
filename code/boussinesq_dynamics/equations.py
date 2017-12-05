@@ -220,7 +220,7 @@ class BoussinesqEquations(Equations):
         """ 
             Set up class and dedalus domain
         """
-        super(BoussinesqEquations2D, self).__init__(dimensions=dimensions)
+        super(BoussinesqEquations, self).__init__(dimensions=dimensions)
         self.set_domain(*args, **kwargs)
 
     def _set_parameters(self, Rayleigh, Prandtl):
@@ -257,7 +257,7 @@ class BoussinesqEquations(Equations):
         Sets up substitutions that are useful for the Boussinesq equations or for outputs
         """
         self.problem.substitutions['Ox'] = '(dy(w) - dz(v))'
-        self.problem.substitutions['Oz'] = '(dx(v) - dy(u)))'
+        self.problem.substitutions['Oz'] = '(dx(v) - dy(u))'
         #Diffusivities; diffusive timescale
         self.problem.substitutions['chi']= '(v_ff * Lz * P)'
         self.problem.substitutions['nu'] = '(v_ff * Lz * R)'
@@ -267,7 +267,6 @@ class BoussinesqEquations(Equations):
         self.problem.substitutions['enstrophy'] = '(Ox**2 + Oy**2 + Oz**2)'
 
         self.problem.substitutions['u_fluc'] = '(u - plane_avg(u))'
-        self.problem.substitutions['v_fluc'] = '(v - plane_avg(v))'
         self.problem.substitutions['w_fluc'] = '(w - plane_avg(w))'
         self.problem.substitutions['KE'] = '(0.5*vel_rms**2)'
 
@@ -603,6 +602,7 @@ class BoussinesqEquations3D(BoussinesqEquations):
         self.problem.substitutions['Lap(A, A_z)'] = '(dx(dx(A)) + dy(dy(A)) + dz(A_z))'
 
         self.problem.substitutions['Oy']          = '(dz(u) - dx(w))'
+        self.problem.substitutions['v_fluc'] = '(v - plane_avg(v))'
         super(BoussinesqEquations3D, self)._set_subs()
 
     def set_velocity_BC(self, stress_free=None, no_slip=None):
@@ -690,14 +690,14 @@ class BoussinesqEquations3D(BoussinesqEquations):
         # Analysis
         snapshots = solver.evaluator.add_file_handler(data_dir+'slices', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode, parallel=False)
         snapshots.add_task("interp(T1 + T0,         y={})".format(self.Ly/2), name='T')
-        snapshots.add_task("interp(T1 + T0,         y={})".format(0.95*self.Lz), name='T near top')
-        snapshots.add_task("interp(T1 + T0,         y={})".format(self.Lz/2), name='T midplane')
+        snapshots.add_task("interp(T1 + T0,         z={})".format(0.95*self.Lz), name='T near top')
+        snapshots.add_task("interp(T1 + T0,         z={})".format(self.Lz/2), name='T midplane')
         snapshots.add_task("interp(w,         y={})".format(self.Ly/2), name='w')
-        snapshots.add_task("interp(w,         y={})".format(0.95*self.Lz), name='w near top')
-        snapshots.add_task("interp(w,         y={})".format(self.Ly/2), name='w')
-        snapshots.add_task("interp(enstrophy,         y={})".format(0.95*self.Lz), name='enstrophy near top')
-        snapshots.add_task("interp(enstrophy,         y={})".format(self.Lz/2),    name='enstrophy midplane')
-        snapshots.add_task("interp(enstrophy,         y={})".format(self.Lz/2),    name='enstrophy midplane')
+        snapshots.add_task("interp(w,         z={})".format(0.95*self.Lz), name='w near top')
+        snapshots.add_task("interp(w,         z={})".format(self.Lz/2), name='w midplane')
+        snapshots.add_task("interp(enstrophy,         y={})".format(self.Ly/2),    name='enstrophy')
+        snapshots.add_task("interp(enstrophy,         z={})".format(0.95*self.Lz), name='enstrophy near top')
+        snapshots.add_task("interp(enstrophy,         z={})".format(self.Lz/2),    name='enstrophy midplane')
         analysis_tasks.append(snapshots)
 
         if volumes_output:
@@ -708,4 +708,4 @@ class BoussinesqEquations3D(BoussinesqEquations):
 
         return analysis_tasks
 
-
+#

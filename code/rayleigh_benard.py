@@ -12,6 +12,7 @@ Options:
     --Prandtl=<Prandtl>        Prandtl number = nu/kappa [default: 1]
     --nz=<nz>                  Vertical resolution [default: 128]
     --nx=<nx>                  Horizontal resolution; if not set, nx=aspect*nz_cz
+    --ny=<nx>                  Horizontal resolution; if not set, nx=aspect*nz_cz
     --aspect=<aspect>          Aspect ratio of problem [default: 4]
 
     --fixed_flux               Fixed flux boundary conditions top/bottom
@@ -20,6 +21,8 @@ Options:
 
     --stress_free              Stress free boundary conditions top/bottom
     --no_slip                  no slip boundary conditions top/bottom; default if no choice is made
+
+    --3D                       Run in 3D
     
     --run_time=<run_time>             Run time, in hours [default: 23.5]
     --run_time_buoy=<run_time_bouy>   Run time, in buoyancy times
@@ -33,6 +36,7 @@ Options:
     
     --label=<label>            Optional additional case name label
     --verbose                  Do verbose output (e.g., sparsity patterns of arrays)
+    --output_dt=<num>          Simulation time between outputs [default: 0.2]
     --no_coeffs                If flagged, coeffs will not be output   
     --no_join                  If flagged, don't join files at end of run
     --root_dir=<dir>           Root directory for output [default: ./]
@@ -57,20 +61,21 @@ from dedalus import public as de
 from dedalus.extras import flow_tools
 from dedalus.tools  import post
 
-from boussinesq_dynamics.equations import BoussinesqEquations2D
+from boussinesq_dynamics.equations import *
 from bvps.bvp_tools import BoussinesqBVPSolver
 from tools.checkpointing import Checkpoint
 checkpoint_min = 30
     
-def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, aspect=4,
+def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     fixed_flux=False, fixed_T=False, mixed_flux_T = True,
                     stress_free=False, no_slip=True,
                     restart=None,
                     run_time=23.5, run_time_buoyancy=None, run_time_iter=np.inf, run_time_therm=1,
-                    max_writes=20, max_slice_writes=20,
+                    max_writes=20, max_slice_writes=20, output_dt=0.2,
                     data_dir='./', coeff_output=True, verbose=False, no_join=False,
                     do_bvp=False, num_bvps=10, bvp_convergence_factor=1e-2, bvp_equil_time=10, bvp_resolution_factor=1,
-                    bvp_transient_time=30, bvp_final_equil_time=None, min_bvp_time=50):
+                    bvp_transient_time=30, bvp_final_equil_time=None, min_bvp_time=50,
+                    threeD=False):
     import os
     from dedalus.tools.config import config
     
@@ -101,9 +106,15 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, aspect=4,
     Lx = aspect*Lz
     if nx is None:
         nx = int(nz*aspect)
-    logger.info("resolution: [{}x{}]".format(nx, nz))
+    if ny is None:
+        ny = int(nz*aspect)
 
-    equations = BoussinesqEquations2D(nx=nx, nz=nz, Lx=Lx, Lz=Lz)
+    if threeD:
+        logger.info("resolution: [{}x{}x{}]".format(nx, ny, nz))
+        equations = BoussinesqEquations3D(nx=nx, nz=nz, Lx=Lx, Lz=Lz)
+    else:
+        logger.info("resolution: [{}x{}]".format(nx, nz))
+        equations = BoussinesqEquations2D(nx=nx, nz=nz, Lx=Lx, Lz=Lz)
     equations.set_IVP(Rayleigh, Prandtl)
 
     bc_dict = { 'fixed_flux'              :   None,
@@ -155,20 +166,22 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, aspect=4,
     solver.stop_iteration = run_time_iter
 
     # Analysis
-    output_dt = 0.2
     max_dt    = output_dt
     analysis_tasks = equations.initialize_output(solver, data_dir, coeff_output=coeff_output, output_dt=output_dt, mode=mode)
 
     # CFL
     CFL = flow_tools.CFL(solver, initial_dt=0.1, cadence=1, safety=cfl_safety,
                          max_change=1.5, min_change=0.5, max_dt=max_dt, threshold=0.1)
-    CFL.add_velocities(('u', 'w'))
+    if threeD:
+        CFL.add_velocities(('u', 'v', 'w'))
+    else:
+        CFL.add_velocities(('u', 'w'))
 
     # Flow properties
     flow = flow_tools.GlobalFlowProperty(solver, cadence=1)
     flow.add_property("Re", name='Re')
 
-    u, w = solver.state['u'], solver.state['w']
+#    u, w = solver.state['u'], solver.state['w']
 
 
     if do_bvp:
@@ -296,6 +309,10 @@ if __name__ == "__main__":
 
     # save data in directory named after script
     data_dir = args['--root_dir'] + sys.argv[0].split('.py')[0]
+    if args['--3D']:
+        data_dir += '_3D'
+    else:
+        data_dir += '_2D'
     if fixed_flux:
         data_dir += '_flux'
     elif mixed_flux_T:
@@ -312,6 +329,10 @@ if __name__ == "__main__":
         nx = int(args['--nx'])
     else:
         nx = None
+    if args['--ny'] is not None:
+        ny = int(args['--ny'])
+    else:
+        ny = None
 
     if args['--run_time_iter'] is not None:
         run_time_iter = int(float(args['--run_time_iter']))
@@ -335,6 +356,7 @@ if __name__ == "__main__":
                     aspect=int(args['--aspect']),
                     nz=int(args['--nz']),
                     nx=nx,
+                    ny=ny,
                     fixed_flux=fixed_flux, fixed_T=fixed_T,
                     mixed_flux_T=mixed_flux_T,
                     no_slip=no_slip, stress_free=stress_free,
@@ -346,6 +368,7 @@ if __name__ == "__main__":
                     max_writes=int(args['--max_writes']),
                     max_slice_writes=int(args['--max_slice_writes']),
                     coeff_output=not(args['--no_coeffs']),
+                    output_dt=float(args['--output_dt']),
                     verbose=args['--verbose'],
                     no_join=args['--no_join'],
                     do_bvp=args['--do_bvp'],
@@ -355,6 +378,7 @@ if __name__ == "__main__":
                     bvp_final_equil_time=bvp_final_equil_time,
                     bvp_transient_time=float(args['--bvp_transient_time']),
                     bvp_resolution_factor=int(args['--bvp_resolution_factor']),
-                    min_bvp_time=float(args['--min_bvp_time']))
+                    min_bvp_time=float(args['--min_bvp_time']),
+                    threeD=args['--3D'])
     
 
