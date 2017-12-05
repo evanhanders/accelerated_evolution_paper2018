@@ -211,24 +211,16 @@ class Equations():
         field.set_scales(orig_scale, keep_data=True)
 
 
-class BoussinesqEquations2D(Equations):
+class BoussinesqEquations(Equations):
     """
     An extension of the Equations class which contains the full 2D form of the boussinesq
     equations.   
     """
     def __init__(self, *args,  dimensions=2, **kwargs):
         """ 
-        Initialize class and set up variables that will be used in eqns:
-            T1 - Temperature fluctuations from static state
-            T1_z - z-derivative of T1
-            p    - Pressure, magic
-            u    - Horizontal velocity
-            w    - Vertical velocity
-            Oy   - y-vorticity (out of plane)
+            Set up class and dedalus domain
         """
         super(BoussinesqEquations2D, self).__init__(dimensions=dimensions)
-        self.variables=['T1_z','T1','p','u','w','Oy']
-
         self.set_domain(*args, **kwargs)
 
     def _set_parameters(self, Rayleigh, Prandtl):
@@ -258,38 +250,24 @@ class BoussinesqEquations2D(Equations):
         self.problem.parameters['R'] = (Rayleigh / Prandtl)**(-1./2)
         self.thermal_time = (Rayleigh / Prandtl)**(1./2)
 
-        self.problem.parameters['Lx'] = self.Lx
         self.problem.parameters['Lz'] = self.Lz
        
     def _set_subs(self):
         """
         Sets up substitutions that are useful for the Boussinesq equations or for outputs
         """
-        if self.dimensions == 1:
-            self.problem.substitutions['plane_avg(A)'] = 'A'
-            self.problem.substitutions['plane_std(A)'] = '0'
-            self.problem.substitutions['vol_avg(A)']   = 'integ(A)/Lz'
-        elif self.dimensions == 2:
-            self.problem.substitutions['plane_avg(A)'] = 'integ(A, "x")/Lx'
-            self.problem.substitutions['plane_std(A)'] = 'sqrt(plane_avg((A - plane_avg(A))**2))'
-            self.problem.substitutions['vol_avg(A)']   = 'integ(A)/Lx/Lz'
-        self.problem.substitutions['UdotGrad(A, A_z)'] = '(u * dx(A) + w * A_z)'
-        self.problem.substitutions['Lap(A, A_z)'] = '(dx(dx(A)) + dz(A_z))'
-       
-        self.problem.substitutions['v'] = '0'
-        self.problem.substitutions['Ox'] = '0'
-        self.problem.substitutions['Oz'] = '(dx(v))'
-
+        self.problem.substitutions['Ox'] = '(dy(w) - dz(v))'
+        self.problem.substitutions['Oz'] = '(dx(v) - dy(u)))'
         #Diffusivities; diffusive timescale
         self.problem.substitutions['chi']= '(v_ff * Lz * P)'
         self.problem.substitutions['nu'] = '(v_ff * Lz * R)'
         self.problem.substitutions['t_therm'] = '(Lz**2/chi)'
         
         self.problem.substitutions['vel_rms']   = 'sqrt(u**2 + v**2 + w**2)'
-        self.problem.substitutions['vorticity'] = 'Oy' 
-        self.problem.substitutions['enstrophy'] = 'Oy**2'
+        self.problem.substitutions['enstrophy'] = '(Ox**2 + Oy**2 + Oz**2)'
 
         self.problem.substitutions['u_fluc'] = '(u - plane_avg(u))'
+        self.problem.substitutions['v_fluc'] = '(v - plane_avg(v))'
         self.problem.substitutions['w_fluc'] = '(w - plane_avg(w))'
         self.problem.substitutions['KE'] = '(0.5*vel_rms**2)'
 
@@ -422,6 +400,94 @@ class BoussinesqEquations2D(Equations):
         T_IC.differentiate('z', out=T_z_IC)
         logger.info("Starting with T1 perturbations of amplitude A0 = {:g}".format(A0))
 
+    def initialize_output(self, solver, data_dir, 
+                          max_writes=20, output_dt=0.25,
+                          mode="overwrite", **kwargs):
+        """
+        Sets up output from runs.
+        """
+
+        # Analysis
+        analysis_tasks = []
+        profiles = solver.evaluator.add_file_handler(data_dir+'profiles', sim_dt=output_dt, max_writes=max_writes, mode=mode)
+        profiles.add_task("plane_avg(T1+T0)", name="T")
+        profiles.add_task("plane_avg(dz(T1+T0))", name="Tz")
+        profiles.add_task("plane_avg(T1)", name="T1")
+        profiles.add_task("plane_avg(u)", name="u")
+        profiles.add_task("plane_avg(w)", name="w")
+        profiles.add_task("plane_avg(enstrophy)", name="enstrophy")
+        profiles.add_task("plane_avg(Nu)", name="Nu")
+        profiles.add_task("plane_avg(Re)", name="Re")
+        profiles.add_task("plane_avg(Pe)", name="Pe")
+        profiles.add_task("plane_avg(enth_flux_z)", name="enth_flux")
+        profiles.add_task("plane_avg(kappa_flux_z)", name="kappa_flux")
+        profiles.add_task("plane_avg(kappa_flux_z + enth_flux_z)", name="tot_flux")
+
+        analysis_tasks.append(profiles)
+
+        scalar = solver.evaluator.add_file_handler(data_dir+'scalar', sim_dt=output_dt, max_writes=max_writes, mode=mode)
+        scalar.add_task("vol_avg(T1)", name="IE")
+        scalar.add_task("vol_avg(KE)", name="KE")
+        scalar.add_task("vol_avg(T1) + vol_avg(KE)", name="TE")
+        scalar.add_task("0.5*vol_avg(u_fluc*u_fluc+w_fluc*w_fluc)", name="KE_fluc")
+        scalar.add_task("0.5*vol_avg(u*u)", name="KE_x")
+        scalar.add_task("0.5*vol_avg(w*w)", name="KE_z")
+        scalar.add_task("0.5*vol_avg(u_fluc*u_fluc)", name="KE_x_fluc")
+        scalar.add_task("0.5*vol_avg(w_fluc*w_fluc)", name="KE_z_fluc")
+        scalar.add_task("vol_avg(plane_avg(u)**2)", name="u_avg")
+        scalar.add_task("vol_avg((u - plane_avg(u))**2)", name="u1")
+        scalar.add_task("vol_avg(Nu)", name="Nu")
+        scalar.add_task("vol_avg(Re)", name="Re")
+        scalar.add_task("vol_avg(Pe)", name="Pe")
+        scalar.add_task("vol_avg(delta_T)", name="delta_T")
+        analysis_tasks.append(scalar)
+
+        return analysis_tasks
+
+
+class BoussinesqEquations2D(BoussinesqEquations):
+
+    def __init__(self, *args, **kwargs):
+        """ 
+        Initialize class and set up variables that will be used in eqns:
+            T1 - Temperature fluctuations from static state
+            T1_z - z-derivative of T1
+            p    - Pressure, magic
+            u    - Horizontal velocity
+            w    - Vertical velocity
+            Oy   - y-vorticity (out of plane)
+        """
+        super(BoussinesqEquations2D, self).__init__(*args, **kwargs)
+        self.variables=['T1_z','T1','p','u','w','Oy']
+
+
+    def _set_parameters(self, *args):
+        """
+        Set up important parameters of the problem for boussinesq convection
+        """
+        super(BoussinesqEquations2D, self)._set_parameters(*args)
+        self.problem.parameters['Lx'] = self.Lx
+
+    def _set_subs(self):
+        """
+        Sets up substitutions that are useful for the Boussinesq equations or for outputs
+        """
+        if self.dimensions == 1:
+            self.problem.substitutions['plane_avg(A)'] = 'A'
+            self.problem.substitutions['plane_std(A)'] = '0'
+            self.problem.substitutions['vol_avg(A)']   = 'integ(A)/Lz'
+        else:
+            self.problem.substitutions['plane_avg(A)'] = 'integ(A, "x")/Lx'
+            self.problem.substitutions['plane_std(A)'] = 'sqrt(plane_avg((A - plane_avg(A))**2))'
+            self.problem.substitutions['vol_avg(A)']   = 'integ(A)/Lx/Lz'
+
+        self.problem.substitutions['UdotGrad(A, A_z)'] = '(u * dx(A) + w * A_z)'
+        self.problem.substitutions['Lap(A, A_z)'] = '(dx(dx(A)) + dz(A_z))'
+       
+        self.problem.substitutions['v'] = '0'
+        self.problem.substitutions['dy(A)'] = '0'
+
+        super(BoussinesqEquations2D, self)._set_subs()
 
     def set_equations(self, Rayleigh, Prandtl, kx = 0):
         """
@@ -470,9 +536,10 @@ class BoussinesqEquations2D(Equations):
         """
         Sets up output from runs.
         """
+        
+        analysis_tasks = super(BoussinesqEquations2D, self).initialize_output(solver, data_dir, max_writes=max_writes, output_dt=output_dt, mode=mode, **kwargs)
 
         # Analysis
-        analysis_tasks = []
         snapshots = solver.evaluator.add_file_handler(data_dir+'slices', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode)
         snapshots.add_task("T1 + T0", name='T')
         snapshots.add_task("enstrophy")
@@ -488,41 +555,156 @@ class BoussinesqEquations2D(Equations):
             coeffs.add_task("w", layout='c')
             coeffs.add_task("u", layout='c')
             coeffs.add_task("enstrophy", layout='c')
-            coeffs.add_task("vorticity", layout='c')
             analysis_tasks.append(coeffs)
 
-        profiles = solver.evaluator.add_file_handler(data_dir+'profiles', sim_dt=output_dt, max_writes=max_writes, mode=mode)
-        profiles.add_task("plane_avg(T1+T0)", name="T")
-        profiles.add_task("plane_avg(dz(T1+T0))", name="Tz")
-        profiles.add_task("plane_avg(T1)", name="T1")
-        profiles.add_task("plane_avg(u)", name="u")
-        profiles.add_task("plane_avg(w)", name="w")
-        profiles.add_task("plane_avg(enstrophy)", name="enstrophy")
-        profiles.add_task("plane_avg(Nu)", name="Nu")
-        profiles.add_task("plane_avg(Re)", name="Re")
-        profiles.add_task("plane_avg(Pe)", name="Pe")
-        profiles.add_task("plane_avg(enth_flux_z)", name="enth_flux")
-        profiles.add_task("plane_avg(kappa_flux_z)", name="kappa_flux")
-        profiles.add_task("plane_avg(kappa_flux_z + enth_flux_z)", name="tot_flux")
+        return analysis_tasks
 
-        analysis_tasks.append(profiles)
+class BoussinesqEquations3D(BoussinesqEquations):
 
-        scalar = solver.evaluator.add_file_handler(data_dir+'scalar', sim_dt=output_dt, max_writes=max_writes, mode=mode)
-        scalar.add_task("vol_avg(T1)", name="IE")
-        scalar.add_task("vol_avg(KE)", name="KE")
-        scalar.add_task("vol_avg(T1) + vol_avg(KE)", name="TE")
-        scalar.add_task("0.5*vol_avg(u_fluc*u_fluc+w_fluc*w_fluc)", name="KE_fluc")
-        scalar.add_task("0.5*vol_avg(u*u)", name="KE_x")
-        scalar.add_task("0.5*vol_avg(w*w)", name="KE_z")
-        scalar.add_task("0.5*vol_avg(u_fluc*u_fluc)", name="KE_x_fluc")
-        scalar.add_task("0.5*vol_avg(w_fluc*w_fluc)", name="KE_z_fluc")
-        scalar.add_task("vol_avg(plane_avg(u)**2)", name="u_avg")
-        scalar.add_task("vol_avg((u - plane_avg(u))**2)", name="u1")
-        scalar.add_task("vol_avg(Nu)", name="Nu")
-        scalar.add_task("vol_avg(Re)", name="Re")
-        scalar.add_task("vol_avg(Pe)", name="Pe")
-        scalar.add_task("vol_avg(delta_T)", name="delta_T")
-        analysis_tasks.append(scalar)
+    def __init__(self, *args, dimensions=3, **kwargs):
+        """ 
+        Initialize class and set up variables that will be used in eqns:
+            T1 - Temperature fluctuations from static state
+            T1_z - z-derivative of T1
+            p    - Pressure, magic
+            u    - Horizontal velocity (x)
+            u_z   - z-derivative of u
+            v    - Horizontal velocity (y)
+            v_z  - z-derivative of v
+            w    - Vertical velocity
+            w_z  - z-derivative of w
+        """
+        super(BoussinesqEquations3D, self).__init__(*args, dimensions=dimensions, **kwargs)
+        self.variables=['T1','T1_z','p','u','v', 'w','u_z', 'v_z', 'w_z']
+
+
+    def _set_parameters(self, *args):
+        """
+        Set up important parameters of the problem for boussinesq convection
+        """
+        super(BoussinesqEquations3D, self)._set_parameters(*args)
+        self.problem.parameters['Lx'] = self.Lx
+        self.problem.parameters['Ly'] = self.Ly
+
+    def _set_subs(self):
+        """
+        Sets up substitutions that are useful for the Boussinesq equations or for outputs
+        """
+        if self.dimensions == 1:
+            self.problem.substitutions['plane_avg(A)'] = 'A'
+            self.problem.substitutions['plane_std(A)'] = '0'
+            self.problem.substitutions['vol_avg(A)']   = 'integ(A)/Lz'
+        else:
+            self.problem.substitutions['plane_avg(A)'] = 'integ(A, "x", "y")/Lx/Ly'
+            self.problem.substitutions['plane_std(A)'] = 'sqrt(plane_avg((A - plane_avg(A))**2))'
+            self.problem.substitutions['vol_avg(A)']   = 'integ(A)/Lx/Ly/Lz'
+
+        self.problem.substitutions['UdotGrad(A, A_z)'] = '(u * dx(A) + v * dy(A) + w * A_z)'
+        self.problem.substitutions['Lap(A, A_z)'] = '(dx(dx(A)) + dy(dy(A)) + dz(A_z))'
+
+        self.problem.substitutions['Oy']          = '(dz(u) - dx(w))'
+        super(BoussinesqEquations3D, self)._set_subs()
+
+    def set_velocity_BC(self, stress_free=None, no_slip=None):
+        """
+        Sets the velocity boundary conditions at the top and bottom of the atmosphere.  If no choice is made, then the
+        default BC is no slip (top and bottom)
+
+        Boundaries are, by default, impenetrable (w = 0 at top and bottom)
+
+        Choices:
+            stress_free         - Oy = 0 at top and bottom [note: Oy = dz(u) - dx(w). With
+                                    impenetrable boundaries at top and bottom, dx(w) = 0, so
+                                    really these are dz(u) = 0 boundary conditions]
+            no_slip             - u = 0 at top and bottom.
+        """
+
+        super(BoussinesqEquations3D, self).set_velocity_BC(stress_free=stress_free, no_slip=no_slip)
+
+        if not(stress_free) and not(no_slip):
+            stress_free = True
+            
+        # horizontal velocity boundary conditions
+        if stress_free:
+            logger.info("Horizontal velocity BC: stress free")
+            self.problem.add_bc("left(Ox) = 0")
+            self.problem.add_bc("right(Ox) = 0")
+            self.dirichlet_set.append('Ox')
+        elif no_slip:
+            logger.info("Horizontal velocity BC: no slip")
+            self.problem.add_bc( "left(v) = 0")
+            self.problem.add_bc("right(v) = 0")
+            self.dirichlet_set.append('v')
+        else:
+            logger.error("Incorrect horizontal velocity boundary conditions specified")
+            raise
+
+    def set_equations(self, Rayleigh, Prandtl, kx = 0, ky = 0):
+        """
+        Set the Boussinesq, Incompressible equations:
+
+            ∇ · u = 0
+            d_t u + u · ∇ u = - ∇ p + T1 (zhat) + √(Pr/Ra) * ∇ ² u,
+            d_t T1 + u · ∇ (T0 + T1) = 1/(√[Pr Ra]) * ∇ ² T1
+
+        """
+        if self.dimensions == 1:
+            self.problem.parameters['j'] = 1j
+            self.problem.substitutions['dx(f)'] = "j*kx*(f)"
+            self.problem.parameters['kx'] = kx
+            self.problem.substitutions['dy(f)'] = "j*ky*(f)"
+            self.problem.parameters['ky'] = ky
+ 
+        self._set_parameters(Rayleigh, Prandtl)
+        self._set_subs()
+
+        # 3D Boussinesq hydrodynamics
+        logger.debug('Adding Eqn: Incompressibility constraint')
+        self.problem.add_equation("dx(u) + dy(v) + w_z = 0")
+        logger.debug('Adding Eqn: T1_z defn')
+        self.problem.add_equation("T1_z - dz(T1) = 0")
+        logger.debug('Adding Eqn: u_z defn')
+        self.problem.add_equation("u_z  - dz(u) = 0")
+        logger.debug('Adding Eqn: v_z defn')
+        self.problem.add_equation("v_z  - dz(v) = 0")
+        logger.debug('Adding Eqn: w_z defn')
+        self.problem.add_equation("w_z  - dz(w) = 0")
+        logger.debug('Adding Eqn: Momentum, x')
+        self.problem.add_equation("dt(u)  - R*Lap(u, u_z) + dx(p)       =  -UdotGrad(u, u_z) ")
+        logger.debug('Adding Eqn: Momentum, x')
+        self.problem.add_equation("dt(v)  - R*Lap(v, v_z) + dy(p)       =  -UdotGrad(v, v_z) ")
+        logger.debug('Adding Eqn: Momentum, z')
+        self.problem.add_equation("dt(w)  - R*Lap(w, w_z) + dz(p) - T1  =  -UdotGrad(w, w_z) ")
+        logger.debug('Adding Eqn: Energy')
+        self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z   = -UdotGrad(T1, T1_z)")
+
+    def initialize_output(self, solver, data_dir, volumes_output=False,
+                          max_writes=20, max_slice_writes=20, output_dt=0.25,
+                          mode="overwrite", **kwargs):
+        """
+        Sets up output from runs.
+        """
+        
+        analysis_tasks = super(BoussinesqEquations3D, self).initialize_output(solver, data_dir, max_writes=max_writes, output_dt=output_dt, mode=mode, **kwargs)
+
+        # Analysis
+        snapshots = solver.evaluator.add_file_handler(data_dir+'slices', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode, parallel=False)
+        snapshots.add_task("interp(T1 + T0,         y={})".format(self.Ly/2), name='T')
+        snapshots.add_task("interp(T1 + T0,         y={})".format(0.95*self.Lz), name='T near top')
+        snapshots.add_task("interp(T1 + T0,         y={})".format(self.Lz/2), name='T midplane')
+        snapshots.add_task("interp(w,         y={})".format(self.Ly/2), name='w')
+        snapshots.add_task("interp(w,         y={})".format(0.95*self.Lz), name='w near top')
+        snapshots.add_task("interp(w,         y={})".format(self.Ly/2), name='w')
+        snapshots.add_task("interp(enstrophy,         y={})".format(0.95*self.Lz), name='enstrophy near top')
+        snapshots.add_task("interp(enstrophy,         y={})".format(self.Lz/2),    name='enstrophy midplane')
+        snapshots.add_task("interp(enstrophy,         y={})".format(self.Lz/2),    name='enstrophy midplane')
+        analysis_tasks.append(snapshots)
+
+        if volumes_output:
+            analysis_volume = solver.evaluator.add_file_handler(data_dir+'volumes', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode, parallel=False)
+            analysis_volume.add_task("T1 + T0", name="T")
+            analysis_volume.add_task("enstrophy", name="enstrophy")
+            analysis_tasks.append(analysis_volume)
 
         return analysis_tasks
 
