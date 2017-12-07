@@ -156,12 +156,12 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
     checkpoint.set_checkpoint(solver, wall_dt=checkpoint_min*60, mode=mode)
         
     # Integration parameters
-    if not isinstance(run_time_therm, type(None)):
-        solver.stop_sim_time = run_time_therm*equations.thermal_time + solver.sim_time
-    elif not isinstance(run_time_buoyancy, type(None)):
-        solver.stop_sim_time  = run_time_buoyancy + solver.sim_time
-    else:
-        solver.stop_sim_time  = np.inf
+#    if not isinstance(run_time_therm, type(None)):
+#        solver.stop_sim_time = run_time_therm*equations.thermal_time + solver.sim_time
+#    elif not isinstance(run_time_buoyancy, type(None)):
+#        solver.stop_sim_time  = run_time_buoyancy + solver.sim_time
+#    else:
+    solver.stop_sim_time  = np.inf
     solver.stop_wall_time = run_time*3600.
     solver.stop_iteration = run_time_iter
 
@@ -203,6 +203,8 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         logger.info('Starting loop')
         Re_avg = 0
         continue_bvps = True
+        not_corrected_times = True
+        init_time = solver.sim_time
         while (solver.ok and np.isfinite(Re_avg)) and continue_bvps:
             dt = CFL.compute_dt()
             solver.step(dt) #, trim=True)
@@ -211,6 +213,13 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
             log_string += 'Time: {:8.3e} ({:8.3e} therm), dt: {:8.3e}, '.format(solver.sim_time, solver.sim_time/equations.thermal_time,  dt)
             log_string += 'Re: {:8.3e}/{:8.3e}'.format(Re_avg, flow.max('Re'))
             logger.info(log_string)
+
+            if not_corrected_times and Re_avg > 1:
+                if not isinstance(run_time_therm, type(None)):
+                    solver.stop_sim_time = run_time_therm*equations.thermal_time + solver.sim_time
+                elif not isinstance(run_time_buoyancy, type(None)):
+                    solver.stop_sim_time  = run_time_buoyancy + solver.sim_time
+                not_corrected_times = False
 
             if do_bvp:
                 bvp_solver.update_avgs(dt, min_Re=1e0)
@@ -299,7 +308,7 @@ if __name__ == "__main__":
     fixed_T = args['--fixed_T']
     mixed_flux_T = args['--mixed_flux_T']
     if not (fixed_flux or mixed_flux_T):
-        fixed_T = True
+        mixed_flux_T = True
 
 
     stress_free = args['--stress_free']
@@ -308,7 +317,7 @@ if __name__ == "__main__":
         no_slip = True
 
     # save data in directory named after script
-    data_dir = args['--root_dir'] + sys.argv[0].split('.py')[0]
+    data_dir = args['--root_dir'] + '/' + sys.argv[0].split('.py')[0]
     if args['--3D']:
         data_dir += '_3D'
     else:
@@ -319,6 +328,11 @@ if __name__ == "__main__":
         data_dir += '_mixed'
     else:
         data_dir += '_fixed'
+
+    if no_slip:
+        data_dir += '_noSlip'
+    else:
+        data_dir += '_stressFree'
 
 
     data_dir += "_Ra{}_Pr{}_a{}".format(args['--Rayleigh'], args['--Prandtl'], args['--aspect'])

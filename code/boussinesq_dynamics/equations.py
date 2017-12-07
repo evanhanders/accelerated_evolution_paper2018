@@ -547,6 +547,23 @@ class BoussinesqEquations2D(BoussinesqEquations):
         snapshots.add_task("w")
         analysis_tasks.append(snapshots)
 
+        powers = solver.evaluator.add_file_handler(data_dir+'powers', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode)
+        powers.add_task("interp(T1,         z={})".format(self.Lz/2),    name='T midplane', layout='c')
+        powers.add_task("interp(T1,         z={})".format(0.05*self.Lz), name='T near bot', layout='c')
+        powers.add_task("interp(T1,         z={})".format(0.95*self.Lz), name='T near top', layout='c')
+        powers.add_task("interp(u,         z={})".format(self.Lz/2),    name='u midplane' , layout='c')
+        powers.add_task("interp(u,         z={})".format(0.05*self.Lz), name='u near bot' , layout='c')
+        powers.add_task("interp(u,         z={})".format(0.95*self.Lz), name='u near top' , layout='c')
+        powers.add_task("interp(w,         z={})".format(self.Lz/2),    name='w midplane' , layout='c')
+        powers.add_task("interp(w,         z={})".format(0.05*self.Lz), name='w near bot' , layout='c')
+        powers.add_task("interp(w,         z={})".format(0.95*self.Lz), name='w near top' , layout='c')
+        for i in range(10):
+            fraction = 0.1*i
+            powers.add_task("interp(T1,     x={})".format(fraction*self.Lx), name='T at x=0.{}Lx'.format(i), layout='c')
+        analysis_tasks.append(powers)
+
+
+
         if coeff_output:
             coeffs = solver.evaluator.add_file_handler(data_dir+'coeffs', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode)
             coeffs.add_task("T1+T0", name="T", layout='c')
