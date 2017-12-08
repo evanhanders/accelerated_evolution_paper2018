@@ -83,7 +83,8 @@ of hydrostatic- and thermal- equilibrium, the desired convective solution cannot
 there cannot be studied.
 
 Knowledge of Mixing Length theory and the nature of evolved convection has been used in some 
-previous studies (e.g., \cite{brandenburg&all2005}) to choose smarter initial conditions than
+previous studies (e.g., \cite{brandenburg&all2005}) to choose initial conditions which are
+closer to the correct evolved adiabat than
 the hydrostatic polytropic states.  However, these assumptions work best in convective regions
 which are bounded by stable layers.  In simple atmospheres where boundary layers form to meet
 boundary conditions at the upper and lower edge of the atmosphere, we cannot know 
@@ -91,23 +92,40 @@ boundary conditions at the upper and lower edge of the atmosphere, we cannot kno
 by the convective dynamics, and specification of the proper boundary layer is essential for
 placing the atmosphere along the proper adiabat.
 
-Here we present a method for using simple boundary value problems, along with information about the evolved flow fields,
-to fast-forward the slow thermal evolution of convecting simulations.  We present this method in the context of RBC, and
-then demonstrate that it applies to stratified, compressible convection under a simple modification.  These methods allow
-us to study the convective flows driven by the evolved thermal profile while only requiring initial value problems to run
+Here we present a method for using simple boundary value problems, 
+along with information about the evolved flow fields,
+to fast-forward the slow thermal evolution of convecting simulations.  
+We present this method in the context of RBC, and
+then demonstrate that applying it to stratified, compressible convection 
+is simple.  These methods allow us to study the convective flows driven by 
+nearly the evolved thermal profile while only requiring initial value problems to run
 for long enough to resolve the fast dynamical timescales of convection.
 
 
-\section{Experiment} 
+\section{Incompressible, Boussinesq \RB Convection}
 \label{sec:experiment}
-\subsection{Incompressible, Boussinesq \RB Convection}
-In studies of convection, it is natural to nondimensionalize the flows on the freefall velocity.
-Under the Boussinesq approximation, where $\rho = \rho_0 (1 - \alpha T_1)$ on the gravitational term in the momentum
-equation and $\rho = \rho_0$ on all other terms, the freefall velocity is $v_{\text{ff}} = \sqrt{\alpha g L^2 (dT/dz)_0}$.
-where $L$ is the depth of the domain, $g$ is the gravitational acceleration, and $(dT/dz)_0$ is the initial temperature
-gradient of the atmosphere, which controls the flux through the system.  The typical timescale and length scale
-then relate to each other according to $t_{\text{ff}} = L/v_{\text{ff}}$.
-Under this nondimensionalization, the Boussinsq, incompressible equations of motion are
+In general, the method for fast-forwarding the atmospheric structure to the correct adiabat is
+simple and involves only a few steps.  At the start of convective simulations, a large transient
+occurs while the hydrostatic state gives way to the convective state.  After the peak of this
+transient, we begin to average the mean vertical profile of the convective flux and the conductive
+flux through the domain.  Once those flux profiles are converged, we solve a simple 
+boundary value problem using the information that those fluxes provide to determine what the
+evolved thermal structure of the atmosphere can be.  The stratification of the initial value
+problems is then adjusted to match the output of the BVP, and we run convection for dynamical
+timescales to let the flows adjust to the new, updated thermal structure.  We then measure
+quantities of the dynamics, and compare them to the dynamics of simulations which underwent a
+long thermal rundown, to determine if our simple BVPs effectively get our convective solution
+to the correct state.
+
+\subsection{Governing Equations, Nondimensionalization, and Domain setup}
+In our first set of experiments, we adopt the Oberbeck-Boussinesq approximation.  Here, the
+fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
+of thermal expansion ($\alpha$).  We non-dimensionalize length by the layer height ($L_z$) ,
+temperature by the (constant) initial temperature gradient across the layer ($\grad T_0$), and time
+by the freefall timescale ($L_z / v_{\text{ff}}$, with $v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$, where $g$ is 
+uniform gravitational acceleration in the $-\hat{z}$ direction). The dimensionless Boussinesq
+equations governing the velocity $\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, temperature
+$T = T_0 + T_1$, and reduced pressure $\varpi$ are (cite Rayleigh, chandrasekar)
 \begin{gather}
 \DivU = 0, 
 	\label{eqn:incompressible}
@@ -119,55 +137,86 @@ Under this nondimensionalization, the Boussinsq, incompressible equations of mot
 \frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \frac{1}{\text{Pr}\,\text{Ra}}\grad^2 T_1,
 	\label{eqn:bouss_energy_eqn}
 \end{gather}
-where
+where the dimensionless control parameters are the Rayleigh and Prandtl numbers,
 \begin{equation}
-\text{Ra} = \frac{g \alpha L^4 \left(\frac{dT}{dz}\right)_0}{\nu\chi} = \frac{(L\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}
+\text{Ra} = \frac{g \alpha L^4 \left(\frac{dT}{dz}\right)_0}{\nu\chi} = \frac{(L\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}.
 \end{equation}
-are the nondimensional Rayleigh and Prandtl numbers, where $\nu$ is the viscous diffusivity and $\chi$ is
-the thermal diffusivity.
+The dimensionless vertical extent of the domain is $z = [-1/2, 1/2]$, and at the boundaries
+we impose no-slip, impenetrable boundary conditions such that $w = u = v = 0$ at $z = \pm 1/2$.
+At the lower boundary, we employ a fixed flux condition such that $\partial T_1 / \partial z = 0$
+at $z = -1/2$, and we impose a fixed temperature condition $T_1 = 0$ at $z = 1/2$. Both
+horizontal directions are periodic and have equal aspect ratio, $\gamma = 4$, such that
+the horizontal coordinates $x, y = [0, \Gamma]$.
 
-One hallmark of Boussinesq convection is that upflows and downflows are symmetric, and thus the long time- and horizontal-
-average of the velocity field is exactly zero.  Assuming that the velocity field has perfect symmetry over a long time
-average, the horizontally-averaged, steady state momentum equation is just
-\begin{equation}
+
+\subsection{The Boundary Value Problem}
+The Boussinesq BVP is simply the time-stationary, horizontally- and time- averaged equations
+of hydrostatic balance and energy conservation,
+\begin{gather}
 \frac{\partial}{\partial z}\angles{\varpi} = \angles{T_1}\hat{z},
-	\label{eqn:simple_momentum}
-\end{equation}
-where $\angles{A}$ represent the horizontal- and time- average of the quantity $A$.  Thus, in the evolved solution, the
-vertical profile of the pressure perturbations are directly determined by the temperature field. 
-Under the Boussinesq approximation, $\bm{u}\cdot\grad(A) = \Div{\bm{u}A}$, and thus the steady state energy equation
-is just
-\begin{equation}
-\frac{\partial}{\partial z}\angles{w(T_0 + T_1)} = \frac{1}{\text{Pr}\text{Ra}}\frac{\partial^2}{\partial z^2} \angles{T_1}.
-	\label{eqn:simple_energy}
-\end{equation}
-Eqns (\ref{eqn:simple_momentum}) \& (\ref{eqn:simple_energy}) combine to form a second-order ODE which specifies the
-mean vertical profile of the temperature and pressure fields in the evolved solution.  These fields are completely specified
-by a set of two thermal boundary conditions and the evolved 
-profile of the convective flux, $F_{\text{conv}} = \angles{w(T_0 + T_1)}$.
+	\label{eqn:bouss_BVP_momentum}
+\\
+\frac{\partial}{\partial z}\angles{wT_1} = \frac{1}{\text{Pr}\text{Ra}}\frac{\partial^2}{\partial z^2} \angles{T_1},
+	\label{eqn:bouss_BVP_energy}
+\end{gather}
+where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  These
+equations arise from taking time- and horizontal- averages of Eqns (\ref{eqn:bouss_momentum_eqn}-\ref{eqn:bouss_energy_eqn})
+and neglecting terms that vanish due to symmetry in the evolved flows.  Convective flows
+are perturbations around a thermal profile defined by these equations in the proper evolved state.
 
-Under the choice of mixed thermal boundary conditions ($dT_1/dz = 0$ at $z = -1/2$, $T_1 = 0$ at $z = +1/2$), the initial
-atmosphere starts off with much more thermal energy ($\propto T$) than the evolved adiabatic solution pegged by the
-top temperature boundary condition.  This excess energy must leave the system through the upper (fixed $T$) boundary
-during the convective transient, and this results in an asymmetric flux profile during the slow thermal evolution of the
-atmosphere.  Furthermore, the convective flux (and the flux at the upper boundary layer) are O(1) during the convective
+In Boussinesq RBC, the thermal structure of the atmosphere is fully determined by the specification
+of the convective flux, $F_{conv} = \angles{w T_1}$.  If this profile is known, then $T_1$ and
+$\varpi$ can be found under the proper specifications of boundary conditions.  
+Under the choice of mixed thermal boundary conditions, the initial
+atmosphere contains more thermal energy ($\propto T$) than the 
+evolved adiabatic solution.  As the atmosphere adjusts to be nearly isothermal in the interior,
+it must evolve towards the (cold) temperature value specified at the upper boundary.
+The evolution of the atmosphere results in an asymmetric flux profile during 
+the slow thermal evolution of the atmosphere.  Furthermore, under our nondimensionalization,
+the convective flux (and the flux at the upper boundary layer) are O(1) during the convective
 transient, whereas the flux entering the atmosphere at the lower boundary is O(Ra$^{-1/2}$), so the asymmetry of the fluxes
 becomes increasingly pronounced as Ra is increased into the turbulent realm. 
 
-In order to find the evolved temperature profile of the atmosphere, the evolved profile of the convective flux must
-be known.  We know that the evolved solution should be in flux equilibrium, and we know that the evolved flux through
-the atmosphere is the flux entering through the bottom.  Thus, the steady-state profile of the convective flux can be
-approximated as
+In order to find the evolved temperature profile of the atmosphere using the Boussinesq BVP equations, 
+the evolved profile of the convective flux must be properly specified.  In order to construct
+this profile, we acknowledge that the evolved solution will in flux equilibrium, 
+carrying the amount of the flux entering through the bottom.  
+Thus, the steady-state profile of the convective flux can be approximated as
 \begin{equation}
-F_{\text{conv, steady}} = F_{\text{bot}}\frac{\angles{w(T_0 + T_1)}}{\angles{w(T_0 + T_1) - \kappa \partial_z (T_0 + T_1)}}
+F_{\text{conv, steady}} = F_{\text{bot}}\frac{\angles{wT_1}}{\angles{wT_1 - \kappa \partial_z (T_0 + T_1)}}
 = F_{\text{bot}}\frac{\angles{F_{\text{conv, IVP}}}}{\angles{F_{\text{tot, IVP}}}}.
+\label{eqn:bouss_BVP_fconv}
 \end{equation}
-Or, put simply, the steady state convective flux is what you get get rid of the asymmetry in the flux profile.
-This flux defined here is used in a 1D boundary value problem solve of 
-eqns (\ref{eqn:simple_momentum}) \& (\ref{eqn:simple_energy}) along with the appropriate boundary values.  The solution
-to that BVP is then used as new initial conditions, convection restarts, and so on.
+Or, put simply, the steady state convective flux is retrieved by properly removing the asymmettry
+from the flux profile.
 
-\subsection{Fully Compressible Convection}
+In our Boussinesq BVPs, we solve Eqns. (\ref{eqn:bouss_BVP_momentum}-\ref{eqn:bouss_BVP_energy}),
+substituting $\angles{wT_1} = F_{\text{conv, steady}}$ as defined in eqn. (\ref{eqn:bouss_BVP_fconv})
+to retrieve the proper vertical profile of $T_1$ and $\varpi$.  We then update the mean horizontal value
+of $T_1$ and $\varpi$ in a corresponding IVP, and continue to timestep forward with the newly adjusted
+atmosphere.
+
+\subsection{Numerics}
+
+\subsection{Results}
+Here we talk about how the solutions are different, or similar.  This includes:
+\begin{enumerate}
+\item Showing that the flow fields look similar
+\item Showing how the temperature / flux profiles look similar/different
+\item showing how Nu and Re scale with Ra in BVP / IVP.
+\item showing how the PDFs of $w$, $wT$, and $T$ change.
+\end{enumerate}
+
+Then we need to make some comments about whether this is good or bad
+
+Then we need to mention how the same thing can be done in stratified, just there you don't
+assume symmetrical boundary layers.
+
+
+
+\section{Fully Compressible Convection}
+
+\subsection{Governing Equations}
 We study stratified convection in an ideal gas whose adiabatic index is $\gamma = 5/3$.
 The initial atmospheric stratification is polytropic \cite{anders&brown2017}.
 We assume a Newtonian radiative conduction term \cite{lecoanet&all2014}, and solve the
@@ -192,7 +241,7 @@ tensor is defined as
 \end{equation}
 and $\delta_{ij}$ is the Kronecker delta function.
 
-\subsubsection{The Boundary Value Equations}
+\subsection{The Boundary Value Equations}
 In studies of fully compressible convection, the flux carried by the adiabatic temperature gradient
 is not available for convection.  Thus, only the flux \emph{in excess} of the adiabat will drive
 convection and be carried by convection.  As such, this is the only portion of the flux which
@@ -220,25 +269,14 @@ in hydrostatic equilibrium.  We couple these equations with four boundary condit
 flux / temperature boundary conditions, as well as setting $M_1 = 0$ at the top and bottom
 of the atmosphere).
 
+\subsection{Results}
 
 
 
 
-\section{Results \& Discussion}
+
+\section{Discussion \& Conclusions}
 \label{sec:results}
-Here we talk about how the solutions are different, or similar.  This includes:
-\begin{enumerate}
-\item Showing that the flow fields look similar
-\item Showing how the temperature / flux profiles look similar/different
-\item showing how Nu and Re scale with Ra in BVP / IVP.
-\item showing how the PDFs of $w$, $wT$, and $T$ change.
-\end{enumerate}
-
-Then we need to make some comments about whether this is good or bad
-
-Then we need to mention how the same thing can be done in stratified, just there you don't
-assume symmetrical boundary layers.
-
 
 
 
