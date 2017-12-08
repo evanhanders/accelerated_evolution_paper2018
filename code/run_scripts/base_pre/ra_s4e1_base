@@ -1,0 +1,35 @@
+#PBS -S /bin/bash
+#PBS -N RB_se4_1.00
+#PBS -l select=5:ncpus=28:mpiprocs=28:model=bro_ele
+#PBS -l walltime=8:00:00
+#PBS -j oe
+#PBS -q normal
+
+export dedalus_script=rayleigh_benard
+export dedalus_dir=$HOME/workdir/rb_base_pre/
+
+cd $PBS_O_WORKDIR
+
+RA=1.30e7
+s=4_1.00
+label=base
+
+mkdir $dedalus_dir
+
+echo running the job
+
+date
+mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
+        --Rayleigh=$RA  \
+        --Prandtl=1     \
+        --aspect=4 \
+		--nz=256        \
+        --nx=1024        \
+		--run_time=7.5 \
+        --run_time_therm=1 \
+        --mixed_flux_T \
+        --no_slip \
+        --output_dt=1 \
+        --label=$label \
+		--root_dir=$dedalus_dir \
+		 > $dedalus_dir/out.s$s.$PBS_JOBID
