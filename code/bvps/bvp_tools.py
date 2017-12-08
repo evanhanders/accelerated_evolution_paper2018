@@ -414,9 +414,8 @@ class BoussinesqBVPSolver(BVPSolverBase):
                         ])
     VEL_VARS = OrderedDict([
                 ('w_IVP',               'w'), 
-                ('wz_IVP',              'wz'), 
+                ('Oy_IVP',              'Oy'), 
                 ('u_IVP',               'u'), 
-                ('uz_IVP',              'uz'), 
                         ])
 
     def __init__(self, atmosphere_class, *args, **kwargs):
@@ -517,7 +516,7 @@ class BoussinesqBVPSolver(BVPSolverBase):
             atmosphere.problem = de.NLBVP(atmosphere.domain, variables=['T1', 'T1_z','p1'], ncc_cutoff=tolerance)
 
             #Zero out old varables to make atmospheric substitutions happy.
-            old_vars = ['u', 'w', 'dx(A)', 'uz', 'wz']
+            old_vars = ['u', 'w', 'dx(A)', 'Oy']
             for sub in old_vars:
                 atmosphere.problem.substitutions[sub] = '0'
 
