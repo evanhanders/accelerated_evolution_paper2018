@@ -275,6 +275,8 @@ class BVPSolverBase:
         """
         #Don't average if all BVPs are done
         if self.completed_bvps >= self.num_bvps:
+            if self.flow.grid_average('Re') < min_Re:
+               self.avg_time_start = self.solver.sim_time
             return
 
         if self.flow.grid_average('Re') > min_Re:

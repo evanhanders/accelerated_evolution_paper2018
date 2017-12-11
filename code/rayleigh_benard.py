@@ -48,7 +48,7 @@ Options:
     --bvp_transient_time=<time>          How long to wait at beginning of run before starting to average for next one, in tbuoy [default: 20]
     --min_bvp_time=<time>                Minimum avg time for a bvp (in tbuoy) [default: 10]
     --bvp_resolution_factor=<mult>       an int, how many times larger than nz should the bvp nz be? [default: 1]
-    --bvp_convergence_factor=<fact>      How well converged time averages need to be for BVP [default: 3e-3]
+    --bvp_convergence_factor=<fact>      How well converged time averages need to be for BVP [default: 1e-3]
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -228,6 +228,12 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                                     'Lz'              : Lz
                                    }
                     diff_args = [Rayleigh, Prandtl]
+
+#                    u = solver.state['u']
+#                    w = solver.state['w']
+#                    u['g'] *= 0
+#                    w['g'] *= 0
+#                    equations.set_IC(solver, A0=1)
                     bvp_solver.solve_BVP(atmo_kwargs, diff_args, bc_dict)
                 if bvp_solver.terminate_IVP():
                     continue_bvps = False
@@ -369,7 +375,7 @@ if __name__ == "__main__":
     Rayleigh_Benard(Rayleigh=float(args['--Rayleigh']),
                     Prandtl=float(args['--Prandtl']),
                     restart=args['--restart'],
-                    aspect=int(args['--aspect']),
+                    aspect=float(args['--aspect']),
                     nz=int(args['--nz']),
                     nx=nx,
                     ny=ny,

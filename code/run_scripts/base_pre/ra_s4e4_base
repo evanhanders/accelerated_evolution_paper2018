@@ -1,9 +1,9 @@
 #PBS -S /bin/bash
 #PBS -N RB_se4_4.64
 #PBS -l select=5:ncpus=28:mpiprocs=28:model=bro_ele
-#PBS -l walltime=8:00:00
+#PBS -l walltime=28:00:00
 #PBS -j oe
-#PBS -q normal
+#PBS -q long
 
 export dedalus_script=rayleigh_benard
 export dedalus_dir=$HOME/workdir/rb_base_pre/
@@ -22,10 +22,10 @@ date
 mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
-        --aspect=4 \
+        --aspect=5.1038 \
 		--nz=256        \
         --nx=1024        \
-		--run_time=7.5 \
+		--run_time=27.5 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \
