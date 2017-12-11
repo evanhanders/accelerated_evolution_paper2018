@@ -69,6 +69,9 @@ The flux at the lower boundary is fixed, modeling
 the constant energy generation of the stellar core, 
 while the outer boundary condition is held at a fixed temperature,
 modeling the surface of a star which must output the energy generated internally.
+This set of boundary conditions is also being studied more recently in Boussinesq convection
+\cite{korre&all2017}, and is displaying interesting characteristics such as internal layers which
+are stable to convection.
 
 While this setup is a useful model for understanding natural
 systems, simulations which employ this setup often suffer from a long convective transient as the thermodynamic structure
@@ -125,7 +128,7 @@ temperature by the (constant) initial temperature gradient across the layer ($\g
 by the freefall timescale ($L_z / v_{\text{ff}}$, with $v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$, where $g$ is 
 uniform gravitational acceleration in the $-\hat{z}$ direction). The dimensionless Boussinesq
 equations governing the velocity $\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, temperature
-$T = T_0 + T_1$, and reduced pressure $\varpi$ are (cite Rayleigh, chandrasekar)
+$T = T_0 + T_1$, and reduced pressure $\varpi$ are \cite{spiegel&veronis1960}
 \begin{gather}
 \DivU = 0, 
 	\label{eqn:incompressible}
@@ -196,7 +199,61 @@ to retrieve the proper vertical profile of $T_1$ and $\varpi$.  We then update t
 of $T_1$ and $\varpi$ in a corresponding IVP, and continue to timestep forward with the newly adjusted
 atmosphere.
 
+In essence, solving the BVP is equivalent to saying that even though the magnitude of flux through
+the system is not initially correct, the system appropriately picks out the ratios
+\begin{equation}
+f_{\text{conv}} = \frac{F_{\text{conv}}}{F_{\text{tot}}}\qquad
+f_{\text{cond}} = \frac{F_{\text{cond}}}{F_{\text{tot}}}.
+\end{equation}
+in the convective, transient state, but the total amount of flux is too large until the system
+reaches the proper isotherm.
+
 \subsection{Numerics}
+Copy+paste from last paper:
+
+We utilize the 
+Dedalus\footnote{\url{http://dedalus-project.org/}} 
+pseudospectral framework \cite{burns&all2016} to time-evolve  
+(\ref{eqn:continuity_eqn})-(\ref{eqn:energy_eqn}) 
+using an implicit-explicit (IMEX), third-order, four-step 
+Runge-Kutta timestepping scheme RK443 \cite{ascher&all1997}.  
+Thermodynamic variables are decomposed such that $T = T_0 + T_1$ and
+$\ln\rho = (\ln\rho)_0 + (\ln\rho)_1$, 
+and the velocity is $\bm{u} = w\bm{\hat{z}} + u\bm{\hat{x}} + v\bm{\hat{y}}$.
+In our 2D runs, $v = 0$.
+Subscript 0 variables, set by (\ref{eqn:polytrope}), 
+have no time derivative and vary only in $z$.
+Variables are time-evolved on a dealiased Chebyshev (vertical)
+and Fourier (horizontal, periodic) domain in which the
+physical grid dimensions are 3/2 the size of the coefficient grid.  
+Domain sizes range from
+64x256 coefficients at the lowest values of 
+Ra to 1024x4096 coefficients at Ra $> 10^{7}$ in 2D,
+and from 64x128$^2$ to  256x512$^2$ in 3D. 
+By using IMEX timestepping, we implicitly step the 
+stiff linear acoustic wave contribution and are able to
+efficiently study flows at high ($\sim 1$) 
+and low ($\sim 10^{-4}$) Ma.  Our equations take the form
+of the FC equations in \cite{lecoanet&all2014}, extended to include
+$\nu$ and $\chi$ which vary with depth, and we follow the approach there.
+This IMEX approach has been successfully 
+tested against a nonlinear benchmark  of the compressible 
+Kelvin-Helmholtz instability \cite{Lecoanet_et_al_2016_KH}.
+
+We impose impenetrable, stress free, fixed temperature boundary conditions at
+the top and bottom of the domain, with 
+$w = \partial_z u = T_1 = 0$ at $z = \{0, L_z\}$. 
+$T_1$ is initially filled with
+random white noise whose magnitude is infinitesimal
+compared to $\epsilon T_0$.
+We filter this noise spectrum in coefficient space, 
+such that only the lower 25\% of the coefficients
+have power. All reported results are taken from time averages
+over many $t_b$ beginning \{100, 40\}$t_b$
+after the start of our \{2D, 3D\} simulations to
+ensure our results are not biased by the convective transient.
+
+
 
 \subsection{Results}
 Here we talk about how the solutions are different, or similar.  This includes:
@@ -211,65 +268,6 @@ Then we need to make some comments about whether this is good or bad
 
 Then we need to mention how the same thing can be done in stratified, just there you don't
 assume symmetrical boundary layers.
-
-
-
-\section{Fully Compressible Convection}
-
-\subsection{Governing Equations}
-We study stratified convection in an ideal gas whose adiabatic index is $\gamma = 5/3$.
-The initial atmospheric stratification is polytropic \cite{anders&brown2017}.
-We assume a Newtonian radiative conduction term \cite{lecoanet&all2014}, and solve the
-fully compressible Navier-Stokes equations of the form
-\begin{gather}
-\frac{\partial \ln \rho}{\partial t} + \bm{u}\cdot\grad\ln\rho + \DivU = 0
-	\label{eqn:FC_continuity}
-\\
-\frac{D \bm{u}}{Dt} = -T\grad\ln\rho - \grad T + \bm{g} - \Div{\stressT}
-	\label{eqn:FC_momentum}
-\\
-\frac{D T}{D t} + (\gamma-1)T\DivU = 
-\frac{1}{\rho c_V}\left(\kappa\grad^2 T - [\stressT\cdot\grad]\cdot\bm{u}\right),
-	\label{eqn:FC_energy}
-\end{gather}
-where $D/Dt \equiv \partial/\partial t + \bm{u}\cdot\grad$ and the viscous stress
-tensor is defined as
-\begin{equation}
-\Pi_{ij} \equiv -\mu\left(\frac{\partial u_i}{\partial x_j} + \frac{\partial u_j}{\partial x_i} - \frac{2}{3}\delta_{ij
-}\DivU\right)
-\label{eqn:stress_tensor}
-\end{equation}
-and $\delta_{ij}$ is the Kronecker delta function.
-
-\subsection{The Boundary Value Equations}
-In studies of fully compressible convection, the flux carried by the adiabatic temperature gradient
-is not available for convection.  Thus, only the flux \emph{in excess} of the adiabat will drive
-convection and be carried by convection.  As such, this is the only portion of the flux which
-must be examined to determine if the solution is in a converged state.  In a system with
-a fixed flux boundary condition, the available superadiabatic flux is
-\begin{equation}
-F_{\text{avail}} = -\kappa(\grad T_0 - \grad T_{\text{ad}}) = \kappa\frac{\epsilon}{c_P}\grad T_0,
-\end{equation}
-which is small when $\epsilon$ is small and only requires low Mach number convective flows
-to carry it.  In a perfectly evolved solution, there will be thin boundary layers in which
-conduction carries this flux in addition to the adiabatic flux, but in an efficient convective
-interior, convective fluxes must carry this full amount.
-
-The BVP equations are inspired by equations of stellar modeling  \cite{paxton&all2011} but adapted to these simulations
-of fully compressible convection.  Here, rather than parameterizing convection, we can get the
-convective fluxes directly from our simulation adn use them to solve for the appropriate structure
-of the atmosphere.  The FC BVP equations are
-\begin{gather}
-\frac{d M_1}{dz} = \rho_1 \\
-T_0 \grad \rho_1 + T_1 \grad \rho_0 + \rho_1 g = - T_0 \grad \rho_0 - T_1 \grad \rho_1 - \rho_0 g \\
-\kappa \frac{d^2 T_1}{d z^2} = -\frac{d}{dz}F_{\text{conv, z}},
-\end{gather}
-which ensure mass conservation, thermal equilibrium, and that the atmosphere is, on average,
-in hydrostatic equilibrium.  We couple these equations with four boundary conditions (mixed
-flux / temperature boundary conditions, as well as setting $M_1 = 0$ at the top and bottom
-of the atmosphere).
-
-\subsection{Results}
 
 
 
