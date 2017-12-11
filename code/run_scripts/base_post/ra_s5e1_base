@@ -1,0 +1,38 @@
+#PBS -S /bin/bash
+#PBS -N RB_se5_1.00
+#PBS -l select=10:ncpus=28:mpiprocs=28:model=bro_ele
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -q long
+
+export dedalus_script=rayleigh_benard
+export dedalus_dir=$HOME/workdir/rb_base_post/
+
+cd $PBS_O_WORKDIR
+
+RA=1.30e8
+s=5_1.00
+label=base
+
+# Will take ~10 days of sim time to reach 1 thermal time...
+
+mkdir $dedalus_dir
+
+echo running the job
+
+date
+mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
+        --Rayleigh=$RA  \
+        --Prandtl=1     \
+        --aspect=5.1038 \
+		--nz=512        \
+        --nx=2048        \
+		--run_time=23 \
+        --run_time_buoy=500 \
+        --mixed_flux_T \
+        --no_slip \
+        --output_dt=1 \
+        --label=$label \
+        --restart=/nobackup/eanders/rb_base_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a4_base/final_checkpoint/final_checkpoint_s1.h5 \
+		--root_dir=$dedalus_dir \
+		 > $dedalus_dir/out.s$s.$PBS_JOBID
