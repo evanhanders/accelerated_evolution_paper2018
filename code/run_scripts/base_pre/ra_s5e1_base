@@ -24,7 +24,7 @@ date
 mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
-        --aspect=5.1038 \
+        --aspect=4.924 \
 		--nz=512        \
         --nx=2048        \
 		--run_time=71 \

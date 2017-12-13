@@ -22,15 +22,15 @@ date
 mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
-        --aspect=5.1038 \
+        --aspect=4.924 \
 		--nz=256         \
         --nx=1024        \
 		--run_time=7.5 \
         --mixed_flux_T \
         --no_slip \
         --output_dt=0.1 \
-        --run_time_buoy=100 \
-        --restart=/nobackup/eanders/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a5.1038_bvp/final_checkpoint/final_checkpoint_s1.h5 \
+        --run_time_buoy=1000 \
+        --restart=/nobackup/eanders/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a4.924_bvp/final_checkpoint/final_checkpoint_s1.h5 \
         --label=$label \
 		--root_dir=$dedalus_dir \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID
