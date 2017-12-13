@@ -30,6 +30,7 @@ Options:
     --run_time_iter=<run_time_iter>   Run time, number of iterations; if not set, n_iter=np.inf
 
     --restart=<restart_file>   Restart from checkpoint
+    --seed=<seed>              RNG seed for initial conditoins [default: 42]
 
     --max_writes=<max_writes>              Writes per file for files other than slices and coeffs [default: 20]
     --max_slice_writes=<max_slice_writes>  Writes per file for slices and coeffs [default: 20]
@@ -75,7 +76,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     data_dir='./', coeff_output=True, verbose=False, no_join=False,
                     do_bvp=False, num_bvps=10, bvp_convergence_factor=1e-2, bvp_equil_time=10, bvp_resolution_factor=1,
                     bvp_transient_time=30, bvp_final_equil_time=None, min_bvp_time=50,
-                    threeD=False):
+                    threeD=False, seed=42):
     import os
     from dedalus.tools.config import config
     
@@ -146,7 +147,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
 
     checkpoint = Checkpoint(data_dir)
     if isinstance(restart, type(None)):
-        equations.set_IC(solver)
+        equations.set_IC(solver, seed=seed)
         dt = None
         mode = 'overwrite'
     else:
@@ -401,6 +402,7 @@ if __name__ == "__main__":
                     bvp_transient_time=float(args['--bvp_transient_time']),
                     bvp_resolution_factor=int(args['--bvp_resolution_factor']),
                     min_bvp_time=float(args['--min_bvp_time']),
-                    threeD=args['--3D'])
+                    threeD=args['--3D'],
+                    seed=int(args['--seed']))
     
 
