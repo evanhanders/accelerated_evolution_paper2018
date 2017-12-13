@@ -135,10 +135,10 @@ $T = T_0 + T_1$, and reduced pressure $\varpi$ are \cite{spiegel&veronis1960}
 \\
 \frac{\partial \bm{u}}{\partial t} + \bm{u}\cdot\grad\bm{u} =
 -\grad\varpi + T_1\hat{z} + \frac{\text{Pr}}{\text{Ra}}\grad^2\bm{u}, 
-	\label{eqn:bouss_momentum_eqn}
+	\label{eqn:bouss_momentum}
 \\
 \frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \frac{1}{\text{Pr}\,\text{Ra}}\grad^2 T_1,
-	\label{eqn:bouss_energy_eqn}
+	\label{eqn:bouss_energy}
 \end{gather}
 where the dimensionless control parameters are the Rayleigh and Prandtl numbers,
 \begin{equation}
@@ -209,53 +209,50 @@ in the convective, transient state, but the total amount of flux is too large un
 reaches the proper isotherm.
 
 \subsection{Numerics}
-Copy+paste from last paper:
-
 We utilize the 
 Dedalus\footnote{\url{http://dedalus-project.org/}} 
 pseudospectral framework \cite{burns&all2016} to time-evolve  
-(\ref{eqn:continuity_eqn})-(\ref{eqn:energy_eqn}) 
+(\ref{eqn:incompressible})-(\ref{eqn:bouss_energy}) 
 using an implicit-explicit (IMEX), third-order, four-step 
 Runge-Kutta timestepping scheme RK443 \cite{ascher&all1997}.  
-Thermodynamic variables are decomposed such that $T = T_0 + T_1$ and
-$\ln\rho = (\ln\rho)_0 + (\ln\rho)_1$, 
+The temperature field is decomposed as $T = T_0(z) + T_1(x, y, z, t)$
 and the velocity is $\bm{u} = w\bm{\hat{z}} + u\bm{\hat{x}} + v\bm{\hat{y}}$.
 In our 2D runs, $v = 0$.
-Subscript 0 variables, set by (\ref{eqn:polytrope}), 
-have no time derivative and vary only in $z$.
 Variables are time-evolved on a dealiased Chebyshev (vertical)
 and Fourier (horizontal, periodic) domain in which the
 physical grid dimensions are 3/2 the size of the coefficient grid.  
 Domain sizes range from
-64x256 coefficients at the lowest values of 
-Ra to 1024x4096 coefficients at Ra $> 10^{7}$ in 2D,
-and from 64x128$^2$ to  256x512$^2$ in 3D. 
-By using IMEX timestepping, we implicitly step the 
-stiff linear acoustic wave contribution and are able to
-efficiently study flows at high ($\sim 1$) 
-and low ($\sim 10^{-4}$) Ma.  Our equations take the form
-of the FC equations in \cite{lecoanet&all2014}, extended to include
-$\nu$ and $\chi$ which vary with depth, and we follow the approach there.
-This IMEX approach has been successfully 
-tested against a nonlinear benchmark  of the compressible 
-Kelvin-Helmholtz instability \cite{Lecoanet_et_al_2016_KH}.
+32x128 coefficients at the lowest values of 
+Ra to 1024x4096 coefficients at Ra $> 10^{9}$ in 2D.
 
-We impose impenetrable, stress free, fixed temperature boundary conditions at
-the top and bottom of the domain, with 
-$w = \partial_z u = T_1 = 0$ at $z = \{0, L_z\}$. 
-$T_1$ is initially filled with
-random white noise whose magnitude is infinitesimal
-compared to $\epsilon T_0$.
+As initial conditions, we fill $T_1$ with
+random white noise whose magnitude is $10^{-6}(\text{Ra Pr})^{-1/2}$.
+This ensures that the initial perturbations are much smaller than the
+evolved convective temperature perturbations, even at large Ra.
 We filter this noise spectrum in coefficient space, 
 such that only the lower 25\% of the coefficients
-have power. All reported results are taken from time averages
-over many $t_b$ beginning \{100, 40\}$t_b$
-after the start of our \{2D, 3D\} simulations to
-ensure our results are not biased by the convective transient.
+have power.
 
-
+In 2D, there are often multiple steady state solutions (e.g., 2-roll and 3-roll
+solutions) which have slightly different flow properties (heat transport, etc.).
+Even though the initial perturbations are very small, they shape the convective
+transient and thus determine the nature of the steady state convection, at least in
+the laminar regime.  In order to ensure that our results are not biased by differences
+in flow structure, we ran the simulations using distinct random temperature perturbations
+so as to compare statistics in comparable flow fields.  In 3D, rolls are nonstationary over
+convective timescales, and so these effects need not be considered there.
 
 \subsection{Results}
+We use the standard definition of the Nusselt number,
+\begin{equation}
+\text{Nu} = \frac{\angles{wT - P\grad T}}{\angles{- P \grad T}} =
+1 + \frac{\angles{wT}}{-P\Delta T},
+\end{equation}
+where $\Delta T = T(z = 1/2) - T(z = -1/2)$ is the evolved temperature difference
+between the top and bottom plates.  This form of the Nusselt number is valid even when
+the system is not yet in flux equilibrium, and reduces to the standard fixed flux definition
+of Nu  = $[1 - \angles{wT} / P]^{-1}$ \cite{johnston&doering2009}.
+
 Here we talk about how the solutions are different, or similar.  This includes:
 \begin{enumerate}
 \item Showing that the flow fields look similar
