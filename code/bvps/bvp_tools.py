@@ -468,9 +468,10 @@ class BoussinesqBVPSolver(BVPSolverBase):
 
         atmosphere.T0_z.set_scales(self.nz/atmosphere.nz, keep_data=True)
         flux_through_system = -atmosphere.P * atmosphere.T0_z['g']
+        flux_scaling = flux_through_system / self.profiles_dict['tot_flux_IVP']
 
         #Scale flux appropriately.
-        self.profiles_dict['enth_flux_IVP'] *= flux_through_system/self.profiles_dict['tot_flux_IVP']
+        self.profiles_dict['enth_flux_IVP'] *= flux_scaling #flux_through_system/self.profiles_dict['tot_flux_IVP']
 
         #Make some plots
         if not isinstance(self.plot_dir, type(None)):
@@ -493,6 +494,8 @@ class BoussinesqBVPSolver(BVPSolverBase):
                     plt.close()
         self.plot_count += 1
 
+        return flux_scaling
+
 
     def solve_BVP(self, atmosphere_kwargs, diffusivity_args, bc_kwargs, tolerance=1e-10):
         """
@@ -509,6 +512,7 @@ class BoussinesqBVPSolver(BVPSolverBase):
         return_dict = OrderedDict()
         for v in self.VARS.keys():
             return_dict[v] = np.zeros(self.nz, dtype=np.float64)
+        return_dict['flux_scaling'] = np.zeros(self.nz, dtype=np.float64)
 
 
         # No need to waste processor power on multiple bvps, only do it on one
@@ -526,7 +530,8 @@ class BoussinesqBVPSolver(BVPSolverBase):
             atmosphere._set_subs()
 
             # Create the appropriate enthalpy flux profile based on boundary conditions
-            self._update_profiles_dict(bc_kwargs, atmosphere, vel_adjust_factor)
+            return_dict['flux_scaling'] = self._update_profiles_dict(bc_kwargs, atmosphere, vel_adjust_factor)
+            vel_adjust_factor = np.sqrt(np.mean(return_dict['flux_scaling']))
 
             #Add time and horizontally averaged profiles from IVP to the problem as parameters
             for k in self.FIELDS.keys():
@@ -578,6 +583,11 @@ class BoussinesqBVPSolver(BVPSolverBase):
             self.comm.Allreduce(return_dict[v], glob, op=MPI.SUM)
             return_dict[v] = glob
 
+        v = 'flux_scaling'        
+        glob = np.zeros(self.nz)
+        self.comm.Allreduce(return_dict[v], glob, op=MPI.SUM)
+        return_dict[v] = glob
+
         vel_adj_loc = np.zeros(1)
         vel_adj_glob = np.zeros(1)
         if self.rank == 0:
@@ -589,6 +599,13 @@ class BoussinesqBVPSolver(BVPSolverBase):
             #Subtract out current avg
             self.solver_states[v].set_scales(1, keep_data=True)
             self.solver_states[v]['g'] -= self.solver_states[v]['g'].mean(axis=0)
+
+            if v == 'T1_IVP':
+                print(self.comm.rank, np.abs(self.solver_states[v]['g']).mean(axis=0))
+                print(return_dict['flux_scaling'])
+                self.solver_states[v].set_scales(1, keep_data=True)
+                self.solver_states[v]['g'] *= np.sqrt(np.mean(return_dict['flux_scaling']))
+
             #Put in right avg
             self.solver_states[v].set_scales(1, keep_data=True)
             self.solver_states[v]['g'] += return_dict[v][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]

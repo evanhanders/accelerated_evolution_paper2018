@@ -277,7 +277,7 @@ class BoussinesqEquations(Equations):
         self.problem.substitutions['kappa_flux_z'] = '(-P*(T1_z+T0_z))'
         self.problem.substitutions['conv_flux_z']  = '(enth_flux_z + kappa_flux_z)'
         self.problem.substitutions['delta_T']      = '(right(T1 + T0) - left(T1 + T0))' 
-        self.problem.substitutions['Nu']           = '(conv_flux_z/(-P*delta_T))'
+        self.problem.substitutions['Nu']           = '(1 + enth_flux_z/(-P*delta_T))'
 
     def set_BC(self,
                fixed_flux=None, fixed_temperature=None, mixed_flux_temperature=None, mixed_temperature_flux=None,
