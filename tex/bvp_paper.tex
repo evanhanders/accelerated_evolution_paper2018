@@ -39,7 +39,7 @@
 \affiliation{Laboratory for Atmospheric and Space Physics, Boulder, CO 80303, USA}
 \author{Jeffrey Oishi}
 \affiliation{Bates}
-\title{BVP Paper}
+\title{Accelerated convergence of convective simulations using boundary value problems}
 
 \begin{abstract}
 WOW this is a really long sentence check out this abstract I'll just keep writing words to make this at least
@@ -50,6 +50,22 @@ one line long so we know what the formatting looks like, ok?
 
 \section{Introduction}
 \label{sec:intro}
+Natural convection occurs in the presence of disparate scales. Granules on the
+solar surface have typical length scales of 1 Mm and overturn on the order of 10 minutes, whereas
+the full solar convection zone spans a depth of 200 Mm, and deep motions are expected to be at very
+low Mach number and constrained by the rotational timescale (1 month) of the Sun.  
+However, despite these relatively short dynamical times, the scale of energy transport on the
+Sun occurs on the Kelvin-Helmholtz timescale, which is nearly $3 \times 10^7$ years for the
+Sun (Michael stix 2003 Solar Physics). As simulations aim to model natural convection
+by increasing into the high-Rayleigh Number (Ra) regime, where diffusive timescales are much
+longer than dynamical timescales \cite{Anders&Brown2017}, simulations will have to run for longer
+times to thermally converge.  Furthermore, as diffusivities decrease, finer grid meshes are required
+to resolve turbulent motions, and timestep sizes decrease.  The result is that high-Ra, interesting
+simulations which strive to model astrophysical convective processes are crippled by the combining effects
+of decreased timestep size due and increased convergence time. In order to study these systems, careful
+techniques must be developed to skip past the long thermal convergence in order to study the fast convective
+flows in the proper atmosphere.
+
 In numerical studies of convection, the chosen boundary conditions at the upper and lower plates
 determines key quantities of the dynamics of the evolved state.
 Studies of incompressible, Boussinesq, \RB convection (RBC) often
@@ -245,8 +261,8 @@ convective timescales, and so these effects need not be considered there.
 \subsection{Results}
 We use the standard definition of the Nusselt number,
 \begin{equation}
-\text{Nu} = \frac{\angles{wT - P\grad T}}{\angles{- P \grad T}} =
-1 + \frac{\angles{wT}}{-P\Delta T},
+\text{Nu} = \frac{\angles{wT - (\text{Ra Pr})^{-1/2}\grad T}}{\angles{- (\text{Ra Pr})^{-1/2} \grad T}} =
+1 + \frac{\angles{wT}}{-\Delta T}\sqrt{\text{Ra Pr}},
 \end{equation}
 where $\Delta T = T(z = 1/2) - T(z = -1/2)$ is the evolved temperature difference
 between the top and bottom plates.  This form of the Nusselt number is valid even when
