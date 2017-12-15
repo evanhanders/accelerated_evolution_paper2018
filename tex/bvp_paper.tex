@@ -50,94 +50,65 @@ one line long so we know what the formatting looks like, ok?
 
 \section{Introduction}
 \label{sec:intro}
-Natural convection occurs in the presence of disparate scales. Granules on the
-solar surface have typical length scales of 1 Mm and overturn on the order of 10 minutes, whereas
-the full solar convection zone spans a depth of 200 Mm, and deep motions are expected to be at very
-low Mach number and constrained by the rotational timescale (1 month) of the Sun.  
-However, despite these relatively short dynamical times, the scale of energy transport on the
-Sun occurs on the Kelvin-Helmholtz timescale, which is nearly $3 \times 10^7$ years for the
-Sun \cite{stix2003}. As simulations aim to model natural convection
+Natural convection occurs in the presence of disparate timescales. Granules on the
+solar surface overturn on the order of 10 minutes, whereas deep motions in the Sun are likely at
+low Mach number and constrained by the solar rotation rate of \~1 month.  
+Despite these relatively short dynamical times, the scale of energy transport on the
+Sun occurs on the Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
+As simulations aim to model natural convection
 by increasing into the high-Rayleigh Number (Ra) regime, where diffusive timescales are much
-longer than dynamical timescales \cite{Anders&Brown2017}, simulations will have to run for longer
-times to thermally converge.  Furthermore, as diffusivities decrease, finer grid meshes are required
-to resolve turbulent motions, and timestep sizes decrease.  The result is that high-Ra, interesting
-simulations which strive to model astrophysical convective processes are crippled by the combining effects
-of decreased timestep size due and increased convergence time. In order to study these systems, careful
-techniques must be developed to skip past the long thermal convergence in order to study the fast convective
-flows in the proper atmosphere.
+longer than dynamical timescales \cite{Anders&Brown2017}, achieving converged simulations will 
+require runs which span a greater number of convective timescales in order to thermally converge.
+Furthermore, with increasing Ra and decreasing diffusivities, motions become more turbulent
+and require finer grid meshes and smaller timesteps to resolve turbulent motions, meaning that
+achieving even one overturn timescale becomes a harder problem.  
+These two effects combine to make thermally converging high-Ra, astrophysically interesting
+simulations intractable using modern numerical tools.
 
-In numerical studies of convection, the chosen boundary conditions at the upper and lower plates
-determines key quantities of the dynamics of the evolved state.
+In studies of stratified convection where a convective layer lies between stable layers, studies
+have used the knowledge of Mixing Length Theory (MLT) to adjust the initial thermal profile of
+atmospheres to a state which is closer to the adiabat chosen by convection \cite{brandenburg&all2005}.
+However, many studies of convection do not contain stable layers above and below the convection
+zone, and the presence of hard boundaries and the boundary layers that they form means
+that the proper adiabat cannot be known \emph{a priori} until the simulation evolves the
+structure of the boundary layers.
+
+The chosen boundary conditions at the upper and lower plates
+determine key quantities of the dynamics of the evolved state.
 Studies of incompressible, Boussinesq, \RB convection (RBC) often
 employ fixed temperature (Dirichlet) or fixed heat flux
 (Neumann) boundary conditions at both plates.  
 Dirichlet conditions represent plates of infinite conductivity,
-whereas Neumann condition model plates of finite conductivity.  
+whereas Neumann conditions model plates of finite conductivity.  
 In both cases, choosing symmetric boundary conditions maintains overall system symmetry, 
-and despite evolving towards quite different thermal structures, both types of conditions
+and despite evolving towards different thermal structures, both types of conditions
 transport heat in the same manner \cite{johnston&doering2009}.
 
-Studies of convection in stratified systems which aim to model convection 
+Studies of convection which aim to model
 in astrophysical systems, such as the outer envelopes of low-to-moderate mass stars 
 like the Sun, often employ a mixture of these
-two types of boundary conditions \cite{hurlburt&all1984, cattaneo&all1991}.  
+two types of boundary conditions \cite{hurlburt&all1984, cattaneo&all1991, korre&all2017}.  
 The flux at the lower boundary is fixed, modeling
 the constant energy generation of the stellar core, 
 while the outer boundary condition is held at a fixed temperature,
 modeling the surface of a star which must output the energy generated internally.
-This set of boundary conditions is also being studied more recently in Boussinesq convection
-\cite{korre&all2017}, and is displaying interesting characteristics such as internal layers which
-are stable to convection.
-
 While this setup is a useful model for understanding natural
-systems, simulations which employ this setup often suffer from a long convective transient as the thermodynamic structure
-of the atmosphere relaxes to the adiabatic profile specified by the fixed temperature upper boundary condition.
-This long evolution occurs on the ``Kelvin-Helmholtz,'' or thermal diffusion timescale of the atmosphere, 
-$t_{\text{KH}} \approx L_z^2 / \chi$, where $L_z$ is the domain depth and $\chi$ is the thermal diffusivity.
-Interesting convection happens as high values of the Rayleigh number, which scales like $\chi^{-1/2}$, such that
-in the astrophysically interesting regime of high-Ra, highly stratified convection, evolving a simulation for a
-KH time becomes numerically intractable.  As the Rayleigh number increases, the KH time increases while the average
-timestep required to resolve the more turbulent flows decreases.  The net result is that under standard initial conditions
-of hydrostatic- and thermal- equilibrium, the desired convective solution cannot be obtained and the dynamics of convection
-there cannot be studied.
+systems, simulations which employ this setup often suffer from a long 
+thermal relaxation as the atmosphere loses energy and approaches the adiabat chosen by the
+Dirichlet condition.
 
-Knowledge of Mixing Length theory and the nature of evolved convection has been used in some 
-previous studies (e.g., \cite{brandenburg&all2005}) to choose initial conditions which are
-closer to the correct evolved adiabat than
-the hydrostatic polytropic states.  However, these assumptions work best in convective regions
-which are bounded by stable layers.  In simple atmospheres where boundary layers form to meet
-boundary conditions at the upper and lower edge of the atmosphere, we cannot know 
-\emph{a priori} what the extent or shape of the boundary layer will be, as that must be chosen
-by the convective dynamics, and specification of the proper boundary layer is essential for
-placing the atmosphere along the proper adiabat.
-
-Here we present a method for using simple boundary value problems, 
+Here we present a method for using simple boundary value problems (BVPs), 
 along with information about the evolved flow fields,
 to fast-forward the slow thermal evolution of convecting simulations.  
-We present this method in the context of RBC, and
-then demonstrate that applying it to stratified, compressible convection 
-is simple.  These methods allow us to study the convective flows driven by 
-nearly the evolved thermal profile while only requiring initial value problems to run
-for long enough to resolve the fast dynamical timescales of convection.
+We run two sets of experiments: one in which we allow convective simulations to evolve for a
+full thermal timescale before taking measurements, and another in which we employ a fast-forwarding,
+BVP technique which occurs on dynamical timescales. We compare these two sets of simulations to
+show the validity of the BVP technique.  Then, we use the BVP technique to run simulations
+at high Ra, in the regime where running for thermal timescales becomes computationally intractable.
 
-
-\section{Incompressible, Boussinesq \RB Convection}
+\section{Experiment}
 \label{sec:experiment}
-In general, the method for fast-forwarding the atmospheric structure to the correct adiabat is
-simple and involves only a few steps.  At the start of convective simulations, a large transient
-occurs while the hydrostatic state gives way to the convective state.  After the peak of this
-transient, we begin to average the mean vertical profile of the convective flux and the conductive
-flux through the domain.  Once those flux profiles are converged, we solve a simple 
-boundary value problem using the information that those fluxes provide to determine what the
-evolved thermal structure of the atmosphere can be.  The stratification of the initial value
-problems is then adjusted to match the output of the BVP, and we run convection for dynamical
-timescales to let the flows adjust to the new, updated thermal structure.  We then measure
-quantities of the dynamics, and compare them to the dynamics of simulations which underwent a
-long thermal rundown, to determine if our simple BVPs effectively get our convective solution
-to the correct state.
-
-\subsection{Governing Equations, Nondimensionalization, and Domain setup}
-In our first set of experiments, we adopt the Oberbeck-Boussinesq approximation.  Here, the
+In our study, we adopt the Oberbeck-Boussinesq approximation.  Here, the
 fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
 of thermal expansion ($\alpha$).  We non-dimensionalize length by the layer height ($L_z$) ,
 temperature by the (constant) initial temperature gradient across the layer ($\grad T_0$), and time
@@ -179,7 +150,7 @@ of hydrostatic balance and energy conservation,
 	\label{eqn:bouss_BVP_energy}
 \end{gather}
 where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  These
-equations arise from taking time- and horizontal- averages of Eqns (\ref{eqn:bouss_momentum_eqn}-\ref{eqn:bouss_energy_eqn})
+equations arise from taking time- and horizontal- averages of Eqns (\ref{eqn:bouss_momentum}-\ref{eqn:bouss_energy})
 and neglecting terms that vanish due to symmetry in the evolved flows.  Convective flows
 are perturbations around a thermal profile defined by these equations in the proper evolved state.
 
@@ -276,6 +247,12 @@ Here we talk about how the solutions are different, or similar.  This includes:
 \item showing how Nu and Re scale with Ra in BVP / IVP.
 \item showing how the PDFs of $w$, $wT$, and $T$ change.
 \end{enumerate}
+
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
+\caption{\label{fig:parameter_space_comparison} }
+\end{figure}
+
 
 Then we need to make some comments about whether this is good or bad
 
