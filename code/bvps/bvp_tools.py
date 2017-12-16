@@ -531,7 +531,10 @@ class BoussinesqBVPSolver(BVPSolverBase):
 
             # Create the appropriate enthalpy flux profile based on boundary conditions
             return_dict['flux_scaling'] = self._update_profiles_dict(bc_kwargs, atmosphere, vel_adjust_factor)
-            vel_adjust_factor = np.sqrt(np.mean(return_dict['flux_scaling']))
+            f = atmosphere._new_ncc()
+            f.set_scales(self.nz / nz, keep_data=True) #If nz(bvp) =/= nz(ivp), this allows interaction between them
+            f['g'] = return_dict['flux_scaling']
+            vel_adjust_factor = np.sqrt(np.mean(f.integrate('z')['g'])/atmosphere.Lz)
 
             #Add time and horizontally averaged profiles from IVP to the problem as parameters
             for k in self.FIELDS.keys():
@@ -601,10 +604,8 @@ class BoussinesqBVPSolver(BVPSolverBase):
             self.solver_states[v]['g'] -= self.solver_states[v]['g'].mean(axis=0)
 
             if v == 'T1_IVP':
-                print(self.comm.rank, np.abs(self.solver_states[v]['g']).mean(axis=0))
-                print(return_dict['flux_scaling'])
                 self.solver_states[v].set_scales(1, keep_data=True)
-                self.solver_states[v]['g'] *= np.sqrt(np.mean(return_dict['flux_scaling']))
+                self.solver_states[v]['g'] *= vel_adj_glob[0]
 
             #Put in right avg
             self.solver_states[v].set_scales(1, keep_data=True)

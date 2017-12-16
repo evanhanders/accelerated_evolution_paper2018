@@ -38,7 +38,7 @@ MARKERS_2=['p', '^', '8']
 COLORS_2=['peru', 'gold', 'teal']
 MARKERSIZE_2=[5,5,5]
 
-fields = ['Re', 'Nu', 'IE']
+fields = ['Nu', 'Re', 'IE']
 base_dirs = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
@@ -75,17 +75,17 @@ for i,k in enumerate(fields):
             ra, ind = ra_info.split('_')
             if k == 'IE':
                 plt.errorbar(float(ra), 0.5+mean, yerr=std,  color=COLORS[int(ind)])
-                plt.scatter(float(ra), 0.5+mean, s=8*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.5)
+                plt.scatter(float(ra), 0.5+mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Nu':
                 p=2/3
                 plt.errorbar(float(ra), mean/(4e-3*float(ra)**(p)), yerr=std/(4e-3*float(ra)**(p)),  color=COLORS[int(ind)])
-                plt.scatter(float(ra), mean/(4e-3*float(ra)**p), s=8*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.5)
+                plt.scatter(float(ra), mean/(4e-3*float(ra)**p), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Re':
                 plt.errorbar(float(ra), mean/float(ra)**(1/2), yerr=std/float(ra)**(1/2),  color=COLORS[int(ind)])
-                plt.scatter(float(ra), mean/float(ra)**(1/2), s=8*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.5)
+                plt.scatter(float(ra), mean/float(ra)**(1/2), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             else:
                 plt.errorbar(float(ra), mean, yerr=std,  color=COLORS[int(ind)])
-                plt.scatter(float(ra), mean, s=8*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.5)
+                plt.scatter(float(ra), mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
         except:
             continue
     plt.xlabel('Ra')
