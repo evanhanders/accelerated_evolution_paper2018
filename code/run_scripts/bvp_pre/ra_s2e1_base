@@ -29,7 +29,7 @@ mpiexec_mpt -np 32 ~/.python3 $dedalus_script.py \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \
-        --output_dt=0.1 \
+        --output_dt=0.25 \
         --do_bvp \
         --num_bvps=1 \
         --bvp_final_equil_time=100 \
