@@ -140,8 +140,17 @@ the horizontal coordinates $x, y = [0, \Gamma]$.
 
 
 \subsection{The Boundary Value Problem}
-The Boussinesq BVP is simply the time-stationary, horizontally- and time- averaged equations
-of hydrostatic balance and energy conservation,
+\begin{figure}[b]
+\includegraphics[width=\textwidth]{./figs/time_trace.png}
+\caption{\label{fig:time_trace} }
+\end{figure}
+
+One can skip the prohibitive thermal timescale required to reach an equilibrium temperature profile
+in a Direct Numerical Simulation (DNS) by coupling the DNS with a simple Boundary Value Problem
+(BVP) solve. Using information about the dynamics of the convection in the atmosphere, it is possible
+to skip a large portion of the thermal evolution, see Fig \ref{fig:time_trace}a\&b.
+
+The Boussinesq BVP contains equations of hydrostatic balance and thermal equilibrium,
 \begin{gather}
 \frac{\partial}{\partial z}\angles{\varpi} = \angles{T_1}\hat{z},
 	\label{eqn:bouss_BVP_momentum}
@@ -149,7 +158,8 @@ of hydrostatic balance and energy conservation,
 \frac{\partial}{\partial z}\angles{wT_1} = \frac{1}{\text{Pr}\text{Ra}}\frac{\partial^2}{\partial z^2} \angles{T_1},
 	\label{eqn:bouss_BVP_energy}
 \end{gather}
-where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  These
+where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  
+These
 equations arise from taking time- and horizontal- averages of Eqns (\ref{eqn:bouss_momentum}-\ref{eqn:bouss_energy})
 and neglecting terms that vanish due to symmetry in the evolved flows.  Convective flows
 are perturbations around a thermal profile defined by these equations in the proper evolved state.
@@ -162,10 +172,7 @@ atmosphere contains more thermal energy ($\propto T$) than the
 evolved adiabatic solution.  As the atmosphere adjusts to be nearly isothermal in the interior,
 it must evolve towards the (cold) temperature value specified at the upper boundary.
 The evolution of the atmosphere results in an asymmetric flux profile during 
-the slow thermal evolution of the atmosphere.  Furthermore, under our nondimensionalization,
-the convective flux (and the flux at the upper boundary layer) are O(1) during the convective
-transient, whereas the flux entering the atmosphere at the lower boundary is O(Ra$^{-1/2}$), so the asymmetry of the fluxes
-becomes increasingly pronounced as Ra is increased into the turbulent realm. 
+the slow thermal evolution of the atmosphere (Fig. \ref{fig:time_trace}c).  
 
 In order to find the evolved temperature profile of the atmosphere using the Boussinesq BVP equations, 
 the evolved profile of the convective flux must be properly specified.  In order to construct
@@ -193,7 +200,11 @@ f_{\text{conv}} = \frac{F_{\text{conv}}}{F_{\text{tot}}}\qquad
 f_{\text{cond}} = \frac{F_{\text{cond}}}{F_{\text{tot}}}.
 \end{equation}
 in the convective, transient state, but the total amount of flux is too large until the system
-reaches the proper isotherm.
+reaches the proper isotherm.  This procedure seems to converge the atmosphere quite well
+(Fig. \ref{fig:time_trace}d\&e).
+
+
+
 
 \subsection{Numerics}
 We utilize the 
@@ -249,9 +260,22 @@ Here we talk about how the solutions are different, or similar.  This includes:
 \end{enumerate}
 
 \begin{figure}[t]
+\includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
+\caption{\label{fig:pdf_comparison} }
+\end{figure}
+
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{./figs/temp_comparison.png}
+\caption{\label{fig:temp_comparison} }
+\end{figure}
+
+\begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
 \caption{\label{fig:parameter_space_comparison} }
 \end{figure}
+
+
+
 
 
 Then we need to make some comments about whether this is good or bad

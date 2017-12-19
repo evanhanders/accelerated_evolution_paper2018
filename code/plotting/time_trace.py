@@ -92,39 +92,11 @@ gs_info = (((0,0), 450, size_1), ((0, 1000-size_2),450, size_2))
 print(size_1, size_2, gs_info)
 axes = []
 axes_share = []
+
 for i in range(4):
     if i < 2:
         axes.append(plt.subplot(gs.new_subplotspec(*gs_info[i])))
         axes_share.append(axes[-1].twinx())
-    this_label = '{}_{}'.format(ra_runs, i)
-    axes[i % 2].plot(info[this_label]['sim_time'], info[this_label]['KE_scalar'], c='k')
-    axes[i % 2].set_yscale('log')
-    axes[i % 2].set_ylim(1e-3, 1e-1)
-    if i > 1:
-        axes[i % 2].axvline(info[this_label]['sim_time'][0], ls='-.')
-
-    axes_share[i % 2].plot(info[this_label]['sim_time'], 0.5 + info[this_label]['IE_scalar'], c='red')
-    axes_share[i % 2].set_yscale('log')
-    axes_share[i % 2].set_ylim(1e-1, 1e0)
-
-#Axes formatting
-axes[0].set_xlim(info['{}_0'.format(ra_runs)]['sim_time'][0], info['{}_2'.format(ra_runs)]['sim_time'][-1])
-axes[1].set_xlim(info['{}_1'.format(ra_runs)]['sim_time'][0], info['{}_3'.format(ra_runs)]['sim_time'][-1])
-axes[0].set_ylabel('Kinetic Energy')
-axes[0].set_xlabel('Simulation Time (freefall units)', labelpad=2)
-x, y = axes[0].xaxis.get_label().get_position()
-print(x, y)
-axes[0].xaxis.get_label().set_position((x/time_ratio, y))
-axes_share[1].set_ylabel(r'$T_1 - T_{\mathrm{top}}$', rotation=270, color='green')
-for tick in axes[1].get_yticklabels():
-    tick.set_size(0)
-axes[1].yaxis.set_ticks_position('none')
-for tick in axes_share[0].get_yticklabels():
-    tick.set_size(0)
-axes_share[0].yaxis.set_ticks_position('none')
-for tick in axes_share[1].get_yticklabels():
-    tick.set_color('g')
-
 #Overlaying bold areas on time traces
 this_label = '{}_0'.format(ra_runs, i)
 t = info[this_label]['sim_time']
@@ -144,8 +116,39 @@ this_label = '{}_3'.format(ra_runs, i)
 t = info[this_label]['sim_time']
 ke = info[this_label]['KE_scalar']
 ie = info[this_label]['IE_scalar'] + 0.5
-axes[1].plot(t, ke, c='indigo', lw=4)
-axes_share[1].plot(t, ie, c='indigo', lw=4)
+axes[1].plot(t, ke, c='green', lw=4)
+axes_share[1].plot(t, ie, c='green', lw=4)
+
+
+for i in range(4):
+    this_label = '{}_{}'.format(ra_runs, i)
+    axes[i % 2].plot(info[this_label]['sim_time'], info[this_label]['KE_scalar'], c='k')
+    axes[i % 2].set_yscale('log')
+    axes[i % 2].set_ylim(1e-3, 1e-1)
+    if i > 1:
+        axes[i % 2].axvline(info[this_label]['sim_time'][0], ls='-.')
+
+    axes_share[i % 2].plot(info[this_label]['sim_time'], 0.5 + info[this_label]['IE_scalar'], c='red')
+    axes_share[i % 2].set_yscale('log')
+    axes_share[i % 2].set_ylim(1e-1, 1e0)
+
+#Axes formatting
+axes[0].set_xlim(info['{}_0'.format(ra_runs)]['sim_time'][0], info['{}_2'.format(ra_runs)]['sim_time'][-1])
+axes[1].set_xlim(info['{}_1'.format(ra_runs)]['sim_time'][0], info['{}_3'.format(ra_runs)]['sim_time'][-1])
+axes[0].set_ylabel('Kinetic Energy')
+axes[0].set_xlabel('Simulation Time (freefall units)', labelpad=0)
+x, y = axes[0].xaxis.get_label().get_position()
+print(x, y)
+axes[0].xaxis.get_label().set_position((x/time_ratio, y))
+axes_share[1].set_ylabel(r'$T_1 - T_{\mathrm{top}}$', rotation=270, color='green')
+for tick in axes[1].get_yticklabels():
+    tick.set_size(0)
+axes[1].yaxis.set_ticks_position('none')
+for tick in axes_share[0].get_yticklabels():
+    tick.set_size(0)
+axes_share[0].yaxis.set_ticks_position('none')
+for tick in axes_share[1].get_yticklabels():
+    tick.set_color('g')
 
 
 spines = ['bottom', 'top', 'right', 'left']
@@ -153,7 +156,7 @@ axis_names   = ['x', 'y']
 # Bottom three plots
 #Plot 1
 axes = []
-gs_info = (((550,0), 450, 267), ((550, 366), 450, 267), ((550, 733), 450, 267))
+gs_info = (((550,0), 450, 267), ((550, 366), 450, 267), ((550, 800), 450, 200))
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[0])))
 this_label = '{}_0'.format(ra_runs)
 enth = info[this_label]['enth_flux_profile'][1,:]*np.sqrt(float(ra_runs))
@@ -161,9 +164,9 @@ kappa = info[this_label]['kappa_flux_profile'][1,:]*np.sqrt(float(ra_runs))
 sum_f = (enth + kappa)
 axes[-1].axhline(1, c='k', ls='--')
 axes[-1].axhline(0, c='k')
-axes[-1].plot(info[this_label]['z_profile'], enth,  c='blue')
-axes[-1].plot(info[this_label]['z_profile'], kappa, c='red')
-axes[-1].plot(info[this_label]['z_profile'], sum_f, color='k', lw=2, dashes=(4, 1.5))
+axes[-1].plot(info[this_label]['z_profile'], enth,  c='darkblue')
+axes[-1].plot(info[this_label]['z_profile'], kappa, c='darkred')
+axes[-1].plot(info[this_label]['z_profile'], sum_f, color='g')
 y_ticks = np.array([0, 0.5, 1, np.ceil(np.max(sum_f))])
 axes[-1].set_yticks(y_ticks)
 axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
@@ -183,9 +186,9 @@ kappa = info[this_label]['kappa_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 sum_f = (enth + kappa)
 axes[-1].axhline(1, c='k', ls='--')
 axes[-1].axhline(0, c='k')
-axes[-1].plot(info[this_label]['z_profile'], enth,  c='blue')
-axes[-1].plot(info[this_label]['z_profile'], kappa, c='red')
-axes[-1].plot(info[this_label]['z_profile'], sum_f, color='k', lw=2, dashes=(4, 1.5))
+axes[-1].plot(info[this_label]['z_profile'], enth,  c='darkblue', lw=3)
+axes[-1].plot(info[this_label]['z_profile'], kappa, c='darkred', lw=3, label='Rundown')
+axes[-1].plot(info[this_label]['z_profile'], sum_f, color='g', lw=3)
 y_ticks = np.array([0, 0.5, 1])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
@@ -196,26 +199,32 @@ axes[-1].set_xlabel('z')
 [t.set_color('k') for t in axes[-1].get_xticklabels()]
 [t.set_color('k') for t in axes[-1].get_yticklabels()]
 
-#Plot 3
-axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
+#axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
 this_label = '{}_3'.format(ra_runs)
+base_enth, base_kappa, base_sum_f = enth, kappa, sum_f
 enth = info[this_label]['enth_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 kappa = info[this_label]['kappa_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 sum_f = (enth + kappa)
 axes[-1].axhline(1, c='k', ls='--')
 axes[-1].axhline(0, c='k')
-axes[-1].plot(info[this_label]['z_profile'], enth, c='blue')
-axes[-1].plot(info[this_label]['z_profile'], kappa, c='red')
-axes[-1].plot(info[this_label]['z_profile'], sum_f, color='k', lw=2, dashes=(4,1.5))
+axes[-1].plot(info[this_label]['z_profile'], enth, c='lightskyblue', lw=1, dashes= (4, 1.5))
+axes[-1].plot(info[this_label]['z_profile'], kappa, c='salmon', lw=1, dashes = (4, 1.5), label='BVP')
+axes[-1].plot(info[this_label]['z_profile'], sum_f, color='springgreen', lw=1, dashes=(4,1.5))
 y_ticks = np.array([0, 0.5, 1])
+axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('z')
-[axes[-1].spines[s].set_color('indigo') for s in spines]
-[axes[-1].tick_params(axis=axis, colors='indigo') for axis in axis_names]
-[t.set_color('k') for t in axes[-1].get_xticklabels()]
-[t.set_color('k') for t in axes[-1].get_yticklabels()]
+plt.legend(frameon=False, loc='center', fontsize=10)
+
+#Plot 3
+axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
+axes[-1].axhline(0, c='k')
+axes[-1].plot(info[this_label]['z_profile'], ((enth-base_enth)), c='darkblue')
+axes[-1].plot(info[this_label]['z_profile'], ((kappa-base_kappa)), c='darkred')
+axes[-1].plot(info[this_label]['z_profile'], ((sum_f - base_sum_f)), c='green')
+axes[-1].set_ylabel(r'$\mathrm{(BVP - Rundown)}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
 
 
 plt.savefig('time_trace.png'.format(k), bbox_inches='tight', dpi=200)
