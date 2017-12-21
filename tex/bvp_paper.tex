@@ -1,5 +1,6 @@
 %\documentclass[iop]{emulateapj}
 \documentclass[aps, pre, onecolumn, nofootinbib, notitlepage, groupedaddress, amsfonts, amssymb, amsmath, longbibliography]{revtex4-1}
+\usepackage{tabularx}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -37,13 +38,17 @@
 \author{Benjamin P. Brown}
 \affiliation{Dept. Astrophysical \& Planetary Sciences, University of Colorado -- Boulder, Boulder, CO 80309, USA}
 \affiliation{Laboratory for Atmospheric and Space Physics, Boulder, CO 80303, USA}
-\author{Jeffrey Oishi}
-\affiliation{Bates}
+\author{Jeffrey S. Oishi}
+\affiliation{Department of Physics and Astronomy, Bates College, Lewiston, ME 04240, USA}
 \title{Accelerated convergence of convective simulations using boundary value problems}
 
 \begin{abstract}
-WOW this is a really long sentence check out this abstract I'll just keep writing words to make this at least
-one line long so we know what the formatting looks like, ok?
+We present a method for using coupling Boundary value problems (BVPs) with Initial value problems (IVPs)
+in order to achieve thermally converged convective solutions on dynamical timescales, rather than the
+long thermal timescale.  We demonstrate the similarity between the solution reached via BVP and the
+solution reached by a long thermal rundown of the IVP, and demonstrate that this method works at a
+large range of supercriticalities.  We use this method to achieve converged solutions at high Ra,
+and discuss its extension to more complex scenarios, such as stratified, compressible convection.
 \end{abstract}
 \maketitle
 
@@ -52,7 +57,7 @@ one line long so we know what the formatting looks like, ok?
 \label{sec:intro}
 Natural convection occurs in the presence of disparate timescales. Granules on the
 solar surface overturn on the order of 10 minutes, whereas deep motions in the Sun are likely at
-low Mach number and constrained by the solar rotation rate of \~1 month.  
+low Mach number and constrained by the solar rotation rate of $\sim$1 month.  
 Despite these relatively short dynamical times, the scale of energy transport on the
 Sun occurs on the Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
 As simulations aim to model natural convection
@@ -62,40 +67,16 @@ require runs which span a greater number of convective timescales in order to th
 Furthermore, with increasing Ra and decreasing diffusivities, motions become more turbulent
 and require finer grid meshes and smaller timesteps to resolve turbulent motions, meaning that
 achieving even one overturn timescale becomes a harder problem.  
-These two effects combine to make thermally converging high-Ra, astrophysically interesting
-simulations intractable using modern numerical tools.
+These two effects combine such that achieving thermally converged, high-Ra, astrophysically interesting
+simulations is intractable using modern numerical tools.
 
 In studies of stratified convection where a convective layer lies between stable layers, studies
 have used the knowledge of Mixing Length Theory (MLT) to adjust the initial thermal profile of
 atmospheres to a state which is closer to the adiabat chosen by convection \cite{brandenburg&all2005}.
 However, many studies of convection do not contain stable layers above and below the convection
-zone, and the presence of hard boundaries and the boundary layers that they form means
-that the proper adiabat cannot be known \emph{a priori} until the simulation evolves the
+zone, and the presence of hard boundaries and the boundary layers that they form makes it difficult to
+know proper evolved adiabat \emph{a priori} before the dynamics of the simulation evolve the
 structure of the boundary layers.
-
-The chosen boundary conditions at the upper and lower plates
-determine key quantities of the dynamics of the evolved state.
-Studies of incompressible, Boussinesq, \RB convection (RBC) often
-employ fixed temperature (Dirichlet) or fixed heat flux
-(Neumann) boundary conditions at both plates.  
-Dirichlet conditions represent plates of infinite conductivity,
-whereas Neumann conditions model plates of finite conductivity.  
-In both cases, choosing symmetric boundary conditions maintains overall system symmetry, 
-and despite evolving towards different thermal structures, both types of conditions
-transport heat in the same manner \cite{johnston&doering2009}.
-
-Studies of convection which aim to model
-in astrophysical systems, such as the outer envelopes of low-to-moderate mass stars 
-like the Sun, often employ a mixture of these
-two types of boundary conditions \cite{hurlburt&all1984, cattaneo&all1991, korre&all2017}.  
-The flux at the lower boundary is fixed, modeling
-the constant energy generation of the stellar core, 
-while the outer boundary condition is held at a fixed temperature,
-modeling the surface of a star which must output the energy generated internally.
-While this setup is a useful model for understanding natural
-systems, simulations which employ this setup often suffer from a long 
-thermal relaxation as the atmosphere loses energy and approaches the adiabat chosen by the
-Dirichlet condition.
 
 Here we present a method for using simple boundary value problems (BVPs), 
 along with information about the evolved flow fields,
@@ -129,14 +110,42 @@ $T = T_0 + T_1$, and reduced pressure $\varpi$ are \cite{spiegel&veronis1960}
 \end{gather}
 where the dimensionless control parameters are the Rayleigh and Prandtl numbers,
 \begin{equation}
-\text{Ra} = \frac{g \alpha L^4 \left(\frac{dT}{dz}\right)_0}{\nu\chi} = \frac{(L\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}.
+\text{Ra} = \frac{g \alpha L_z^4 \grad T_0}{\nu\chi} = \frac{(L_z\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}.
 \end{equation}
 The dimensionless vertical extent of the domain is $z = [-1/2, 1/2]$, and at the boundaries
 we impose no-slip, impenetrable boundary conditions such that $w = u = v = 0$ at $z = \pm 1/2$.
 At the lower boundary, we employ a fixed flux condition such that $\partial T_1 / \partial z = 0$
 at $z = -1/2$, and we impose a fixed temperature condition $T_1 = 0$ at $z = 1/2$. Both
-horizontal directions are periodic and have equal aspect ratio, $\gamma = 4$, such that
-the horizontal coordinates $x, y = [0, \Gamma]$.
+horizontal directions are periodic, extending over a range $x, y = [0, \Gamma]$, where
+the aspect ratio is $\Gamma = 2 \lambda_c$, with
+$\lambda_c = 2\pi/k_c$, and $k_c=2.5519$ is the wavenumber of convective onset for this choice of
+boundary conditions.  
+
+The chosen thermal boundary conditions at the upper and lower plates
+determine key quantities of the evolved state.
+Studies of incompressible, Boussinesq, \RB convection often
+employ fixed temperature (Dirichlet) or fixed heat flux
+(Neumann) boundary conditions at both plates.  
+Dirichlet conditions represent plates of infinite conductivity,
+whereas Neumann conditions model plates of finite conductivity.  
+In both cases, choosing symmetric boundary conditions maintains overall system symmetry, 
+and despite evolving towards different thermal structures, both types of conditions
+transport heat in the same manner \cite{johnston&doering2009}.
+Studies of convection which aim to model
+astrophysical systems such as stars often employ a mixture of these
+two types of boundary conditions \cite{hurlburt&all1984, cattaneo&all1991, korre&all2017}.  
+The flux at the lower boundary is fixed, modeling
+the constant energy generation of the stellar core, 
+while the outer boundary condition is held at a fixed temperature,
+modeling the surface of a star which must output the energy generated internally.
+This setup is a useful model for understanding natural
+systems, but simulations which employ these boundary conditions suffer from a long 
+thermal relaxation as the atmosphere loses energy and approaches the adiabat chosen by the
+Dirichlet condition.  We choose these conditions in part to better understand them, and in
+part because these conditions minimize the number of assumptions that must be made in
+setting up the boundary value problem.
+
+
 
 
 \subsection{The Boundary Value Problem}
@@ -145,8 +154,8 @@ the horizontal coordinates $x, y = [0, \Gamma]$.
 \caption{\label{fig:time_trace} }
 \end{figure}
 
-One can skip the prohibitive thermal timescale required to reach an equilibrium temperature profile
-in a Direct Numerical Simulation (DNS) by coupling the DNS with a simple Boundary Value Problem
+The prohibitively long thermal timescale required to reach an equilibrium temperature profile
+in a Direct Numerical Simulation (DNS) can be skipped by coupling the DNS with a simple Boundary Value Problem
 (BVP) solve. Using information about the dynamics of the convection in the atmosphere, it is possible
 to skip a large portion of the thermal evolution, see Fig \ref{fig:time_trace}a\&b.
 
@@ -160,50 +169,60 @@ The Boussinesq BVP contains equations of hydrostatic balance and thermal equilib
 \end{gather}
 where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  
 These
-equations arise from taking time- and horizontal- averages of Eqns (\ref{eqn:bouss_momentum}-\ref{eqn:bouss_energy})
-and neglecting terms that vanish due to symmetry in the evolved flows.  Convective flows
+equations arise from taking time- and horizontal- averages of Eqns (\ref{eqn:bouss_momentum}\&\ref{eqn:bouss_energy}),
+neglecting terms that vanish due to symmetry, and assuming that the flows are in a stationary state.  
+Convective flows
 are perturbations around a thermal profile defined by these equations in the proper evolved state.
 
-In Boussinesq RBC, the thermal structure of the atmosphere is fully determined by the specification
-of the convective flux, $F_{conv} = \angles{w T_1}$.  If this profile is known, then $T_1$ and
-$\varpi$ can be found under the proper specifications of boundary conditions.  
-Under the choice of mixed thermal boundary conditions, the initial
-atmosphere contains more thermal energy ($\propto T$) than the 
-evolved adiabatic solution.  As the atmosphere adjusts to be nearly isothermal in the interior,
-it must evolve towards the (cold) temperature value specified at the upper boundary.
-The evolution of the atmosphere results in an asymmetric flux profile during 
-the slow thermal evolution of the atmosphere (Fig. \ref{fig:time_trace}c).  
+Under eqns (\ref{eqn:bouss_BVP_momentum}\&\ref{eqn:bouss_BVP_energy}), 
+the thermal structure ($\angles{T_1}$, $\angles{\varpi}$) of the atmosphere is fully determined by the specification
+of the convective flux, $F_{conv} = \angles{w T_1}$.  If this profile is known, then 
+solving for $\angles{T_1}$ and
+$\angles{\varpi}$ depends only upon the choice of boundary conditions.
 
-In order to find the evolved temperature profile of the atmosphere using the Boussinesq BVP equations, 
-the evolved profile of the convective flux must be properly specified.  In order to construct
-this profile, we acknowledge that the evolved solution will in flux equilibrium, 
-carrying the amount of the flux entering through the bottom.  
+By definition, the profile of $F_{conv}$ is \emph{not} in its time stationary state near the
+beginning of the simulation.  In fact, under mixed boundary conditions, as the atmosphere approaches the
+isotherm specified by the upper boundary condition, the motions display an asymmetric flux as energy
+leaks through the upper boundary condition (Fig. \ref{fig:time_trace}c).  
+In order to construct the evolved convective flux from the current fluxes in the atmosphere,
+we acknowledge that the evolved solution will be in flux equilibrium, 
+carrying the amount of flux specified at the fixed-flux condition throughout the full depth of the atmosphere.  
 Thus, the steady-state profile of the convective flux can be approximated as
 \begin{equation}
 F_{\text{conv, steady}} = F_{\text{bot}}\frac{\angles{wT_1}}{\angles{wT_1 - \kappa \partial_z (T_0 + T_1)}}
 = F_{\text{bot}}\frac{\angles{F_{\text{conv, IVP}}}}{\angles{F_{\text{tot, IVP}}}}.
 \label{eqn:bouss_BVP_fconv}
 \end{equation}
-Or, put simply, the steady state convective flux is retrieved by properly removing the asymmettry
-from the flux profile.
-
-In our Boussinesq BVPs, we solve Eqns. (\ref{eqn:bouss_BVP_momentum}-\ref{eqn:bouss_BVP_energy}),
-substituting $\angles{wT_1} = F_{\text{conv, steady}}$ as defined in eqn. (\ref{eqn:bouss_BVP_fconv})
-to retrieve the proper vertical profile of $T_1$ and $\varpi$.  We then update the mean horizontal value
-of $T_1$ and $\varpi$ in a corresponding IVP, and continue to timestep forward with the newly adjusted
-atmosphere.
-
-In essence, solving the BVP is equivalent to saying that even though the magnitude of flux through
-the system is not initially correct, the system appropriately picks out the ratios
+In essence, the construction of this profile assumes that the system appropriately picks out the ratios
 \begin{equation}
 f_{\text{conv}} = \frac{F_{\text{conv}}}{F_{\text{tot}}}\qquad
 f_{\text{cond}} = \frac{F_{\text{cond}}}{F_{\text{tot}}}.
 \end{equation}
-in the convective, transient state, but the total amount of flux is too large until the system
-reaches the proper isotherm.  This procedure seems to converge the atmosphere quite well
-(Fig. \ref{fig:time_trace}d\&e).
+in the transient state.  Thus, even though the quantity of flux being carried is not correct, the
+system is carrying flux convectively where it needs to in the interior, and conductively in the boundaries.
 
+The choice of a fixed-flux boundary condition at the bottom appropriately scales the magnitude of
+$F_{\text{conv, steady}}$.  The choice of a fixed-temperature boundary condition at the top of the
+atmosphere appropriately sets the isotherm of the convective interior.  While this method can be used
+for other choices of thermal boundary conditions (see Discussion), dual fixed temperature conditions
+at the upper plate require a more careful handling of $F_{\text{bot}}$, and dual fixed flux boundary
+conditions have degenerate solutions for the constant offset of $T_1$.
 
+In general, the BVP solve takes the following form:
+\begin{enumerate}
+\item Run the convective IVP. Once the convection begins, start taking averages averages of $\angles{wT_1}$
+and $\partial_z^2\angles{T_1}$, which determine the fluxes through the system.  Update these averages every
+$\Delta t = 0.1$ freefall times.  Once these averages are converged to 1 part in 1000, the BVP is ready to be solved.
+\item Construct $F_{\text{conv, steady}}$ from the flux profiles, then use it to solve for $\angles{T_1}$ 
+and \angles{\varpi} of the
+evolved state.  Adjust the mean profiles in the BVP such that this is their mean profile.
+\item Divide the velocities and the $T_1$ fluctuations around the mean profile by 
+$\sqrt{\bar{F_{\text{bot}}/F_{\text{tot}}}}$. This lowers the convective flux through the system such that it is,
+on average, the convective flux used in the BVP solve.
+\item Continue running the IVP for a number of freefall times to allow the velocities and temperature perturbations
+to equilibrate to the new mean state.
+\end{enumerate}
+This procedure seems to work quite well, see Fig. \ref{fig:time_trace}d\&e.
 
 
 \subsection{Numerics}
@@ -240,24 +259,38 @@ in flow structure, we ran the simulations using distinct random temperature pert
 so as to compare statistics in comparable flow fields.  In 3D, rolls are nonstationary over
 convective timescales, and so these effects need not be considered there.
 
-\subsection{Results}
-We use the standard definition of the Nusselt number,
+\section{Results}
+While the differences in the fluxes in Fig. \ref{fig:time_trace} are small, it is important
+to determine if the velocity fluctuations and point-by-point nonlinear transport are the same
+in the evolved state.  Fig. \ref{fig:pdf_comparison} overlays the probability distribution functions
+of the vertical and horizontal velocities, as well as the fully nonlinear portion of the convective
+flux for the same case as is shown in Fig. \ref{fig:time_trace}.  The PDFs are quite similar visually,
+and have a similarity of (XYZ) according to a Kolmogorov-Smirnov statistic.
+
+In addition to getting the nonlinear dynamics mostly correct, we show that the BVP method retrieves the
+proper temperature profile, see e.g., Fig. \ref{fig:temp_comparison}.  Here the BVP profile retrieves the
+mean profile of the temperature to within 1\% accuracy, and temperature fluctuations in the two runs
+have a similarity of (XYZ) according to a Kolmogorov-Smirnov statistic.
+
+This method works across a broad range of supercriticality.  In Fig. \ref{fig:parameter_space_comparison},
+we show measurements of the volume-averaged Nusselt number, Reynolds number, and temperature.
+We use standard definitions of the Nusselt number and Reynolds numbers,
 \begin{equation}
 \text{Nu} = \frac{\angles{wT - (\text{Ra Pr})^{-1/2}\grad T}}{\angles{- (\text{Ra Pr})^{-1/2} \grad T}} =
-1 + \frac{\angles{wT}}{-\Delta T}\sqrt{\text{Ra Pr}},
+1 + \frac{\angles{wT}}{-\Delta T}\sqrt{\text{Ra Pr}}, \qquad \text{Re} = \frac{|\bm{u}| L_z}{\nu},
 \end{equation}
 where $\Delta T = T(z = 1/2) - T(z = -1/2)$ is the evolved temperature difference
 between the top and bottom plates.  This form of the Nusselt number is valid even when
 the system is not yet in flux equilibrium, and reduces to the standard fixed flux definition
-of Nu  = $[1 - \angles{wT} / P]^{-1}$ \cite{johnston&doering2009}.
+of Nu  = $[1 - \angles{wT} / P]^{-1}$ \cite{johnston&doering2009}. We find a scaling law of
+Nu $\propto \text{Ra}^{2/3}$, much steeper than a standard 2/7 or 1/3 scaling law
+\cite{johnston&doering2009}. Furthermore, we find that Re$\propto \text{Ra}^{0.425}$. The average temperature
+approaches the value at the top of the domain as Ra increases.  
 
-Here we talk about how the solutions are different, or similar.  This includes:
-\begin{enumerate}
-\item Showing that the flow fields look similar
-\item Showing how the temperature / flux profiles look similar/different
-\item showing how Nu and Re scale with Ra in BVP / IVP.
-\item showing how the PDFs of $w$, $wT$, and $T$ change.
-\end{enumerate}
+The final morphology of the flows is very important in determining the exact value of Nu and Re.  In general,
+a two-roll state vs. a three-roll state will have entirely different statistics -- different Nu, Re, and average
+temprature (and as a result, different size boundary layers).  Thus, in 2D studies, it is essential to study flows
+of a similar morphology in order to see a clear trend. 
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
@@ -276,19 +309,16 @@ Here we talk about how the solutions are different, or similar.  This includes:
 
 
 
-
-
-Then we need to make some comments about whether this is good or bad
-
-Then we need to mention how the same thing can be done in stratified, just there you don't
-assume symmetrical boundary layers.
-
-
-
-
-
 \section{Discussion \& Conclusions}
 \label{sec:results}
+I don't have the mental stamina to write this section right now.  In general, here's what it's going to say:
+\begin{enumerate}
+\item This procedure works, as we've shown.
+\item How to apply this to more complicated cases, like stratified convection
+\item How to apply this to different boundary conditions
+\item Brief discussion of other methods that can be used to fast-forward, e.g., bootstrapping.
+\item This is just a first step.
+\end{enumerate}
 
 
 
@@ -305,11 +335,34 @@ with allocations GID s1647 and GID g26133.
 
 
 \appendix
-\section{Table of Boussinesq Runs}
+\section{Table of Runs}
+\begin{center}
+\begin{tabularx}{\textwidth}{ X X X X X X X }
+\hline													
+Ra	&	Supercriticality	&	nz	&	nx	&	$t_{\text{therm}}$	&	$t_{\text{post BVP}}$	&	$t_{\text{avg}}$	\\[1ex]
+\hline		\hline											
+$2.79 \cdot 10^3$	&	$10^{1/3}$	&	32	&	128	&	$52.8$	&	50	&	100	\\
+$6.01 \cdot 10^3$	&	$10^{2/3}$	&	32	&	128	&	$77.6$	&	50	&	100	\\
+$1.30 \cdot 10^4$	&	$10^1$	&	32	&	128	&	$114$	&	50	&	100	\\
+$2.79 \cdot 10^4$	&	$10^{1 + 1/3}$	&	32	&	128	&	$167$	&	50	&	100	\\
+$6.01 \cdot 10^4$	&	$10^{1 + 2/3}$	&	32	&	128	&	$245$	&	50	&	100	\\
+$1.30 \cdot 10^5$	&	$10^2$	&	64	&	256	&	$360$	&	100	&	100	\\
+$2.79 \cdot 10^5$	&	$10^{2 + 1/3}$	&	64	&	256	&	$528$	&	100	&	100	\\
+$6.01 \cdot 10^5$	&	$10^{2 + 2/3}$	&	64	&	256	&	$776$	&	100	&	100	\\
+$1.30 \cdot 10^6$	&	$10^3$	&	128	&	512	&	$1.14 \cdot 10^3$	&	100	&	200	\\
+$2.79 \cdot 10^6$	&	$10^{3 + 1/3}$	&	128	&	512	&	$1.67 \cdot 10^3$	&	200	&	200	\\
+$6.01 \cdot 10^6$	&	$10^{3 + 2/3}$	&	256	&	1024	&	$2.45 \cdot 10^3$	&	200	&	200	\\
+$1.30 \cdot 10^7$	&	$10^4$	&	256	&	1024	&	$3.60 \cdot 10^3$	&	200	&	200	\\
+$2.79 \cdot 10^7$	&	$10^{4 + 1/3}$	&	256	&	1024	&	$5.28 \cdot 10^3$	&	200	&	200	\\
+$6.01 \cdot 10^7$	&	$10^{4 + 2/3}$	&	256	&	1024	&	$7.76 \cdot 10^3$	&	200	&	200	\\
+$1.30 \cdot 10^8$	&	$10^5$	&	512	&	2048	&	$1.14 \cdot 10^4$	&	500	&	500	\\
+$2.79 \cdot 10^8$	&	$10^{5 + 1/3}$	&	512	&	2048	&	$1.67 \cdot 10^4$	&	500	&	500	\\
+$6.01 \cdot 10^8$	&	$10^{5 + 2/3}$	&	512	&	2048	&	$2.45 \cdot 10^4$	&	500	&	500	\\
+$1.30 \cdot 10^9$	&	$10^6$	&	1024	&	4096	&	$3.60 \cdot 10^4$	&	500	&	500	\\
+\hline													
+\end{tabularx}
+\end{center}
 
-
-
-\section{Table of stratified runs}
 
 
 \bibliography{biblio.bib}

@@ -43,6 +43,7 @@ base_dirs_post = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
             ]
 ra_runs = '6.01e4'
+ra_runs = '2.79e7'
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_post):
@@ -106,10 +107,12 @@ axes[-1].fill_between(info[base_label]['T_xs_pdf'], 0, info[base_label]['T_pdf_p
 axes[-1].plot(info[base_label]['T_xs_pdf'], info[base_label]['T_pdf_pdf'], c='blue')
 axes[-1].fill_between(info[bvp_label]['T_xs_pdf'], 0, info[bvp_label]['T_pdf_pdf'], color='red', alpha=0.4)
 axes[-1].plot(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'], c='red')
-x_ticks = np.array([-0.5, np.floor(100*info[base_label]['T_xs_pdf'][np.argmax(info[base_label]['T_pdf_pdf'][3:])])/100, 0])
+x_ticks = np.array([-0.5, np.max(info[base_label]['T_xs_pdf'])])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('T')
 axes[-1].set_ylabel('Probability')
+axes[-1].set_yscale('log')
+axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
 
 
 

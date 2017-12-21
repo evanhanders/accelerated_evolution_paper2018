@@ -63,43 +63,69 @@ for a, base_dir in enumerate(base_dirs):
 print(info.keys())
 
 
-plt.figure(figsize=(8, 2.5))
+plt.figure(figsize=(8, 1.5))
 gs     = gridspec.GridSpec(*(1000,1000))
-gs_info = (((0,0), 1000, 270), ((0, 350), 1000, 270), ((0, 700), 1000, 270))
+gs_info = (((0,0), 1000, 270), ((0, 350), 1000, 250), ((0, 730), 1000, 270))
+ra_crit = 1295.78
 for i,k in enumerate(fields):
     ax = plt.subplot(gs.new_subplotspec(*gs_info[i]))
+    bx = ax.twiny()
     for ra_info, datum in info.items():
         try:
             good_data = datum[k]
             mean, std = np.mean(good_data), np.std(good_data)
             ra, ind = ra_info.split('_')
             if k == 'IE':
-                plt.errorbar(float(ra), 0.5+mean, yerr=std,  color=COLORS[int(ind)])
-                plt.scatter(float(ra), 0.5+mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                bx.scatter(float(ra)/ra_crit, 0.5+mean, s=0, alpha=0)
+                ax.errorbar(float(ra), 0.5+mean, yerr=std,  color=COLORS[int(ind)])
+                ax.scatter(float(ra), 0.5+mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Nu':
                 p=2/3
-                plt.errorbar(float(ra), mean/(4e-3*float(ra)**(p)), yerr=std/(4e-3*float(ra)**(p)),  color=COLORS[int(ind)])
-                plt.scatter(float(ra), mean/(4e-3*float(ra)**p), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                bx.scatter(float(ra)/ra_crit, mean/float(ra)**(p), s=0, alpha=0)
+                ax.errorbar(float(ra), mean/(float(ra)**(p)), yerr=std/(float(ra)**(p)),  color=COLORS[int(ind)])
+                ax.scatter(float(ra), mean/(float(ra)**p), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Re':
-                plt.errorbar(float(ra), mean/float(ra)**(1/2), yerr=std/float(ra)**(1/2),  color=COLORS[int(ind)])
-                plt.scatter(float(ra), mean/float(ra)**(1/2), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                pRe = 0.425
+                bx.scatter(float(ra)/ra_crit, mean/float(ra)**(pRe), s=0, alpha=0)
+                ax.errorbar(float(ra), mean/float(ra)**(pRe), yerr=std/float(ra)**(pRe),  color=COLORS[int(ind)])
+                ax.scatter(float(ra), mean/float(ra)**(pRe), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             else:
-                plt.errorbar(float(ra), mean, yerr=std,  color=COLORS[int(ind)])
-                plt.scatter(float(ra), mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                bx.scatter(float(ra)/ra_crit, mean, s=0, alpha=0)
+                ax.errorbar(float(ra), mean, yerr=std,  color=COLORS[int(ind)])
+                ax.scatter(float(ra), mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
         except:
             continue
-    plt.xlabel('Ra')
+    ax.set_xlabel('Ra')
+    bx.set_xlabel('S')
     if k == 'IE':
-        ax.set_title(r'$\langle T_1 \rangle - T_{\mathrm{top}}$', fontsize=10)
+        ax.set_ylabel(r'$\langle T_1 \rangle - T_{\mathrm{top}}$', fontsize=10)
     elif k == 'Nu':
         label_end = '-{:.2g}'.format(p)
         label_end = '$\\langle\\mathrm{Nu}\\rangle\\mathrm{ Ra}^{' + label_end + '}$'
-        ax.set_title(r'{}'.format(label_end) + r' / ($4\cdot 10^{-3}$)',fontsize=10)
+        ax.set_ylabel(r'{}'.format(label_end), fontsize=10, labelpad=-10)
     elif k == 'Re':
-        ax.set_title(r'$\langle\mathrm{Re}\rangle \mathrm{Ra}^{-1/2}$', fontsize=10)
+        label_end = '-{:.3g}'.format(pRe)
+        label_end = '$\\langle\\mathrm{Re}\\rangle\\mathrm{ Ra}^{' + label_end + '}$'
+        ax.set_ylabel(r'{}'.format(label_end),fontsize=10, labelpad=-10)
+#        ax.set_title(r'$\langle\mathrm{Re}\rangle \mathrm{Ra}^{-1/2}$', fontsize=10)
     else:
         ax.set_title(k)
-    plt.xscale('log')
+
+    [t.set_fontsize(10) for t in ax.get_xticklabels()]
+    [t.set_fontsize(10) for t in ax.get_yticklabels()]
+    [t.set_fontsize(10) for t in bx.get_xticklabels()]
+    [t.set_fontsize(10) for t in bx.get_yticklabels()]
+    for i,t in enumerate(ax.get_xticklabels()):
+        if i % 2 == 1:
+            t.set_visible(0)
+
+    for i,t in enumerate(bx.get_xticklabels()):
+        if i % 2 == 1:
+            t.set_visible(0)
+
+    ax.set_xscale('log')
+    bx.set_xscale('log')
     if k == 'IE' or True:
-        plt.yscale('log')
+        ax.set_yscale('log')
+        bx.set_yscale('log')
 plt.savefig('parameter_space_comparison.png'.format(k), bbox_inches='tight', dpi=200)

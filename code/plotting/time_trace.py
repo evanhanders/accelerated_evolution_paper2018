@@ -50,6 +50,7 @@ base_dirs_post = [
             ]
 
 ra_runs = '6.01e4'
+ra_runs = '2.79e7'
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_pre + base_dirs_post):
@@ -130,7 +131,7 @@ for i in range(4):
 
     axes_share[i % 2].plot(info[this_label]['sim_time'], 0.5 + info[this_label]['IE_scalar'], c='red')
     axes_share[i % 2].set_yscale('log')
-    axes_share[i % 2].set_ylim(1e-1, 1e0)
+    axes_share[i % 2].set_ylim(1e-2, 1e0)
 
 #Axes formatting
 axes[0].set_xlim(info['{}_0'.format(ra_runs)]['sim_time'][0], info['{}_2'.format(ra_runs)]['sim_time'][-1])

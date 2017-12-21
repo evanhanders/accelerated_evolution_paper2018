@@ -43,6 +43,7 @@ base_dirs_post = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
             ]
 ra_runs = '6.01e4'
+ra_runs = '2.79e7'
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_post):
@@ -88,7 +89,7 @@ axes[-1].fill_between(info[base_label]['w_xs_pdf'], 0, info[base_label]['w_pdf_p
 axes[-1].plot(info[base_label]['w_xs_pdf'], info[base_label]['w_pdf_pdf'], c='blue')
 axes[-1].fill_between(info[bvp_label]['w_xs_pdf'], 0, info[bvp_label]['w_pdf_pdf'], color='red', alpha=0.4)
 axes[-1].plot(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf'], c='red')
-axes[-1].set_xlim(np.min(info[base_label]['w_xs_pdf']), np.max(info[base_label]['w_xs_pdf']))
+axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w_xs_pdf']))
 axes[-1].set_xlabel('w\'')
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
@@ -99,7 +100,7 @@ axes[-1].fill_between(info[base_label]['u_xs_pdf'], 0, info[base_label]['u_pdf_p
 axes[-1].plot(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf'], c='blue')
 axes[-1].fill_between(info[bvp_label]['u_xs_pdf'], 0, info[bvp_label]['u_pdf_pdf'], color='red', alpha=0.4)
 axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'], c='red')
-axes[-1].set_xlim(np.min(info[base_label]['u_xs_pdf']), np.max(info[base_label]['u_xs_pdf']))
+axes[-1].set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
 axes[-1].set_xlabel('u\'')
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
@@ -107,10 +108,11 @@ axes[-1].set_yscale('log')
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
 axes[-1].fill_between(info[base_label]['w*T_xs_pdf'], 0, info[base_label]['w*T_pdf_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'], c='blue')
+axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'], c='blue', label='rundown')
 axes[-1].fill_between(info[bvp_label]['w*T_xs_pdf'], 0, info[bvp_label]['w*T_pdf_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'], c='red')
-axes[-1].set_xlim(np.min(info[base_label]['w*T_xs_pdf']), np.max(info[base_label]['w*T_xs_pdf']))
+axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'], c='red', label='BVP')
+axes[-1].set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label]['w*T_xs_pdf']))
+plt.legend(frameon=False, fontsize=10, loc='upper right')
 axes[-1].set_xlabel('w*T\'')
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
