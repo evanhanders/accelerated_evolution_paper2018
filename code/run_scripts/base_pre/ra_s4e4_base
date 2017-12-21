@@ -12,7 +12,7 @@ cd $PBS_O_WORKDIR
 
 RA=6.01e7
 s=4_4.64
-label=base
+label=base_newseed
 
 mkdir $dedalus_dir
 
@@ -23,6 +23,7 @@ mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
         --aspect=4.924 \
+        --seed=500 \
 		--nz=256        \
         --nx=1024        \
 		--run_time=27.5 \

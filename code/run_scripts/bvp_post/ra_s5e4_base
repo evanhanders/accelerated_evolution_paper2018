@@ -12,7 +12,7 @@ cd $PBS_O_WORKDIR
 
 RA=6.01e8
 s=5_4.64
-label=bvp
+label=bvp2
 
 mkdir $dedalus_dir
 
@@ -29,8 +29,8 @@ mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
         --mixed_flux_T \
         --no_slip \
         --output_dt=0.1 \
-        --run_time_buoy=400 \
-        --restart=/nobackup/eanders/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a4.924_bvp/final_checkpoint/final_checkpoint_s1.h5 \
+        --run_time_buoy=500 \
+        --restart=/nobackup/eanders/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a4.924_bvp2/final_checkpoint/final_checkpoint_s1.h5 \
         --label=$label \
 		--root_dir=$dedalus_dir \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID

@@ -23,6 +23,7 @@ mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
         --aspect=4.924 \
+        --seed=150 \
 		--nz=256        \
         --nx=1024        \
 		--run_time=23.5 \
@@ -33,3 +34,5 @@ mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --label=$label \
 		--root_dir=$dedalus_dir \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID
+
+qsub run_scripts/base_post/ra_s4e1_base

@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -N RB_se3_4.64
-#PBS -l select=3:ncpus=28:mpiprocs=28:model=bro_ele
+#PBS -l select=5:ncpus=28:mpiprocs=28:model=bro_ele
 #PBS -l walltime=8:00:00
 #PBS -j oe
 #PBS -q normal
@@ -19,17 +19,17 @@ mkdir $dedalus_dir
 echo running the job
 
 date
-mpiexec_mpt -np 64 ~/.python3 $dedalus_script.py \
+mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
         --aspect=4.924 \
-		--nz=128        \
-        --nx=512        \
+		--nz=256        \
+        --nx=1024        \
 		--run_time=7.5 \
-        --run_time_buoy=500 \
+        --run_time_buoy=200 \
         --mixed_flux_T \
         --no_slip \
-        --output_dt=1 \
+        --output_dt=0.1 \
         --label=$label \
         --restart=/nobackup/eanders/rb_base_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a4.924_base/final_checkpoint/final_checkpoint_s1.h5 \
 		--root_dir=$dedalus_dir \

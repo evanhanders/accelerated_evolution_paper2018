@@ -28,10 +28,10 @@ mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
 		--nz=512        \
         --nx=2048        \
 		--run_time=23 \
-        --run_time_buoy=1000 \
+        --run_time_buoy=400 \
         --mixed_flux_T \
         --no_slip \
-        --output_dt=1 \
+        --output_dt=0.1 \
         --label=$label \
         --restart=/nobackup/eanders/rb_base_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a4.924_base/final_checkpoint/final_checkpoint_s1.h5 \
 		--root_dir=$dedalus_dir \

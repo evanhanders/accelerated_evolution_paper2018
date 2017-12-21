@@ -23,6 +23,7 @@ Options:
     --no_slip                  no slip boundary conditions top/bottom; default if no choice is made
 
     --3D                       Run in 3D
+    --mesh=<mesh>                        Processor mesh if distributing 3D run in 2D 
     
     --run_time=<run_time>             Run time, in hours [default: 23.5]
     --run_time_buoy=<run_time_bouy>   Run time, in buoyancy times
@@ -76,7 +77,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     data_dir='./', coeff_output=True, verbose=False, no_join=False,
                     do_bvp=False, num_bvps=10, bvp_convergence_factor=1e-2, bvp_equil_time=10, bvp_resolution_factor=1,
                     bvp_transient_time=30, bvp_final_equil_time=None, min_bvp_time=50,
-                    threeD=False, seed=42):
+                    threeD=False, seed=42, mesh=None):
     import os
     from dedalus.tools.config import config
     
@@ -112,7 +113,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
 
     if threeD:
         logger.info("resolution: [{}x{}x{}]".format(nx, ny, nz))
-        equations = BoussinesqEquations3D(nx=nx, nz=nz, Lx=Lx, Lz=Lz)
+        equations = BoussinesqEquations3D(nx=nx, ny=ny, nz=nz, Lx=Lx, Lz=Lz, mesh=mesh)
     else:
         logger.info("resolution: [{}x{}]".format(nx, nz))
         equations = BoussinesqEquations2D(nx=nx, nz=nz, Lx=Lx, Lz=Lz)
@@ -372,6 +373,13 @@ if __name__ == "__main__":
     bvp_final_equil_time=args['--bvp_final_equil_time']
     if not isinstance(bvp_final_equil_time, type(None)):
         bvp_final_equil_time = float(bvp_final_equil_time)
+
+    mesh = args['--mesh']
+    if mesh is not None:
+        mesh = mesh.split(',')
+        mesh = [int(mesh[0]), int(mesh[1])]
+
+
         
     Rayleigh_Benard(Rayleigh=float(args['--Rayleigh']),
                     Prandtl=float(args['--Prandtl']),
@@ -403,6 +411,7 @@ if __name__ == "__main__":
                     bvp_resolution_factor=int(args['--bvp_resolution_factor']),
                     min_bvp_time=float(args['--min_bvp_time']),
                     threeD=args['--3D'],
+                    mesh=mesh,
                     seed=int(args['--seed']))
     
 

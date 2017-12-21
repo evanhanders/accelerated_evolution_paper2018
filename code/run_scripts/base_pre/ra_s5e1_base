@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -N RB_se5_1.00
 #PBS -l select=10:ncpus=28:mpiprocs=28:model=bro_ele
-#PBS -l walltime=72:00:00
+#PBS -l walltime=120:00:00
 #PBS -j oe
 #PBS -q long
 
@@ -14,7 +14,7 @@ RA=1.30e8
 s=5_1.00
 label=base
 
-# Will take ~10 days of sim time to reach 1 thermal time...
+# Will take ~5 days of sim time to reach 1 thermal time...
 
 mkdir $dedalus_dir
 
@@ -27,7 +27,7 @@ mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
         --aspect=4.924 \
 		--nz=512        \
         --nx=2048        \
-		--run_time=71 \
+		--run_time=119 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \
