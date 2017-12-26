@@ -106,6 +106,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
     # Parameters
     Lz = 1.
     Lx = aspect*Lz
+    Ly = aspect*Lz
     if nx is None:
         nx = int(nz*aspect)
     if ny is None:
@@ -113,7 +114,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
 
     if threeD:
         logger.info("resolution: [{}x{}x{}]".format(nx, ny, nz))
-        equations = BoussinesqEquations3D(nx=nx, ny=ny, nz=nz, Lx=Lx, Lz=Lz, mesh=mesh)
+        equations = BoussinesqEquations3D(nx=nx, ny=ny, nz=nz, Lx=Lx, Ly=Ly, Lz=Lz, mesh=mesh)
     else:
         logger.info("resolution: [{}x{}]".format(nx, nz))
         equations = BoussinesqEquations2D(nx=nx, nz=nz, Lx=Lx, Lz=Lz)
