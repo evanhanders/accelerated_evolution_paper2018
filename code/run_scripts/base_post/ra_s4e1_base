@@ -10,7 +10,7 @@ export dedalus_dir=$HOME/workdir/rb_base_post/
 
 cd $PBS_O_WORKDIR
 
-RA=1
+RA=1.30e7
 s=4_1.00
 label=base
 

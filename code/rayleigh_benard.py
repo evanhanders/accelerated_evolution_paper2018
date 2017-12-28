@@ -187,9 +187,9 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
     # Flow properties
     flow = flow_tools.GlobalFlowProperty(solver, cadence=1)
     flow.add_property("Re", name='Re')
-    flow.add_property("interp(w, z=0.95)", name='w near top')
+#    flow.add_property("interp(w, z=0.95)", name='w near top')
 
-    u, v, w = solver.state['u'], solver.state['v'], solver.state['w']
+#    u, v, w = solver.state['u'], solver.state['v'], solver.state['w']
 
 
     if do_bvp:
@@ -205,7 +205,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         bc_dict.pop('stress_free')
         bc_dict.pop('no_slip')
 
-    print(equations.domain.grid(0), equations.domain.grid(1), equations.domain.grid(2))
+ #   print(equations.domain.grid(0), equations.domain.grid(1), equations.domain.grid(2))
 
     first_step = True
     # Main loop
@@ -218,8 +218,8 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         while (solver.ok and np.isfinite(Re_avg)) and continue_bvps:
             dt = CFL.compute_dt()
             solver.step(dt) #, trim=True)
-            if equations.domain.dist.comm_cart.rank == 0:
-                print(flow.properties['w near top']['g'])
+#            if equations.domain.dist.comm_cart.rank == 0:
+#                print(flow.properties['w near top']['g'])
             Re_avg = flow.grid_average('Re')
             log_string =  'Iteration: {:5d}, '.format(solver.iteration)
             log_string += 'Time: {:8.3e} ({:8.3e} therm), dt: {:8.3e}, '.format(solver.sim_time, solver.sim_time/equations.thermal_time,  dt)

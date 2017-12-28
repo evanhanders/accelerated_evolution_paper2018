@@ -23,9 +23,9 @@ mpiexec_mpt -np 512 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
         --aspect=4.924 \
-		--nz=64        \
-        --nx=128        \
-        --ny=128       \
+		--nz=32        \
+        --nx=64        \
+        --ny=64       \
         --3D            \
         --mesh=32,16    \
 		--run_time=3.5 \
