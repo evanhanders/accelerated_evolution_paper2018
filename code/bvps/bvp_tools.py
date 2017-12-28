@@ -605,13 +605,15 @@ class BoussinesqBVPSolver(BVPSolverBase):
 
             if v == 'T1_IVP':
                 self.solver_states[v].set_scales(1, keep_data=True)
-                self.solver_states[v]['g'] *= vel_adj_glob[0]
+                self.solver_states[v]['g'] *= np.sqrt(return_dict['flux_scaling'][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)])
 
             #Put in right avg
             self.solver_states[v].set_scales(1, keep_data=True)
             self.solver_states[v]['g'] += return_dict[v][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
         for v in self.VEL_VARS.keys():
-            self.vel_solver_states[v]['g'] *= vel_adj_glob[0]
+            self.vel_solver_states[v].set_scales(1, keep_data=True)
+            self.vel_solver_states[v]['g'] *= np.sqrt(return_dict['flux_scaling'][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)])
+            #self.vel_solver_states[v]['g'] *= vel_adj_glob[0]
 
         self._reset_fields()
 

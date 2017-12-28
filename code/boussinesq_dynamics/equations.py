@@ -276,8 +276,8 @@ class BoussinesqEquations(Equations):
         self.problem.substitutions['enth_flux_z']  = '(w*(T1+T0))'
         self.problem.substitutions['kappa_flux_z'] = '(-P*(T1_z+T0_z))'
         self.problem.substitutions['conv_flux_z']  = '(enth_flux_z + kappa_flux_z)'
-        self.problem.substitutions['delta_T']      = '(right(T1 + T0) - left(T1 + T0))' 
-        self.problem.substitutions['Nu']           = '(1 + enth_flux_z/(-P*delta_T))'
+        self.problem.substitutions['delta_T']      = 'vol_avg(right(T1 + T0) - left(T1 + T0))' 
+        self.problem.substitutions['Nu']           = '(conv_flux_z/vol_avg(kappa_flux_z))'
 
     def set_BC(self,
                fixed_flux=None, fixed_temperature=None, mixed_flux_temperature=None, mixed_temperature_flux=None,
@@ -441,7 +441,7 @@ class BoussinesqEquations(Equations):
         scalar.add_task("vol_avg(Nu)", name="Nu")
         scalar.add_task("vol_avg(Re)", name="Re")
         scalar.add_task("vol_avg(Pe)", name="Pe")
-        scalar.add_task("vol_avg(delta_T)", name="delta_T")
+        scalar.add_task("delta_T", name="delta_T")
         analysis_tasks.append(scalar)
 
         return analysis_tasks
