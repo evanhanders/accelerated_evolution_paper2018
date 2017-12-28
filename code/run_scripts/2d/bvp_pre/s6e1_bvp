@@ -6,13 +6,13 @@
 #PBS -q long
 
 export dedalus_script=rayleigh_benard
-export dedalus_dir=$HOME/workdir/rb_bvp_pre/
+export dedalus_dir=$HOME/workdir/2d/rb_bvp_pre/
 
 cd $PBS_O_WORKDIR
 
 RA=1.30e9
 s=6_1.00
-label=bvp2
+label=bvp
 
 mkdir $dedalus_dir
 
@@ -22,9 +22,9 @@ date
 mpiexec_mpt -np 512 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
-        --aspect=4.924 \
+        --aspect=2 \
 		--nz=1024        \
-        --nx=4096        \
+        --nx=2048        \
 		--run_time=71.5 \
         --run_time_therm=1 \
         --mixed_flux_T \

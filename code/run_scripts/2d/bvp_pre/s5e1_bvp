@@ -6,27 +6,28 @@
 #PBS -q long
 
 export dedalus_script=rayleigh_benard
-export dedalus_dir=$HOME/workdir/rb_bvp_pre/
+export dedalus_dir=$HOME/workdir/2d/rb_bvp_pre/
 
 cd $PBS_O_WORKDIR
 
 RA=1.30e8
 s=5_1.00
-label=bvp2
+label=bvp
 
 mkdir $dedalus_dir
 
 echo running the job
 
+#for a = 4.924, use seed = 500
+
 date
 mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
-        --aspect=4.924 \
+        --aspect=2 \
 		--nz=512        \
-        --nx=2048        \
+        --nx=1024        \
 		--run_time=23.5 \
-        --seed=500 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \

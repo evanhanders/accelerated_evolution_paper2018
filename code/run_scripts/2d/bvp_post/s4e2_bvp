@@ -6,13 +6,13 @@
 #PBS -q normal
 
 export dedalus_script=rayleigh_benard
-export dedalus_dir=$HOME/workdir/rb_bvp_post/
+export dedalus_dir=$HOME/workdir/2d/rb_bvp_post/
 
 cd $PBS_O_WORKDIR
 
 RA=2.79e7
 s=4_2.15
-label=bvp2
+label=bvp
 
 mkdir $dedalus_dir
 
@@ -22,15 +22,15 @@ date
 mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
-        --aspect=4.924 \
+        --aspect=2 \
 		--nz=256         \
-        --nx=1024        \
+        --nx=512        \
 		--run_time=7.5 \
         --mixed_flux_T \
         --no_slip \
         --output_dt=0.1 \
         --run_time_buoy=200 \
-        --restart=/nobackup/eanders/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a4.924_bvp2/final_checkpoint/final_checkpoint_s1.h5 \
+        --restart=/nobackup/eanders/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a2_bvp/final_checkpoint/final_checkpoint_s1.h5 \
         --label=$label \
 		--root_dir=$dedalus_dir \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID

@@ -6,13 +6,13 @@
 #PBS -q long
 
 export dedalus_script=rayleigh_benard
-export dedalus_dir=$HOME/workdir/rb_base_pre/
+export dedalus_dir=$HOME/workdir/2d/rb_base_pre/
 
 cd $PBS_O_WORKDIR
 
 RA=1.30e8
 s=5_1.00
-label=base_short_test10
+label=base
 
 # Will take ~5 days of sim time to reach 1 thermal time...
 
@@ -23,11 +23,11 @@ mkdir $dedalus_dir
 #  3 - seed 120 - 3 rolls, maybe heading towards 2?
 #  4 - seed 130 - 3 rolls?
 #  5 - seed 140 - 3 rolls?
-#  6 - seed 10  - 
-#  7 - seed 20  - 
-#  8 - seed 30  - 
-#  9 - seed 40  -
-#  10 - seed 50 - 
+#  6 - seed 10  - 3 rolls 
+#  7 - seed 20  - 3 rolls 
+#  8 - seed 30  - 3 rolls 
+#  9 - seed 40  - 3 rolls
+#  10 - seed 50 - 3 rolls 
 
 echo running the job
 
@@ -35,11 +35,10 @@ date
 mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
-        --aspect=4.924 \
+        --aspect=2 \
 		--nz=512        \
-        --nx=2048        \
+        --nx=1024        \
 		--run_time=9.5 \
-        --seed=50 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \
