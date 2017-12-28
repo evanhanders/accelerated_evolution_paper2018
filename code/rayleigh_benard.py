@@ -1,5 +1,5 @@
 """
-Dedalus script for 2D Rayleigh-Benard convection.
+Dedalus script for Rayleigh-Benard convection.
 
 This script uses a Fourier basis in the x direction with periodic boundary
 conditions.  The equations are scaled in units of the buoyancy time (Fr = 1).
@@ -31,6 +31,7 @@ Options:
     --run_time_iter=<run_time_iter>   Run time, number of iterations; if not set, n_iter=np.inf
 
     --restart=<restart_file>   Restart from checkpoint
+    --overwrite                If flagged, force file mode to overwrite
     --seed=<seed>              RNG seed for initial conditoins [default: 42]
 
     --max_writes=<max_writes>              Writes per file for files other than slices and coeffs [default: 20]
@@ -77,7 +78,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     data_dir='./', coeff_output=True, verbose=False, no_join=False,
                     do_bvp=False, num_bvps=10, bvp_convergence_factor=1e-2, bvp_equil_time=10, bvp_resolution_factor=1,
                     bvp_transient_time=30, bvp_final_equil_time=None, min_bvp_time=50,
-                    threeD=False, seed=42, mesh=None):
+                    threeD=False, seed=42, mesh=None, overwrite=False):
     import os
     from dedalus.tools.config import config
     
@@ -155,7 +156,10 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
     else:
         logger.info("restarting from {}".format(restart))
         checkpoint.restart(restart, solver)
-        mode = 'append'
+        if overwrite:
+            mode = 'overwrite'
+        else:
+            mode = 'append'
     checkpoint.set_checkpoint(solver, wall_dt=checkpoint_min*60, mode=mode)
         
     # Integration parameters
@@ -183,8 +187,9 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
     # Flow properties
     flow = flow_tools.GlobalFlowProperty(solver, cadence=1)
     flow.add_property("Re", name='Re')
+    flow.add_property("interp(w, z=0.95)", name='w near top')
 
-#    u, w = solver.state['u'], solver.state['w']
+    u, v, w = solver.state['u'], solver.state['v'], solver.state['w']
 
 
     if do_bvp:
@@ -200,6 +205,8 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         bc_dict.pop('stress_free')
         bc_dict.pop('no_slip')
 
+    print(equations.domain.grid(0), equations.domain.grid(1), equations.domain.grid(2))
+
     first_step = True
     # Main loop
     try:
@@ -211,6 +218,8 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         while (solver.ok and np.isfinite(Re_avg)) and continue_bvps:
             dt = CFL.compute_dt()
             solver.step(dt) #, trim=True)
+            if equations.domain.dist.comm_cart.rank == 0:
+                print(flow.properties['w near top']['g'])
             Re_avg = flow.grid_average('Re')
             log_string =  'Iteration: {:5d}, '.format(solver.iteration)
             log_string += 'Time: {:8.3e} ({:8.3e} therm), dt: {:8.3e}, '.format(solver.sim_time, solver.sim_time/equations.thermal_time,  dt)
@@ -413,6 +422,7 @@ if __name__ == "__main__":
                     min_bvp_time=float(args['--min_bvp_time']),
                     threeD=args['--3D'],
                     mesh=mesh,
-                    seed=int(args['--seed']))
+                    seed=int(args['--seed']),
+                    overwrite=args['--overwrite'])
     
 

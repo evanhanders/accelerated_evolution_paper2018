@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -N RB_se3_4.64
 #PBS -l select=5:ncpus=28:mpiprocs=28:model=bro_ele
-#PBS -l walltime=24:00:00
+#PBS -l walltime=12:00:00
 #PBS -j oe
 #PBS -q long
 
@@ -18,6 +18,11 @@ mkdir $dedalus_dir
 
 echo running the job
 
+# 1 - 60 - 3 rolls, oscillates
+# 2 - 70 - 2 rolls, steady
+# 3 - 80 - 2 rolls, steady
+# 4 - 90 - 2 rolls, steady
+
 date
 mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
@@ -25,8 +30,8 @@ mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --aspect=4.924 \
 		--nz=256        \
         --nx=1024        \
-		--run_time=23.5 \
-        --seed=150 \
+		--run_time=11.5 \
+        --seed=70 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \
@@ -35,4 +40,4 @@ mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
 		--root_dir=$dedalus_dir \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID
 
-qsub run_scripts/base_post/ra_s3e4_base
+#qsub run_scripts/base_post/ra_s3e4_base

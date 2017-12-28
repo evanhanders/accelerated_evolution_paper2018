@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -N RB_se4_1.00
 #PBS -l select=5:ncpus=28:mpiprocs=28:model=bro_ele
-#PBS -l walltime=24:00:00
+#PBS -l walltime=20:00:00
 #PBS -j oe
 #PBS -q long
 
@@ -18,15 +18,22 @@ mkdir $dedalus_dir
 
 echo running the job
 
+# seed 70 - 3 rolls, wiggly
+# 1 - seed 80 - 2 rolls
+# 2 - seed 90 -  3 rolls, wiggly
+# 3 - seed 1000 -  3 rolls, wiggly
+# 4 - seed 5000 -  3 rolls, wiggly
+# 5 - seed 13000 -  3 rolls, wiggly
+
 date
 mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
         --aspect=4.924 \
-        --seed=150 \
+        --seed=80 \
 		--nz=256        \
         --nx=1024        \
-		--run_time=23.5 \
+		--run_time=19.5 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \

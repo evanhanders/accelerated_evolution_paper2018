@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -N RB_se5_1.00
 #PBS -l select=10:ncpus=28:mpiprocs=28:model=bro_ele
-#PBS -l walltime=120:00:00
+#PBS -l walltime=10:00:00
 #PBS -j oe
 #PBS -q long
 
@@ -12,11 +12,22 @@ cd $PBS_O_WORKDIR
 
 RA=1.30e8
 s=5_1.00
-label=base
+label=base_short_test10
 
 # Will take ~5 days of sim time to reach 1 thermal time...
 
 mkdir $dedalus_dir
+
+#  1 - seed 100 - 3 rolls?
+#  2 - seed 110 - 3 rolls?
+#  3 - seed 120 - 3 rolls, maybe heading towards 2?
+#  4 - seed 130 - 3 rolls?
+#  5 - seed 140 - 3 rolls?
+#  6 - seed 10  - 
+#  7 - seed 20  - 
+#  8 - seed 30  - 
+#  9 - seed 40  -
+#  10 - seed 50 - 
 
 echo running the job
 
@@ -27,7 +38,8 @@ mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
         --aspect=4.924 \
 		--nz=512        \
         --nx=2048        \
-		--run_time=119 \
+		--run_time=9.5 \
+        --seed=50 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \

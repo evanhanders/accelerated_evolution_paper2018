@@ -373,9 +373,12 @@ class BoussinesqEquations(Equations):
         # vertical velocity boundary conditions
         logger.info("Vertical velocity BC: impenetrable")
         self.problem.add_bc( "left(w) = 0")
-        if self.dimensions > 1:
+        if self.dimensions == 2:
             self.problem.add_bc("right(p) = 0", condition="(nx == 0)")
             self.problem.add_bc("right(w) = 0", condition="(nx != 0)")
+        elif self.dimensions ==3:
+            self.problem.add_bc("right(p) = 0", condition="(nx == 0) and (ny == 0)")
+            self.problem.add_bc("right(w) = 0", condition="(nx != 0) or  (ny != 0)")
         else:
             self.problem.add_bc("right(p) = 0")
         self.dirichlet_set.append('w')
@@ -675,9 +678,18 @@ class BoussinesqEquations3D(BoussinesqEquations):
         self._set_parameters(Rayleigh, Prandtl)
         self._set_subs()
 
+
         # 3D Boussinesq hydrodynamics
         logger.debug('Adding Eqn: Incompressibility constraint')
         self.problem.add_equation("dx(u) + dy(v) + w_z = 0")
+        logger.debug('Adding Eqn: Energy')
+        self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z   = -UdotGrad(T1, T1_z)")
+        logger.debug('Adding Eqn: Momentum, x')
+        self.problem.add_equation("dt(u)  - R*Lap(u, u_z) + dx(p)       =  -UdotGrad(u, u_z) ")
+        logger.debug('Adding Eqn: Momentum, x')
+        self.problem.add_equation("dt(v)  - R*Lap(v, v_z) + dy(p)       =  -UdotGrad(v, v_z) ")
+        logger.debug('Adding Eqn: Momentum, z')
+        self.problem.add_equation("dt(w)  - R*Lap(w, w_z) + dz(p) - T1  =  -UdotGrad(w, w_z) ")
         logger.debug('Adding Eqn: T1_z defn')
         self.problem.add_equation("T1_z - dz(T1) = 0")
         logger.debug('Adding Eqn: u_z defn')
@@ -686,14 +698,6 @@ class BoussinesqEquations3D(BoussinesqEquations):
         self.problem.add_equation("v_z  - dz(v) = 0")
         logger.debug('Adding Eqn: w_z defn')
         self.problem.add_equation("w_z  - dz(w) = 0")
-        logger.debug('Adding Eqn: Momentum, x')
-        self.problem.add_equation("dt(u)  - R*Lap(u, u_z) + dx(p)       =  -UdotGrad(u, u_z) ")
-        logger.debug('Adding Eqn: Momentum, x')
-        self.problem.add_equation("dt(v)  - R*Lap(v, v_z) + dy(p)       =  -UdotGrad(v, v_z) ")
-        logger.debug('Adding Eqn: Momentum, z')
-        self.problem.add_equation("dt(w)  - R*Lap(w, w_z) + dz(p) - T1  =  -UdotGrad(w, w_z) ")
-        logger.debug('Adding Eqn: Energy')
-        self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z   = -UdotGrad(T1, T1_z)")
 
     def initialize_output(self, solver, data_dir, volumes_output=False,
                           max_writes=20, max_slice_writes=20, output_dt=0.25,
@@ -705,7 +709,7 @@ class BoussinesqEquations3D(BoussinesqEquations):
         analysis_tasks = super(BoussinesqEquations3D, self).initialize_output(solver, data_dir, max_writes=max_writes, output_dt=output_dt, mode=mode, **kwargs)
 
         # Analysis
-        snapshots = solver.evaluator.add_file_handler(data_dir+'slices', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode, parallel=False)
+        snapshots = solver.evaluator.add_file_handler(data_dir+'slices', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode)
         snapshots.add_task("interp(T1 + T0,         y={})".format(self.Ly/2), name='T')
         snapshots.add_task("interp(T1 + T0,         z={})".format(0.95*self.Lz), name='T near top')
         snapshots.add_task("interp(T1 + T0,         z={})".format(self.Lz/2), name='T midplane')
@@ -718,11 +722,9 @@ class BoussinesqEquations3D(BoussinesqEquations):
         analysis_tasks.append(snapshots)
 
         if volumes_output:
-            analysis_volume = solver.evaluator.add_file_handler(data_dir+'volumes', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode, parallel=False)
+            analysis_volume = solver.evaluator.add_file_handler(data_dir+'volumes', sim_dt=output_dt, max_writes=max_slice_writes, mode=mode)
             analysis_volume.add_task("T1 + T0", name="T")
             analysis_volume.add_task("enstrophy", name="enstrophy")
             analysis_tasks.append(analysis_volume)
 
         return analysis_tasks
-
-#

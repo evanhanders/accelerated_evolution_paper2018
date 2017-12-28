@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -N RB_se1_1.00_3d_base_pre
-#PBS -l select=10:ncpus=28:mpiprocs=28:model=bro_ele
+#PBS -l select=19:ncpus=28:mpiprocs=28:model=bro_ele
 #PBS -l walltime=4:00:00
 #PBS -j oe
 #PBS -q normal
@@ -19,16 +19,16 @@ mkdir $dedalus_dir
 echo running the job
 
 date
-mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
+mpiexec_mpt -np 512 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
         --aspect=4.924 \
-		--nz=32        \
-        --nx=64        \
-        --ny=64        \
+		--nz=64        \
+        --nx=128        \
+        --ny=128       \
         --3D            \
-        --mesh=16,16    \
-		--run_time=3.75 \
+        --mesh=32,16    \
+		--run_time=3.5 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \
