@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -N RB_se5_1.00
 #PBS -l select=10:ncpus=28:mpiprocs=28:model=bro_ele
-#PBS -l walltime=10:00:00
+#PBS -l walltime=120:00:00
 #PBS -j oe
 #PBS -q long
 
@@ -38,7 +38,7 @@ mpiexec_mpt -np 256 ~/.python3 $dedalus_script.py \
         --aspect=2 \
 		--nz=512        \
         --nx=1024        \
-		--run_time=9.5 \
+		--run_time=119 \
         --run_time_therm=1 \
         --mixed_flux_T \
         --no_slip \

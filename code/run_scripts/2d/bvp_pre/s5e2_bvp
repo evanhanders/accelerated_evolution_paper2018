@@ -12,7 +12,7 @@ cd $PBS_O_WORKDIR
 
 RA=2.79e8
 s=5_2.15
-label=bvp2
+label=bvp
 
 mkdir $dedalus_dir
 

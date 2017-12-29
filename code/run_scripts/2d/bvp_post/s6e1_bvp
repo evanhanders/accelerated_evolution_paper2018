@@ -1,5 +1,5 @@
 #PBS -S /bin/bash
-#PBS -N RB_bvp_se6_1.00
+#PBS -N RB_bvp_se6_1.00_post
 #PBS -l select=19:ncpus=28:mpiprocs=28:model=bro_ele
 #PBS -l walltime=72:00:00
 #PBS -j oe
@@ -30,7 +30,7 @@ mpiexec_mpt -np 512 ~/.python3 $dedalus_script.py \
         --no_slip \
         --output_dt=0.1 \
         --run_time_buoy=500 \
-        --restart=/nobackup/eanders/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a2_bvp/final_checkpoint/final_checkpoint_s1.h5 \
+        --restart=/nobackup/eanders/2d/rb_bvp_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a2_bvp/final_checkpoint/final_checkpoint_s1.h5 \
         --label=$label \
 		--root_dir=$dedalus_dir \
 		--overwrite \
