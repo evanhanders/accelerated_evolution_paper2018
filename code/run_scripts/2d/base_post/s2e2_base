@@ -33,4 +33,5 @@ mpiexec_mpt -np 32 ~/.python3 $dedalus_script.py \
         --label=$label \
         --restart=/nobackup/eanders/rb_base_pre/rayleigh_benard_2D_mixed_noSlip_Ra$RA\_Pr1_a2_base/final_checkpoint/final_checkpoint_s1.h5 \
 		--root_dir=$dedalus_dir \
+		--overwrite \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID
