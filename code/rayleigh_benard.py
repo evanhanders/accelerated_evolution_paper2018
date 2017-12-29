@@ -290,7 +290,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         logger.info('iter/sec: {:f} (main loop only)'.format(n_iter_loop/main_loop_time))
         try:
             final_checkpoint = Checkpoint(data_dir, checkpoint_name='final_checkpoint')
-            final_checkpoint.set_checkpoint(solver, wall_dt=1, mode="append")
+            final_checkpoint.set_checkpoint(solver, wall_dt=1, mode=mode)
             solver.step(dt) #clean this up in the future...works for now.
             post.merge_process_files(data_dir+'/final_checkpoint/', cleanup=False)
         except:

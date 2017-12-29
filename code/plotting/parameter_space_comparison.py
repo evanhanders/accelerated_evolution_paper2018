@@ -80,12 +80,12 @@ for i,k in enumerate(fields):
                 ax.errorbar(float(ra), 0.5+mean, yerr=std,  color=COLORS[int(ind)])
                 ax.scatter(float(ra), 0.5+mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Nu':
-                p=0#2/3
+                p=2/7#2/3
                 bx.scatter(float(ra)/ra_crit, mean/float(ra)**(p), s=0, alpha=0)
                 ax.errorbar(float(ra), mean/(float(ra)**(p)), yerr=std/(float(ra)**(p)),  color=COLORS[int(ind)])
                 ax.scatter(float(ra), mean/(float(ra)**p), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Re':
-                pRe = 0.425
+                pRe = 0.5
                 bx.scatter(float(ra)/ra_crit, mean/float(ra)**(pRe), s=0, alpha=0)
                 ax.errorbar(float(ra), mean/float(ra)**(pRe), yerr=std/float(ra)**(pRe),  color=COLORS[int(ind)])
                 ax.scatter(float(ra), mean/float(ra)**(pRe), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
