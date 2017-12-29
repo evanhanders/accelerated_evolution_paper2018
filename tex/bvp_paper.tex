@@ -55,11 +55,8 @@ and discuss its extension to more complex scenarios, such as stratified, compres
 \section{To Do}
 \begin{enumerate}
 \item Get 3D cases in
-\item Run some fixed T boundary conditions to see that we get the scaling expected from 
-\cite{johnston&doering2009}.  Literally re-do their experiment.
 \item Continue Improving Figures
 \item Write figure captions
-\item Think about creating a 2-roll vs. 3-roll figure to help explain that part
 \item Think about post-bvp multiplying.  Should it be a profile for both the velocity
 and for the T perturbations, rather than a scalar?  I'm starting to think it should.
 \end{enumerate}
@@ -129,9 +126,7 @@ we impose no-slip, impenetrable boundary conditions such that $w = u = v = 0$ at
 At the lower boundary, we employ a fixed flux condition such that $\partial T_1 / \partial z = 0$
 at $z = -1/2$, and we impose a fixed temperature condition $T_1 = 0$ at $z = 1/2$. Both
 horizontal directions are periodic, extending over a range $x, y = [0, \Gamma]$, where
-the aspect ratio is $\Gamma = 2 \lambda_c$, with
-$\lambda_c = 2\pi/k_c$, and $k_c=2.5519$ is the wavenumber of convective onset for this choice of
-boundary conditions.  
+the aspect ratio is $\Gamma = 2$.
 
 The chosen thermal boundary conditions at the upper and lower plates
 determine key quantities of the evolved state.
@@ -163,7 +158,14 @@ setting up the boundary value problem.
 \subsection{The Boundary Value Problem}
 \begin{figure}[b]
 \includegraphics[width=\textwidth]{./figs/time_trace.png}
-\caption{\label{fig:time_trace} }
+\caption{Traces of system energies vs. time for a long thermal rundown (a) and BVP convergence
+(b) are shown for Ra = $1.30 \cdot 10^7$ ($S = 10^4$).  The two plots are scaled such that
+one time unit on the x-axis of either run takes up an equivalent amount of space on the paper
+to illustrate the time savings of the BVP run.  (c\&d) Flux plots, where black is the sum of the
+flux, blue is enthalphy flux and red is condcutive flux. (c) Fluxes are shown for the IVP at an early
+time to illustrate the asymmetry of the flux through the system. (d) Fluxes through the converged,
+rundown state are compared to the fluxes in the converged BVP solution, where their difference
+is shown in (e). \label{fig:time_trace} }
 \end{figure}
 
 The prohibitively long thermal timescale required to reach an equilibrium temperature profile
@@ -306,31 +308,73 @@ of a similar morphology in order to see a clear trend.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
-\caption{\label{fig:pdf_comparison} }
+\caption{We compare the time-variant dynamics in our 2D solutions by showing probability distribution
+functions of the values of vertical velocity (a), horizontal velocity (b), and nonlinear heat
+transport (c) in our converged solutions.  The horizontal velocities are very similar, with a
+KS test similarity of X.  The vertical velocities, too, are similar, with a KS similarity of
+Y.  The nonlinear heat transport, while overall quite similar, shows that the BVP experiences
+a greater number of extreme events.  The peak around zero for all three PDFs reflects the
+no-slip boundary conditions.\label{fig:pdf_comparison} }
 \end{figure}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/temp_comparison.png}
-\caption{\label{fig:temp_comparison} }
+\caption{Here we compare the evolved thermodynamic state of a BVP to that of a rundown IVP that
+has been run through a thermal timescale.  (a) The temperature profiles, as a function of height,
+are shown. (b) The percentage difference between the temperature profiles, as a function of height,
+is shown.  (c) PDFs comparing the values of the point-by-point temperatures over the averaging
+window.  While the median of the PDF has a distinct offset between the two runs, the
+thermal fluctuations about the mean which drive the convection are nearly the same.
+\label{fig:temp_comparison} }
 \end{figure}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
-\caption{\label{fig:parameter_space_comparison} }
+\caption{Here we demonstrate the efficacy of the BVP method at many values of Ra.  We show
+(a) Nusselt number scaling, (b) Reynolds number scaling, and (c) scaling of the mean temperature
+over the whole simulation.  (a) The Nusselt number follows a classic 2/7 scaling law
+\cite{johnston&doering2009}, until it reaches S = $10^{3 + 2/3}$, at which point the
+two-roll solution begins oscillating horizontally, showing time-variant Nu.  The range of Nu
+over the averaging window is (blah), and the trend of Nu (the variance of the mean Nu) is shown
+as (blah).  (b) Re follows an expected 1/2 scaling law. (c) The mean value of temperature, minus
+the value at the fixed-temperature boundary, is shown.  As Ra increases, the boundary layers shrink,
+and the convection becomes more efficient, we anticipate this value to get closer and closer to
+zero as the atmosphere approaches the isotherm defined by the upper boundary.
+\label{fig:parameter_space_comparison} }
 \end{figure}
 
 
 
 \section{Discussion \& Conclusions}
 \label{sec:results}
-I don't have the mental stamina to write this section right now.  In general, here's what it's going to say:
-\begin{enumerate}
-\item This procedure works, as we've shown.
-\item How to apply this to more complicated cases, like stratified convection
-\item How to apply this to different boundary conditions
-\item Brief discussion of other methods that can be used to fast-forward, e.g., bootstrapping.
-\item This is just a first step.
-\end{enumerate}
+While imperfect, the method presented here is a first step towards taking meaningful measurements
+of highly turbulent convection on manageable, human timescales.  As demonstrated in Figs.
+1-4, this BVP method quickly converges simulations to within a few percent of the true final
+state, while preserving the natural behavior of the convective solution (such as the oscillatory
+nature of high-Ra 2D states in \ref{fig:parameter_space_comparison}).  
+
+While not perfect, the BVP method here has one major benefit over some of the other methods
+currently being used to achieve high Ra solutions.  One oft-used method is that of bootstrapping,
+in which the converged solution of a low-Ra state is used as initial conditions for a higher-Ra
+simulation.  While these methods are extremely powerful, they are influenced by hysteresis effects,
+and the powerful, steady rolls achieved at low Ra can result in an artifically over-stable high-Ra
+roll solution.  The BVP method can be used with random noise initial conditions which allow the
+convective solution to be naturally chosen by the dynamics.
+
+One benefit of the method presented here is that it can be easily extended to more complicated
+configurations.  For example, to use this method in simulations of stratified compressible convection,
+one need only adapt the BVP equations to the appropriate equations of hydrostatic equilibrium,
+$\grad P = -\rho \bm{g}$, and thermal equilibrium, $\Div{F_{\text{cond}} + F_{\text{conv}}} = \text{sources}$,
+for the problem at hand.  In compressible convection, where the density is allowed to change,
+one must also use the knowledge of stellar structure codes and add an equation of mass conservation
+in order to ensure that the BVP does not spuriously add or remove mass from the system.
+
+This method can be extended to other boundary conditions, as well.  To solve for fixed temperature
+boundary conditions, the difficulty is in finding the amount of flux through the system -- but
+this can be done by using the ratios $f_{\text{conv}}$ and $f_{\text{cond}}$.  In the case of
+fixed flux boundary conditions, there is degeneracy in the temperature solution which can come
+out of the BVP, but in using knowledge about the system -- such as the initial symmetry of the
+RB state around $T_1 = 0$, the final solution can be pegged onto the proper profile.
 
 
 
