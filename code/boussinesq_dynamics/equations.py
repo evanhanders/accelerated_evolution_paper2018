@@ -377,7 +377,7 @@ class BoussinesqEquations(Equations):
             self.problem.add_bc("right(p) = 0", condition="(nx == 0)")
             self.problem.add_bc("right(w) = 0", condition="(nx != 0)")
         elif self.dimensions == 3:
-            self.problem.add_bc("right(p) = 0", condition="(nx == 0) and (ny == 0)")
+            self.problem.add_bc("integ_z(p) = 0", condition="(nx == 0) and (ny == 0)")
             self.problem.add_bc("right(w) = 0", condition="(nx != 0) or  (ny != 0)")
         else:
             self.problem.add_bc("right(p) = 0")
