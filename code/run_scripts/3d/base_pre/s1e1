@@ -23,16 +23,16 @@ mpiexec_mpt -np 512 ~/.python3 $dedalus_script.py \
         --Rayleigh=$RA  \
         --Prandtl=1     \
         --aspect=2 \
-		--nz=32        \
-        --nx=64        \
-        --ny=64       \
+		--nz=64        \
+        --nx=128        \
+        --ny=128       \
         --3D            \
         --mesh=32,16    \
 		--run_time=3.5 \
         --run_time_therm=2 \
         --mixed_flux_T \
         --no_slip \
-        --output_dt=1 \
+        --output_dt=0.25 \
         --label=$label \
 		--root_dir=$dedalus_dir \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID

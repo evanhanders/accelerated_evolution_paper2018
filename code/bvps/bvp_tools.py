@@ -602,8 +602,9 @@ class BoussinesqBVPSolver(BVPSolverBase):
             vel_adj_loc[0] = vel_adjust_factor
         self.comm.Allreduce(vel_adj_loc, vel_adj_glob, op=MPI.SUM)
 
-        local_flux_reducer =  return_dict['enth_flux_IVP'][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
-        local_flux_reducer /= self.partial_prof_dict_current['enth_flux_IVP']
+        local_flux_reducer =  return_dict['flux_scaling'][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
+#        local_flux_reducer =  return_dict['enth_flux_IVP'][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
+#        local_flux_reducer /= self.partial_prof_dict_current['enth_flux_IVP']
         local_flux_reducer = np.sqrt(local_flux_reducer)
 
         # Actually update IVP states
