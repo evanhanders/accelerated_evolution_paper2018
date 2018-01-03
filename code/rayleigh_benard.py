@@ -194,9 +194,12 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
 
 
     if do_bvp:
-        bvp_solver = BoussinesqBVPSolver(BoussinesqEquations2D, nx, nz, \
+        if not threeD: 
+            ny = 0
+        bvp_solver = BoussinesqBVPSolver(BoussinesqEquations2D, nx, ny, nz, \
                                    flow, equations.domain.dist.comm_cart, \
                                    solver, num_bvps, bvp_equil_time, \
+                                   threeD=threeD,
                                    bvp_transient_time=bvp_transient_time, \
                                    bvp_run_threshold=bvp_convergence_factor, \
                                    bvp_l2_check_time=1, \
@@ -227,8 +230,6 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                 for field in solver.state.fields:
                     field.require_grid_space()
 
-#            if equations.domain.dist.comm_cart.rank == 0:
-#                print(flow.properties['w near top']['g'])
             Re_avg = flow.grid_average('Re')
             log_string =  'Iteration: {:5d}, '.format(solver.iteration)
             log_string += 'Time: {:8.3e} ({:8.3e} therm), dt: {:8.3e}, '.format(solver.sim_time, solver.sim_time/equations.thermal_time,  dt)
@@ -250,11 +251,6 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                                    }
                     diff_args = [Rayleigh, Prandtl]
 
-#                    u = solver.state['u']
-#                    w = solver.state['w']
-#                    u['g'] *= 0
-#                    w['g'] *= 0
-#                    equations.set_IC(solver, A0=1)
                     bvp_solver.solve_BVP(atmo_kwargs, diff_args, bc_dict)
                 if bvp_solver.terminate_IVP():
                     continue_bvps = False
