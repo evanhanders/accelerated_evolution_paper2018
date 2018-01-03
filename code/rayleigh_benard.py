@@ -202,7 +202,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                                    threeD=threeD,
                                    bvp_transient_time=bvp_transient_time, \
                                    bvp_run_threshold=bvp_convergence_factor, \
-                                   bvp_l2_check_time=1, \
+                                   bvp_l2_check_time=1, mesh=mesh,\
                                    plot_dir='{}/bvp_plots/'.format(data_dir),\
                                    min_avg_dt=0.01, final_equil_time=bvp_final_equil_time,
                                    min_bvp_time=min_bvp_time)
@@ -224,6 +224,8 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
             dt = CFL.compute_dt()
             solver.step(dt) #, trim=True)
 
+            logger.debug('timestep taken')
+
             # Solve for blow-up over long timescales in 3D due to hermitian-ness
             effective_iter = solver.iteration - start_iter
             if threeD and effective_iter % Hermitian_cadence == 0:
@@ -244,13 +246,13 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                 not_corrected_times = False
 
             if do_bvp:
-                bvp_solver.update_avgs(dt, min_Re=1e0)
+                bvp_solver.update_avgs(dt, Re_avg, min_Re=1e0)
                 if bvp_solver.check_if_solve():
                     atmo_kwargs = { 'nz'              : nz*bvp_resolution_factor,
                                     'Lz'              : Lz
                                    }
                     diff_args = [Rayleigh, Prandtl]
-
+                    logger.debug('about to solve BVP')
                     bvp_solver.solve_BVP(atmo_kwargs, diff_args, bc_dict)
                 if bvp_solver.terminate_IVP():
                     continue_bvps = False
@@ -281,6 +283,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     logger.info("{} fill in factor".format(LU.nnz/solver.pencils[0].LHS.tocsc().nnz))
                 first_step=False
                 start_time = time.time()
+            logger.debug('end of loop statement, continue? {} {} {}'.format(solver.ok, np.isfinite(Re_avg), continue_bvps))
     except:
         raise
         logger.error('Exception raised, triggering end of main loop.')
