@@ -171,6 +171,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
     solver.stop_sim_time  = np.inf
     solver.stop_wall_time = run_time*3600.
     solver.stop_iteration = run_time_iter
+    Hermitian_cadence = 100
 
     # Analysis
     max_dt    = output_dt
@@ -215,9 +216,17 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         continue_bvps = True
         not_corrected_times = True
         init_time = solver.sim_time
+        start_iter = solver.iteration
         while (solver.ok and np.isfinite(Re_avg)) and continue_bvps:
             dt = CFL.compute_dt()
             solver.step(dt) #, trim=True)
+
+            # Solve for blow-up over long timescales in 3D due to hermitian-ness
+            effective_iter = solver.iteration - start_iter
+            if threeD and effective_iter % Hermitian_cadence == 0:
+                for field in solver.state.fields:
+                    field.require_grid_space()
+
 #            if equations.domain.dist.comm_cart.rank == 0:
 #                print(flow.properties['w near top']['g'])
             Re_avg = flow.grid_average('Re')
