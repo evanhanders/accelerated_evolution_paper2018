@@ -51,7 +51,7 @@ Options:
     --bvp_transient_time=<time>          How long to wait at beginning of run before starting to average for next one, in tbuoy [default: 20]
     --min_bvp_time=<time>                Minimum avg time for a bvp (in tbuoy) [default: 10]
     --bvp_resolution_factor=<mult>       an int, how many times larger than nz should the bvp nz be? [default: 1]
-    --bvp_convergence_factor=<fact>      How well converged time averages need to be for BVP [default: 1e-3]
+    --bvp_convergence_factor=<fact>      How well converged time averages need to be for BVP [default: 1e-2]
 """
 import logging
 logger = logging.getLogger(__name__)

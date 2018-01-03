@@ -389,7 +389,6 @@ class BoussinesqBVPSolver(BVPSolverBase):
                 ('enth_flux_IVP',       ('w*(T0+T1)', 0)),                      
                 ('tot_flux_IVP',        ('(w*(T0+T1) - P*(T0_z+T1_z))', 0)),                      
                 ('T1_IVP',              ('T1', 0)),                      
-                ('T1_z_IVP',            ('T1_z', 0)),                      
                 ('p_IVP',               ('p', 0)),                      
                         ])
     VARS   = OrderedDict([  
@@ -507,8 +506,16 @@ class BoussinesqBVPSolver(BVPSolverBase):
         nz = atmosphere_kwargs['nz']
         # Create space for the returned profiles on all processes.
         return_dict = OrderedDict()
+        orig_dict = OrderedDict()
         for v in self.VARS.keys():
             return_dict[v] = np.zeros(self.nz, dtype=np.float64)
+            orig_dict[v] = np.zeros(self.nz, dtype=np.float64)
+
+            if self.rank == 0:
+                try:
+                    orig_dict[v] = self.profiles_dict[v]
+                except:
+                    logger.info('{} is not a tracked profile'.format(v))
         return_dict['flux_scaling'] = np.zeros(self.nz, dtype=np.float64)
         return_dict['enth_flux_IVP'] = np.zeros(self.nz, dtype=np.float64)
 
@@ -559,16 +566,11 @@ class BoussinesqBVPSolver(BVPSolverBase):
 
 
             T1 = solver.state['T1']
-            T1_z = solver.state['T1_z']
             P1   = solver.state['p1']
 
             #Appropriately adjust T1 in IVP
             T1.set_scales(self.nz/nz, keep_data=True)
             return_dict['T1_IVP'] += T1['g']
-
-            #Appropriately adjust T1_z in IVP
-            T1_z.set_scales(self.nz/nz, keep_data=True)
-            return_dict['T1_z_IVP'] += T1_z['g']
 
             #Appropriately adjust p in IVP
             P1.set_scales(self.nz/nz, keep_data=True)
@@ -577,13 +579,15 @@ class BoussinesqBVPSolver(BVPSolverBase):
             for v in self.VARS.keys():
                 return_dict[v] *= 0
         logger.info(return_dict)
-            
         self.comm.Barrier()
         # Communicate output profiles from proc 0 to all others.
         for v in self.VARS.keys():
             glob = np.zeros(self.nz)
             self.comm.Allreduce(return_dict[v], glob, op=MPI.SUM)
             return_dict[v] = glob
+            glob = np.zeros(self.nz)
+            self.comm.Allreduce(orig_dict[v], glob, op=MPI.SUM)
+            orig_dict[v] = glob
 
         for v in ['flux_scaling', 'enth_flux_IVP']:
             glob = np.zeros(self.nz)
@@ -599,17 +603,24 @@ class BoussinesqBVPSolver(BVPSolverBase):
         local_flux_reducer =  return_dict['flux_scaling'][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
         local_flux_reducer = np.sqrt(local_flux_reducer)
 
+        logger.info('updating thermo states')
         # Actually update IVP states
         for v in self.VARS.keys():
+            if v == 'T1_z_IVP':
+                continue
             #Subtract out current avg
             self.solver_states[v].set_scales(1, keep_data=True)
-            self.solver_states[v]['g'] -= self.profiles_dict[v][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
+            self.solver_states[v]['g'] -= orig_dict[v][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
             if v == 'T1_IVP':
                 self.solver_states[v].set_scales(1, keep_data=True)
                 self.solver_states[v]['g'] *= local_flux_reducer
             #Put in right avg
             self.solver_states[v].set_scales(1, keep_data=True)
             self.solver_states[v]['g'] += return_dict[v][self.n_per_proc*self.rank:self.n_per_proc*(self.rank+1)]
+
+        self.solver_states['T1_IVP'].differentiate('z', out=self.solver_states['T1_z_IVP'])
+
+        logger.info('updating velocity states')
         for v in self.VEL_VARS.keys():
             self.vel_solver_states[v].set_scales(1, keep_data=True)
             self.vel_solver_states[v]['g'] *= local_flux_reducer
