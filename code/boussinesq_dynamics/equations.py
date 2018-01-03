@@ -256,8 +256,6 @@ class BoussinesqEquations(Equations):
         """
         Sets up substitutions that are useful for the Boussinesq equations or for outputs
         """
-        self.problem.substitutions['Ox'] = '(dy(w) - dz(v))'
-        self.problem.substitutions['Oz'] = '(dx(v) - dy(u))'
         #Diffusivities; diffusive timescale
         self.problem.substitutions['chi']= '(v_ff * Lz * P)'
         self.problem.substitutions['nu'] = '(v_ff * Lz * R)'
@@ -489,6 +487,9 @@ class BoussinesqEquations2D(BoussinesqEquations):
         self.problem.substitutions['v'] = '0'
         self.problem.substitutions['dy(A)'] = '0'
 
+        self.problem.substitutions['Ox'] = '(dy(w) - dz(v))'
+        self.problem.substitutions['Oz'] = '(dx(v) - dy(u))'
+
         super(BoussinesqEquations2D, self)._set_subs()
 
     def set_equations(self, Rayleigh, Prandtl, kx = 0):
@@ -594,7 +595,9 @@ class BoussinesqEquations3D(BoussinesqEquations):
             w_z  - z-derivative of w
         """
         super(BoussinesqEquations3D, self).__init__(*args, dimensions=dimensions, **kwargs)
-        self.variables=['T1','T1_z','p','u','v', 'w','u_z', 'v_z', 'w_z']
+#        self.variables=['T1','T1_z','p','u','v', 'w','u_z', 'v_z', 'w_z']
+        self.variables=['T1','T1_z','p','u','v', 'w','Ox', 'Oy', 'Oz']
+
 
 
     def _set_parameters(self, *args):
@@ -621,7 +624,7 @@ class BoussinesqEquations3D(BoussinesqEquations):
         self.problem.substitutions['UdotGrad(A, A_z)'] = '(u * dx(A) + v * dy(A) + w * A_z)'
         self.problem.substitutions['Lap(A, A_z)'] = '(dx(dx(A)) + dy(dy(A)) + dz(A_z))'
 
-        self.problem.substitutions['Oy']          = '(dz(u) - dx(w))'
+#        self.problem.substitutions['Oy']          = '(dz(u) - dx(w))'
         self.problem.substitutions['v_fluc'] = '(v - plane_avg(v))'
         super(BoussinesqEquations3D, self)._set_subs()
 
@@ -680,24 +683,45 @@ class BoussinesqEquations3D(BoussinesqEquations):
 
 
         # 3D Boussinesq hydrodynamics
+#        logger.debug('Adding Eqn: Incompressibility constraint')
+#        self.problem.add_equation("dx(u) + dy(v) + w_z = 0")
+#        logger.debug('Adding Eqn: Energy')
+#        self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z   = -UdotGrad(T1, T1_z)")
+#        logger.debug('Adding Eqn: Momentum, x')
+#        self.problem.add_equation("dt(u)  - R*Lap(u, u_z) + dx(p)       =  -UdotGrad(u, u_z) ")
+#        logger.debug('Adding Eqn: Momentum, x')
+#        self.problem.add_equation("dt(v)  - R*Lap(v, v_z) + dy(p)       =  -UdotGrad(v, v_z) ")
+#        logger.debug('Adding Eqn: Momentum, z')
+#        self.problem.add_equation("dt(w)  - R*Lap(w, w_z) + dz(p) - T1  =  -UdotGrad(w, w_z) ")
+#        logger.debug('Adding Eqn: T1_z defn')
+#        self.problem.add_equation("T1_z - dz(T1) = 0")
+#        logger.debug('Adding Eqn: u_z defn')
+#        self.problem.add_equation("u_z  - dz(u) = 0")
+#        logger.debug('Adding Eqn: v_z defn')
+#        self.problem.add_equation("v_z  - dz(v) = 0")
+#        logger.debug('Adding Eqn: w_z defn')
+#        self.problem.add_equation("w_z  - dz(w) = 0")
+
         logger.debug('Adding Eqn: Incompressibility constraint')
-        self.problem.add_equation("dx(u) + dy(v) + w_z = 0")
+        self.problem.add_equation("dx(u) + dz(w) = 0")
         logger.debug('Adding Eqn: Energy')
-        self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z   = -UdotGrad(T1, T1_z)")
+        self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z           = -UdotGrad(T1, T1_z)")
         logger.debug('Adding Eqn: Momentum, x')
-        self.problem.add_equation("dt(u)  - R*Lap(u, u_z) + dx(p)       =  -UdotGrad(u, u_z) ")
-        logger.debug('Adding Eqn: Momentum, x')
-        self.problem.add_equation("dt(v)  - R*Lap(v, v_z) + dy(p)       =  -UdotGrad(v, v_z) ")
+        self.problem.add_equation("dt(u)  + R*(dy(Oz) - dz(Oy))  + dx(p)       =  v*Oz - w*Oy ")
+        logger.debug('Adding Eqn: Momentum, y')
+        self.problem.add_equation("dt(v)  + R*(dx(Oz) - dz(Ox))  + dy(p)       =  u*Oz - w*Ox ")
         logger.debug('Adding Eqn: Momentum, z')
-        self.problem.add_equation("dt(w)  - R*Lap(w, w_z) + dz(p) - T1  =  -UdotGrad(w, w_z) ")
+        self.problem.add_equation("dt(w)  + R*(dx(Oy) - dy(Ox))  + dz(p) - T1  =  u*Oy - v*Ox ")
         logger.debug('Adding Eqn: T1_z defn')
         self.problem.add_equation("T1_z - dz(T1) = 0")
-        logger.debug('Adding Eqn: u_z defn')
-        self.problem.add_equation("u_z  - dz(u) = 0")
-        logger.debug('Adding Eqn: v_z defn')
-        self.problem.add_equation("v_z  - dz(v) = 0")
-        logger.debug('Adding Eqn: w_z defn')
-        self.problem.add_equation("w_z  - dz(w) = 0")
+        logger.debug('Adding Eqn: X Vorticity defn')
+        self.problem.add_equation("Ox - dy(w) + dz(v) = 0")
+        logger.debug('Adding Eqn: Y Vorticity defn')
+        self.problem.add_equation("Oy - dz(u) + dx(w) = 0")
+        logger.debug('Adding Eqn: Z Vorticity defn')
+        self.problem.add_equation("Oz - dx(v) + dy(u) = 0")
+
+
 
     def initialize_output(self, solver, data_dir, volumes_output=False,
                           max_writes=20, max_slice_writes=20, output_dt=0.25,
