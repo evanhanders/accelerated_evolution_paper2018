@@ -14,29 +14,6 @@ from scipy.interpolate import interp1d
 
 from dedalus import public as de
 
-
-def bl_profile(z, bl, center=0, upper=False):
-    """ from Shishkina et al 2015 PRL, eqn 31. """
-    a = 2 * np.pi / ( 3 * np.sqrt(3) )
-    xi = (z - center) / bl
-    if upper:
-        xi *= -1
-    part1 = ( np.sqrt(3) / (4 * np.pi) ) * np.log( (1 + a*xi)**3 / (1 + (a*xi)**3) )
-    part2 = ( 3 / (2 * np.pi) ) * np.arctan( ( 4 * np.pi / 9 ) * xi - 1 / np.sqrt(3) )
-    return part1 + part2 + 1./4
-
-def bl_Tz_profile(z, bl, center=0, upper=False):
-    """ Derivative of eqn 31 from Shishkina et al 2015 PRL. Normalized to 1 at the boundary. """
-    a = 2 * np.pi / ( 3 * np.sqrt(3) )
-    xi = (z - center) / bl
-    if upper:
-        xi *= -1
-    part1 = (1/2.) * ( 1/(1 + a*xi) - a**2 * xi**2 / (1 + (a*xi)**3) )
-    part2 = (2/3.) * 1 / (1. + (4*np.pi/9. * xi - 1/np.sqrt(3.))**2)
-    return part1 + part2 
-
-
-
 class BVPSolverBase:
     """
     A base class for solving a BVP in the middle of a running IVP.
