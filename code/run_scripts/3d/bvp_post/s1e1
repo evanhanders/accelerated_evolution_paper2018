@@ -6,7 +6,7 @@
 #PBS -q normal
 
 export dedalus_script=rayleigh_benard
-export dedalus_dir=$HOME/workdir/3d_rb/rb_base_post/
+export dedalus_dir=$HOME/workdir/3d_rb/rb_bvp_post/
 
 cd $PBS_O_WORKDIR
 
