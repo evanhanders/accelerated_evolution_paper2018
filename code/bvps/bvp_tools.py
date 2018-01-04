@@ -319,7 +319,7 @@ class BVPSolverBase:
 
     def check_if_solve(self):
         """ Returns a boolean.  If True, it's time to solve a BVP """
-        logger.debug('start bvp {}'.format((self.avg_started and self.avg_time_elapsed >= self.min_bvp_time) and (self.do_bvp and (self.completed_bvps < self.num_bvps))))
+#        logger.debug('start bvp {}'.format((self.avg_started and self.avg_time_elapsed >= self.min_bvp_time) and (self.do_bvp and (self.completed_bvps < self.num_bvps))))
         return (self.avg_started and self.avg_time_elapsed >= self.min_bvp_time) and (self.do_bvp and (self.completed_bvps < self.num_bvps))
 
     def _save_file(self):

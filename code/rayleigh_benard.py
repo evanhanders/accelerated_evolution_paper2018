@@ -224,7 +224,6 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
             dt = CFL.compute_dt()
             solver.step(dt) #, trim=True)
 
-            logger.debug('timestep taken')
 
             # Solve for blow-up over long timescales in 3D due to hermitian-ness
             effective_iter = solver.iteration - start_iter
@@ -252,7 +251,6 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                                     'Lz'              : Lz
                                    }
                     diff_args = [Rayleigh, Prandtl]
-                    logger.debug('about to solve BVP')
                     bvp_solver.solve_BVP(atmo_kwargs, diff_args, bc_dict)
                 if bvp_solver.terminate_IVP():
                     continue_bvps = False
@@ -283,7 +281,6 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     logger.info("{} fill in factor".format(LU.nnz/solver.pencils[0].LHS.tocsc().nnz))
                 first_step=False
                 start_time = time.time()
-            logger.debug('end of loop statement, continue? {} {} {}'.format(solver.ok, np.isfinite(Re_avg), continue_bvps))
     except:
         raise
         logger.error('Exception raised, triggering end of main loop.')

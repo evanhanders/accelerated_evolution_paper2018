@@ -1,18 +1,18 @@
 #PBS -S /bin/bash
-#PBS -N RB_se3_1.00_3d_base_pre
+#PBS -N RB_se3_1.00_3d_bvp_pre
 #PBS -l select=74:ncpus=28:mpiprocs=28:model=bro_ele
-#PBS -l walltime=5:00:00
+#PBS -l walltime=4:00:00
 #PBS -j oe
 #PBS -q normal
 
 export dedalus_script=rayleigh_benard
-export dedalus_dir=$HOME/workdir/3d_rb/rb_base_pre/
+export dedalus_dir=$HOME/workdir/3d_rb/rb_bvp_pre/
 
 cd $PBS_O_WORKDIR
 
 RA=1.30e6
 s=3_1.00
-label=base_pre
+label=bvp_pre
 
 mkdir $dedalus_dir
 
@@ -25,11 +25,14 @@ mpiexec_mpt -np 2048 ~/.python3 $dedalus_script.py \
         --aspect=2 \
 		--nz=64        \
         --nx=128        \
-        --ny=128        \
+        --ny=128       \
         --3D            \
         --mesh=64,32    \
-		--run_time=4.5 \
-        --run_time_therm=1 \
+		--run_time=3.5 \
+        --run_time_therm=100 \
+        --do_bvp \
+        --num_bvps=1 \
+        --bvp_final_equil_time=200 \
         --mixed_flux_T \
         --no_slip \
         --output_dt=0.25 \

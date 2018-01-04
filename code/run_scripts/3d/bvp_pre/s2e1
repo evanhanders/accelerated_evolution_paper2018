@@ -1,0 +1,41 @@
+#PBS -S /bin/bash
+#PBS -N RB_se2_1.00_3d_bvp_pre
+#PBS -l select=19:ncpus=28:mpiprocs=28:model=bro_ele
+#PBS -l walltime=4:00:00
+#PBS -j oe
+#PBS -q normal
+
+export dedalus_script=rayleigh_benard
+export dedalus_dir=$HOME/workdir/3d_rb/rb_bvp_pre/
+
+cd $PBS_O_WORKDIR
+
+RA=1.30e5
+s=2_1.00
+label=bvp_pre
+
+mkdir $dedalus_dir
+
+echo running the job
+
+date
+mpiexec_mpt -np 512 ~/.python3 $dedalus_script.py \
+        --Rayleigh=$RA  \
+        --Prandtl=1     \
+        --aspect=2 \
+		--nz=32        \
+        --nx=64        \
+        --ny=64       \
+        --3D            \
+        --mesh=32,16    \
+		--run_time=3.5 \
+        --run_time_therm=100 \
+        --do_bvp \
+        --num_bvps=1 \
+        --bvp_final_equil_time=100 \
+        --mixed_flux_T \
+        --no_slip \
+        --output_dt=0.25 \
+        --label=$label \
+		--root_dir=$dedalus_dir \
+		 > $dedalus_dir/out.s$s.$PBS_JOBID
