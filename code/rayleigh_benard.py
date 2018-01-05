@@ -48,7 +48,7 @@ Options:
     --num_bvps=<num>                     Max number of bvps to solve [default: 1]
     --bvp_equil_time=<time>              How long to wait after a previous BVP before starting to average for next one, in tbuoy [default: 50]
     --bvp_final_equil_time=<time>        How long to wait after last bvp before ending simulation 
-    --bvp_transient_time=<time>          How long to wait at beginning of run before starting to average for next one, in tbuoy [default: 20]
+    --bvp_transient_time=<time>          How long to wait at beginning of run before starting to average for next one, in tbuoy [default: 50]
     --min_bvp_time=<time>                Minimum avg time for a bvp (in tbuoy) [default: 10]
     --bvp_resolution_factor=<mult>       an int, how many times larger than nz should the bvp nz be? [default: 1]
     --bvp_convergence_factor=<fact>      How well converged time averages need to be for BVP [default: 1e-2]
@@ -68,6 +68,7 @@ from boussinesq_dynamics.equations import *
 from bvps.bvp_tools import BoussinesqBVPSolver
 from tools.checkpointing import Checkpoint
 checkpoint_min = 30
+RA_CRIT = 1295.78
     
 def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     fixed_flux=False, fixed_T=False, mixed_flux_T = True,
@@ -138,6 +139,9 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
         bc_dict['stress_free'] = True
     elif no_slip:
         bc_dict['no_slip'] = True
+
+
+    supercrit = Rayleigh/RA_CRIT
 
     equations.set_BC(**bc_dict)
 
@@ -245,7 +249,7 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                 not_corrected_times = False
 
             if do_bvp:
-                bvp_solver.update_avgs(dt, Re_avg, min_Re=1e0)
+                bvp_solver.update_avgs(dt, Re_avg, min_Re=np.sqrt(supercrit)/2)
                 if bvp_solver.check_if_solve():
                     atmo_kwargs = { 'nz'              : nz*bvp_resolution_factor,
                                     'Lz'              : Lz

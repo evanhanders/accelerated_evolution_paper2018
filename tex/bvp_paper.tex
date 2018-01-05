@@ -57,8 +57,6 @@ and discuss its extension to more complex scenarios, such as stratified, compres
 \item Get 3D cases in
 \item Continue Improving Figures
 \item Write figure captions
-\item Think about post-bvp multiplying.  Should it be a profile for both the velocity
-and for the T perturbations, rather than a scalar?  I'm starting to think it should.
 \end{enumerate}
 
 
@@ -67,25 +65,24 @@ and for the T perturbations, rather than a scalar?  I'm starting to think it sho
 Natural convection occurs in the presence of disparate timescales. Granules on the
 solar surface overturn on the order of 10 minutes, whereas deep motions in the Sun are likely at
 low Mach number and constrained by the solar rotation rate of $\sim$1 month.  
-Despite these relatively short dynamical times, the scale of energy transport on the
-Sun occurs on the Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
+Both of these dynamical timescales are vastly shorter than the Sun's average timescale of energy transport,
+which is the Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
 As simulations aim to model natural convection
 by increasing into the high-Rayleigh Number (Ra) regime, where diffusive timescales are much
 longer than dynamical timescales \cite{Anders&Brown2017}, achieving converged simulations will 
 require runs which span a greater number of convective timescales in order to thermally converge.
 Furthermore, with increasing Ra and decreasing diffusivities, motions become more turbulent
-and require finer grid meshes and smaller timesteps to resolve turbulent motions, meaning that
-achieving even one overturn timescale becomes a harder problem.  
-These two effects combine such that achieving thermally converged, high-Ra, astrophysically interesting
-simulations is intractable using modern numerical tools.
+and require finer grid meshes and shorter timesteps to resolve turbulent motions, increasing the simulation
+time required for each overturn timescale.  
+These two effects conspire to make achieving thermally converged, high-Ra, astrophysically interesting
+simulations an intractable problem using modern numerical tools.
 
-In studies of stratified convection where a convective layer lies between stable layers, studies
-have used the knowledge of Mixing Length Theory (MLT) to adjust the initial thermal profile of
-atmospheres to a state which is closer to the adiabat chosen by convection \cite{brandenburg&all2005}.
-However, many studies of convection do not contain stable layers above and below the convection
-zone, and the presence of hard boundaries and the boundary layers that they form makes it difficult to
-know proper evolved adiabat \emph{a priori} before the dynamics of the simulation evolve the
-structure of the boundary layers.
+Prior studies of stratified convection in which a convective layer lies between stable layers
+have used the knowledge of Mixing Length Theory (MLT) to adjust the initial thermodynamic structure of
+the atmosphere to a state which is closer to the adiabat chosen by convection \cite{brandenburg&all2005}.
+However, most studies of convection do not contain stable layers above and below the convection
+zone, and the presence of hard boundaries and the boundary layers that they form make it difficult to
+know the correct evolved adiabat \emph{a priori}.
 
 Here we present a method for using simple boundary value problems (BVPs), 
 along with information about the evolved flow fields,
@@ -99,26 +96,42 @@ at high Ra, in the regime where running for thermal timescales becomes computati
 \section{Experiment}
 \label{sec:experiment}
 In our study, we adopt the Oberbeck-Boussinesq approximation.  Here, the
-fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
-of thermal expansion ($\alpha$).  We non-dimensionalize length by the layer height ($L_z$) ,
-temperature by the (constant) initial temperature gradient across the layer ($\grad T_0$), and time
-by the freefall timescale ($L_z / v_{\text{ff}}$, with $v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$, where $g$ is 
-uniform gravitational acceleration in the $-\hat{z}$ direction). The dimensionless Boussinesq
+fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), fluid density ($\rho_0$), and coefficient
+of thermal expansion ($\alpha$).   The Boussinesq
 equations governing the velocity $\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, temperature
-$T = T_0 + T_1$, and reduced pressure $\varpi$ are \cite{spiegel&veronis1960}
+$T = T_0 + T_1$, and pressure $P$ are \cite{spiegel&veronis1960}
+\begin{gather}
+\DivU = 0, 
+	\label{eqn:dim_incompressible}
+\\
+\frac{\partial \bm{u}}{\partial t} + \bm{u}\cdot\grad\bm{u} =
+-\frac{1}{\rho_0}\grad P - g( 1 - \alpha T_1)\hat{z} + \nu\grad^2\bm{u}, 
+	\label{eqn:dim_bouss_momentum}
+\\
+\frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \kappa\grad^2 T_1,
+	\label{eqn:dim_bouss_energy}
+\end{gather}
+We non-dimensionalize these equations on a length scale of the layer height ($L_z$),
+a temperature of the (constant) initial temperature gradient across the layer ($\grad T_0$), and a timescale
+of the freefall timescale ($L_z / v_{\text{ff}}$, with $v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$, where $g$ is 
+uniform gravitational acceleration in the $-\hat{z}$ direction).
+We non-dimensionalize the equations and re-arrange the momentum equation, introducing a reduced pressure
+$\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where $\phi$ is the gravitational potential, we time evolve
+the following equations,
 \begin{gather}
 \DivU = 0, 
 	\label{eqn:incompressible}
 \\
-\frac{\partial \bm{u}}{\partial t} + \bm{u}\cdot\grad\bm{u} =
--\grad\varpi + T_1\hat{z} + \frac{\text{Pr}}{\text{Ra}}\grad^2\bm{u}, 
+\frac{\partial \bm{u}}{\partial t} + \grad \varpi - T_1\hat{z} + \mathcal{R}\grad\times\bm{\omega} = \bm{u}\times\bm{\omega}
 	\label{eqn:bouss_momentum}
 \\
-\frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \frac{1}{\text{Pr}\,\text{Ra}}\grad^2 T_1,
+\frac{\partial T_1}{\partial t} - \mathcal{P}\grad^2 T_1 + w \frac{\partial T_0}{\partial z} = - \bm{u}\cdot\grad T_1,
 	\label{eqn:bouss_energy}
 \end{gather}
-where the dimensionless control parameters are the Rayleigh and Prandtl numbers,
+where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity.  
+Here the dimensionless control parameters are the Rayleigh and Prandtl numbers,
 \begin{equation}
+\mathcal{R} \equiv \sqrt{\frac{\text{Pr}}{\text{Ra}}}, \qquad \mathcal{P} \equiv \frac{1}{\sqrt{\text{Pr}\,\text{Ra}}}, \qquad
 \text{Ra} = \frac{g \alpha L_z^4 \grad T_0}{\nu\chi} = \frac{(L_z\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}.
 \end{equation}
 The dimensionless vertical extent of the domain is $z = [-1/2, 1/2]$, and at the boundaries
@@ -127,6 +140,17 @@ At the lower boundary, we employ a fixed flux condition such that $\partial T_1 
 at $z = -1/2$, and we impose a fixed temperature condition $T_1 = 0$ at $z = 1/2$. Both
 horizontal directions are periodic, extending over a range $x, y = [0, \Gamma]$, where
 the aspect ratio is $\Gamma = 2$.
+
+
+
+These equations are expressed with linear terms on the left-hand side and
+nonlinear terms on the right-hand side.  Because $P$ is a (whatever it's called) in boussinesq, \RB convection, we are able to
+evolve $\varpi$ as a linear variable even though it contains a nonlinear velocity component.  This formulation
+of the equations gives us a modest improvement in timestepping speed compared to Eqns. (\ref{eqn:dim_incompressible}-\ref{eqn:dim_bouss_energy}).
+have been expressed with the linear terms (which we solve implicitly) on the LHS, and the
+nonlinear terms on the RHS. Here, the reduced pressure is $\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$,
+where $\phi$ is the gravitational potential and where $P$ is a (I forget the word) that enforces incompressibility
+in the Boussinesq system.
 
 The chosen thermal boundary conditions at the upper and lower plates
 determine key quantities of the evolved state.

@@ -27,21 +27,16 @@ import matplotlib.gridspec as gridspec
 
 import dedalus.public as de
 
-EPSILON_ORDER=[1e-7, 1e0, 1e-4, 5e-1]
-FORCE_WRITE=False
-
 COLORS=['indigo', 'orange']
 MARKERS=['s', 'o', 'd', '*']
 MARKERSIZE=[5,4,5,7]
 
-MARKERS_2=['p', '^', '8']
-COLORS_2=['peru', 'gold', 'teal']
-MARKERSIZE_2=[5,5,5]
-
 fields = ['Nu', 'Re', 'IE']
 base_dirs = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
+            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post',
+            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/3d/base_post',
+            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/3d/bvp_post'
             ]
 
 info = OrderedDict()
@@ -75,24 +70,30 @@ for i,k in enumerate(fields):
             good_data = datum[k]
             mean, std = np.mean(good_data), np.std(good_data)
             ra, ind = ra_info.split('_')
+            ind = int(ind)
+            if ind >= 2:
+                mrkr = '*'
+            else:
+                mrkr = 'o'
+            ind = int(ind) % 2
             if k == 'IE':
                 bx.scatter(float(ra)/ra_crit, 0.5+mean, s=0, alpha=0)
                 ax.errorbar(float(ra), 0.5+mean, yerr=std,  color=COLORS[int(ind)])
-                ax.scatter(float(ra), 0.5+mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                ax.scatter(float(ra), 0.5+mean, s=12*(3 - 2*int(ind)), marker=mrkr, color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Nu':
                 p=2/7#2/3
                 bx.scatter(float(ra)/ra_crit, mean/float(ra)**(p), s=0, alpha=0)
                 ax.errorbar(float(ra), mean/(float(ra)**(p)), yerr=std/(float(ra)**(p)),  color=COLORS[int(ind)])
-                ax.scatter(float(ra), mean/(float(ra)**p), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                ax.scatter(float(ra), mean/(float(ra)**p), s=12*(3 - 2*int(ind)), marker=mrkr, color=COLORS[int(ind)], alpha=0.75)
             elif k == 'Re':
                 pRe = 0.5
                 bx.scatter(float(ra)/ra_crit, mean/float(ra)**(pRe), s=0, alpha=0)
                 ax.errorbar(float(ra), mean/float(ra)**(pRe), yerr=std/float(ra)**(pRe),  color=COLORS[int(ind)])
-                ax.scatter(float(ra), mean/float(ra)**(pRe), s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                ax.scatter(float(ra), mean/float(ra)**(pRe), s=12*(3 - 2*int(ind)), marker=mrkr, color=COLORS[int(ind)], alpha=0.75)
             else:
                 bx.scatter(float(ra)/ra_crit, mean, s=0, alpha=0)
                 ax.errorbar(float(ra), mean, yerr=std,  color=COLORS[int(ind)])
-                ax.scatter(float(ra), mean, s=12*(3 - 2*int(ind)), marker='o', color=COLORS[int(ind)], alpha=0.75)
+                ax.scatter(float(ra), mean, s=12*(3 - 2*int(ind)), marker=mrkr, color=COLORS[int(ind)], alpha=0.75)
         except:
             continue
     ax.set_xlabel('Ra')
@@ -115,12 +116,12 @@ for i,k in enumerate(fields):
     [t.set_fontsize(10) for t in ax.get_yticklabels()]
     [t.set_fontsize(10) for t in bx.get_xticklabels()]
     [t.set_fontsize(10) for t in bx.get_yticklabels()]
-    for i,t in enumerate(ax.get_xticklabels()):
-        if i % 2 == 1:
+    for j,t in enumerate(ax.get_xticklabels()):
+        if j % 2 == 1:
             t.set_visible(0)
 
-    for i,t in enumerate(bx.get_xticklabels()):
-        if i % 2 == 1:
+    for j,t in enumerate(bx.get_xticklabels()):
+        if j % 2 == 1:
             t.set_visible(0)
 
     ax.set_xscale('log')

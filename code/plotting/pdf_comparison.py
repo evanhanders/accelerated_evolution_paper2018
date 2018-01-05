@@ -43,7 +43,7 @@ base_dirs_post = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
             ]
 ra_runs = '6.01e4'
-ra_runs = '2.79e7'
+ra_runs = '1.30e8'
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_post):
