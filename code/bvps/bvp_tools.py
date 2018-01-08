@@ -33,6 +33,7 @@ class BVPSolverBase:
         VARS       - An OrderedDict of variables which will be updated by the BVP
         VEL_VARS   - An OrderedDict of variables which contain info about the velocity field;
                         may be updated by BVP.
+        LOCAL_TRACK -An OrderedDict of variables which contain info about the instantaneous horizontal average of a profile
 
     Object Attributes:
     ------------------
@@ -45,27 +46,33 @@ class BVPSolverBase:
         bvp_run_threshold   - Degree of convergence required on time averages before doing BVP
         bvp_l2_check_time   - How often to check for convergence, in simulation time
         bvp_l2_last_check_time - Last time we checked if avgs were converged
+        current_avg_profiles- A 2 x nz_per_proc array containing the previous and current values of each tracked profile, for use in averaging
+        current_avg_times   - A 2 element array containing the time of the previous avg and the time of the current avg.
         current_local_avg   - Current value of the local portion of the time average of profiles
         current_local_l2    - The avg of the abs() of the change in the avg profile compared to the previous timestep.
         comm                - COMM_WORLD for IVP
         completed_bvps      - # of BVPs that have been completed during this run
         do_bvp              - If True, average profiles are converged, do BVP.
+        files_saved         - The number of BVP files that have been saved
         final_equil_time    - How long to allow the solution to equilibrate after the final bvp
         first_l2            - If True, we haven't taken an L2 average for convergence yet.
         flow                - A dedalus flow_tools.GlobalFlowProperty object for the IVP solver which is tracking
                                 the Reynolds number, and will track FIELDS variables
+        mesh                - processor mesh of the IVP in [ny, nz] form
         min_bvp_time        - Minimum simulation time to wait between BVPs.
         min_avg_dt          - Minimum simulation time to wait between adjusting average profiles.
         nz_per_proc          - Number of z-points per core (for parallelization)
         num_bvps            - Total (max) number of BVPs to complete
         nx                  - x-resolution of the IVP grid
+        ny                  - y-resolution of the IVP grid
         nz                  - z-resolution of the IVP grid
+        nz_per_proc         - number of z-points on each processor (important to track in 3D)
         partial_prof_dict   - a dictionary containing local contributions to the averages of FIELDS
         plot_dir            - A directory to save plots into during BVPs.
         profiles_dict       - a dictionary containing the time/horizontal average of FIELDS
-        profiles_dict_last  - a dictionary containing the time/horizontal average of FIELDS from the previous bvp
-        profiles_dict_curr  - a dictionary containing the time/horizontal average of FIELDS for current atmosphere state
+        profiles_dict_curr  - a dictionary containing the time/horizontal average of LOCAL_TRACK for current atmosphere state
         rank                - comm rank
+        re_switch           - A reynolds-number-based switch that becomes True once the Re threshold for averaging is reached.
         size                - comm size
         solver              - The corresponding dedalus IVP solver object
         solver_states       - The states of VARS in solver
@@ -104,7 +111,7 @@ class BVPSolverBase:
         self.flow       = flow
         self.solver     = solver
         self.nx         = nx
-        self.nx         = ny
+        self.ny         = ny
         self.nz         = nz
         self.mesh       = mesh
 
@@ -112,7 +119,6 @@ class BVPSolverBase:
         self.num_bvps           = num_bvps
         self.min_bvp_time       = min_bvp_time
         self.min_avg_dt         = min_avg_dt
-        self.time_since_avg_adjust        = 0.
         self.completed_bvps     = 0
         self.avg_time_elapsed   = 0.
         self.avg_time_start     = 0.
@@ -139,39 +145,33 @@ class BVPSolverBase:
             self.nz_per_proc     = self.nz/self.mesh[-1]
 
         # Set up tracking dictionaries for flow fields
-        for fd in self.FIELDS.keys():
-            field, avg_type = self.FIELDS[fd]
-            if avg_type == 0:
-                self.flow.add_property('plane_avg({})'.format(field), name='{}'.format(fd))
-            elif avg_type == 1:
-                self.flow.add_property('plane_std({})'.format(field), name='{}'.format(fd))
+        for fd, field in self.FIELDS.items():
+            self.flow.add_property('plane_avg({})'.format(field), name='{}'.format(fd))
         for fd, field in self.LOCAL_TRACK.items():
             self.flow.add_property('plane_avg({})'.format(field), name='{}'.format(fd))
  
-                
         if self.rank == 0:
             self.profiles_dict = OrderedDict()
             for fd, info in self.FIELDS.items():
-                if info[1] == 0 or info[1] == 1:    
-                    self.profiles_dict[fd]      = np.zeros(nz)
-
-
+                self.profiles_dict[fd]      = np.zeros(nz)
 
         # Set up a dictionary of partial profiles to track averages locally so we
         # don't have to communicate each timestep.
         self.profiles_dict_curr = OrderedDict()
+        self.current_avg_profiles = OrderedDict()
         self.current_local_avg = OrderedDict()
-        self.current_profiles = OrderedDict()
-        self.current_times = OrderedDict()
         self.current_local_l2  = OrderedDict()
         for fd, info in self.FIELDS.items():
-            if info[1] == 0 or info[1] == 1:
-                self.current_local_avg[fd]  = np.zeros(self.nz_per_proc)
-                self.current_local_l2[fd]   = np.zeros(self.nz_per_proc)
-                self.current_profiles[fd]   = np.zeros((2,self.nz_per_proc))
-                self.current_times[fd]      = np.zeros(2)
+            self.current_avg_profiles[fd]   = np.zeros((2,self.nz_per_proc))
+
+            self.current_local_avg[fd]  = np.zeros(self.nz_per_proc)
+            self.current_local_l2[fd]   = np.zeros(self.nz_per_proc)
         for fd in self.LOCAL_TRACK.keys():
             self.profiles_dict_curr[fd] = np.zeros(self.nz_per_proc)
+
+
+        self.current_avg_times      = np.zeros(2)
+        self.current_avg_times[1]   = self.solver.sim_time
 
         # Set up a dictionary which tracks the states of important variables in the solver.
         self.solver_states = OrderedDict()
@@ -189,29 +189,25 @@ class BVPSolverBase:
                 os.mkdir('{:s}'.format(self.plot_dir))
 
 
-    def get_local_profile(self, prof_name, avg_type=0):
+    def get_local_profile(self, prof_name):
         """
         Given a profile name, which is a key to the class FIELDS dictionary, 
         update the average on the local core based on the current flows.
 
         Arguments:
-            dt              - size of timestep taken
             prof_name       - A string, which is a key to the class FIELDS dictionary
-            avg_type        - If 0, horiz avg.  If 1, full 2D field.
         """
         field = self.flow.properties['{}'.format(prof_name)]['g']
         if len(field.shape) == 3:
             profile = field[0,0,:]
         else:
             profile = field[0,:]
-        if avg_type == 1:
-            profile = profile**2
         return profile
 
     def _update_profiles_dict(self, *args, **kwargs):
         pass
 
-    def get_full_profile(self, dictionary, prof_name, avg_type=0):
+    def get_full_profile(self, dictionary, prof_name):
         """
         Given a profile name, which is a key to the class FIELDS dictionary, communicate the
         full vertical profile across all processes, then return the full profile as a function
@@ -221,15 +217,14 @@ class BVPSolverBase:
             prof_name       - A string, which is a key to the class FIELDS dictionary
             avg_type        - If 0, horiz avg.  If 1, full 2D field.
         """
-        if avg_type == 0 or avg_type == 1:
-            local = np.zeros(self.nz)
-            glob  = np.zeros(self.nz)
-            if isinstance(self.mesh, type(None)):
-                local[self.nz_per_proc*self.rank:self.nz_per_proc*(self.rank+1)] = \
-                        dictionary[prof_name]
-            elif self.rank < self.mesh[-1]:
-                local[self.nz_per_proc*self.rank:self.nz_per_proc*(self.rank+1)] = \
-                        dictionary[prof_name]
+        local = np.zeros(self.nz)
+        glob  = np.zeros(self.nz)
+        if isinstance(self.mesh, type(None)):
+            local[self.nz_per_proc*self.rank:self.nz_per_proc*(self.rank+1)] = \
+                    dictionary[prof_name]
+        elif self.rank < self.mesh[-1]:
+            local[self.nz_per_proc*self.rank:self.nz_per_proc*(self.rank+1)] = \
+                    dictionary[prof_name]
         self.comm.Allreduce(local, glob, op=MPI.SUM)
 
         profile = glob
@@ -273,33 +268,32 @@ class BVPSolverBase:
 
             # Grab local profile info
             for fd, info in self.FIELDS.items():
-                field, avg_type = self.FIELDS[fd]
-                self.current_profiles[fd][0,:] = self.get_local_profile(fd, avg_type=avg_type)
-                self.current_times[fd][0] = solver_sim_time
+                self.current_avg_profiles[fd][0,:] = self.get_local_profile(fd)
             for fd in self.LOCAL_TRACK.keys():
                 self.profiles_dict_curr[fd] = self.get_local_profile(fd)
-
+            
+            self.current_avg_times[0] = solver_sim_time
+            time_diff = self.current_avg_times[0] - self.current_avg_times[1]
             #Update sums for averages. Check to see if we're converged enough for a BVP.
-            self.time_since_avg_adjust += dt
-            if self.time_since_avg_adjust >= self.min_avg_dt:
-                self.avg_time_elapsed += self.time_since_avg_adjust
+            if time_diff >= self.min_avg_dt:
+                if self.first_l2:
+                    self.current_avg_times[1] = self.current_avg_times[0]
+                else:
+                    self.avg_time_elapsed += time_diff
                 for fd, info in self.FIELDS.items():
                     if self.first_l2:
-                        self.current_times[fd][1] = self.current_times[fd][0]
-                        self.current_profiles[fd][1,:] = self.current_profiles[fd][0,:]
+                        self.current_avg_profiles[fd][1,:] = self.current_avg_profiles[fd][0,:]
                         self.current_local_l2[fd]  *= 0
                         continue
                     else:
-                        avg = self.current_local_avg[fd]*1. / self.avg_time_elapsed
-                        self.current_local_avg[fd] += ((self.current_times[fd][0] - self.current_times[fd][1])/2)*\
-                                                    (self.current_profiles[fd][1,:] + self.current_profiles[fd][0,:])
+                        avg = self.current_local_avg[fd]*1. / (self.avg_time_elapsed - time_diff)
+                        self.current_local_avg[fd] += ((time_diff)/2)*(self.current_avg_profiles[fd][1,:] + self.current_avg_profiles[fd][0,:])
                         new_avg = self.current_local_avg[fd]*1. / self.avg_time_elapsed
                         self.current_local_l2[fd] = np.abs((new_avg - avg)/new_avg)
-#                    print(fd, np.sum(self.current_profiles[fd], axis=0)/2, self.current_times[fd][0] - self.current_times[fd][1])
 
                     #get staged for next point in avg.
-                    self.current_times[fd][1] = self.current_times[fd][0]
-                    self.current_profiles[fd][1,:] = self.current_profiles[fd][0,:]
+                    self.current_avg_times[1] = self.current_avg_times[0]
+                    self.current_avg_profiles[fd][1,:] = self.current_avg_profiles[fd][0,:]
 
                 # Check if converged for BVP
                 if (solver_sim_time - self.bvp_l2_last_check_time) > self.bvp_l2_check_time and not self.first_l2:
@@ -377,8 +371,7 @@ class BVPSolverBase:
         """ Base functionality at the beginning of BVP solves, regardless of equation set"""
 
         for fd, item in self.FIELDS.items():
-            defn, avg_type = item
-            curr_profile = self.get_full_profile(self.current_local_avg, fd, avg_type=avg_type)
+            curr_profile = self.get_full_profile(self.current_local_avg, fd)
             if self.rank == 0:
                 self.profiles_dict[fd] = curr_profile / self.avg_time_elapsed
         self._save_file()
@@ -399,9 +392,9 @@ class BoussinesqBVPSolver(BVPSolverBase):
     # 0 - full avg profile
     # 1 - stdev profile
     FIELDS = OrderedDict([  
-                ('enth_flux_IVP',       ('w*(T0+T1)', 0)),                      
-                ('tot_flux_IVP',        ('(w*(T0+T1) - P*(T0_z+T1_z))', 0)),                      
-                ('momentum_rhs_z',      ('(u*Oy - v*Ox)', 0)),                      
+                ('enth_flux_IVP',       'w*(T0+T1)'),                      
+                ('tot_flux_IVP',        '(w*(T0+T1) - P*(T0_z+T1_z))'),                      
+                ('momentum_rhs_z',      '(u*Oy - v*Ox)'),                      
                         ])
 
     LOCAL_TRACK = OrderedDict([  
@@ -504,10 +497,9 @@ class BoussinesqBVPSolver(BVPSolverBase):
             plt.savefig('{}/fluxes_after_{:04d}.png'.format(self.plot_dir, self.plot_count))
             plt.close()
             for fd in self.FIELDS.keys():
-                if self.FIELDS[fd][1] == 0 or self.FIELDS[fd][1] == 1 or self.FIELDS[fd][1] == 2:
-                    plt.plot(z, self.profiles_dict[fd])
-                    plt.savefig('{}/{}_{:04d}.png'.format(self.plot_dir, fd, self.plot_count))
-                    plt.close()
+                plt.plot(z, self.profiles_dict[fd])
+                plt.savefig('{}/{}_{:04d}.png'.format(self.plot_dir, fd, self.plot_count))
+                plt.close()
         self.plot_count += 1
 
         return flux_scaling
