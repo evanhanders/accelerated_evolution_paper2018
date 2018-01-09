@@ -23,6 +23,38 @@ comm_world = MPI.COMM_WORLD
 from collections import OrderedDict
 import h5py
 import matplotlib.gridspec as gridspec
+from scipy.interpolate import interp1d
+
+
+def calculate_CDF(x, pdf):
+    """ Calculate the CDF of a PDF using trapezoidal rule integration """
+    dx = np.diff(x)
+    new_x = x[0:-1] + dx
+    d_cdf   = (dx/2) * (pdf[0:-1] + pdf[1:])
+    cdf = np.zeros_like(d_cdf)
+    for i in range(len(cdf)):
+        cdf[i] = np.sum(d_cdf[:i+1])
+    return new_x, cdf
+
+def ks_test(x1, y1, N1, x2, y2, N2, n=1000):
+    x_range = [np.min(x1), np.max(x1)]
+    if np.min(x2) > x_range[0]:
+        x_range[0] = np.min(x2)
+    if np.max(x2) < x_range[1]:
+        x_range[1] = np.max(x2)
+
+    x_points = np.linspace(*tuple(x_range), n)
+
+    f1 = interp1d(x1, y1, bounds_error=False, assume_sorted=True)#, fill_value='extrapolate')
+    f2 = interp1d(x2, y2, bounds_error=False, assume_sorted=True)#, fill_value='extrapolate')
+
+    y1_interp = f1(x_points)
+    y2_interp = f2(x_points)
+    diff = np.abs(y1_interp - y2_interp)
+    
+    max_diff = np.max(diff)
+    return max_diff, np.sqrt((N1+N2)/(N1*N2))
+
 
 
 import dedalus.public as de
@@ -93,6 +125,19 @@ axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w
 axes[-1].set_xlabel('w\'')
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
+
+#plt.figure()
+#cdf_x_bvp, cdf_y_bvp = calculate_CDF(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
+#cdf_x_base, cdf_y_base = calculate_CDF(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf'])
+#plt.plot(cdf_x_bvp, cdf_y_bvp)
+#plt.plot(cdf_x_base, cdf_y_base)
+#plt.yscale('log')
+#
+#max_diff, comp = ks_test(cdf_x_bvp, cdf_y_bvp, info[bvp_label]['u_denorm_pdf'],\
+#                         cdf_x_base, cdf_y_base, info[base_label]['u_denorm_pdf'])
+#print(max_diff, comp, max_diff/comp)
+#plt.show()
+
 
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))

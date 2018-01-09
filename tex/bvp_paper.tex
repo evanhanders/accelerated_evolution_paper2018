@@ -95,11 +95,14 @@ at high Ra, in the regime where running for thermal timescales becomes computati
 
 \section{Experiment}
 \label{sec:experiment}
-In our study, we adopt the Oberbeck-Boussinesq approximation.  Here, the
-fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), fluid density ($\rho_0$), and coefficient
-of thermal expansion ($\alpha$).   The Boussinesq
-equations governing the velocity $\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, temperature
-$T = T_0 + T_1$, and pressure $P$ are \cite{spiegel&veronis1960}
+We adopt the Oberbeck-Boussinesq approximation.  Under this choice, the
+fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
+of thermal expansion ($\alpha$). The variables of the fluid that are evolved are the velocity,
+$\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, the temperature $T = T_0 + T_1$, and the pressure.
+The density of the fluid is a constant $\rho_0$, except on the
+term where the constant gravitational acceleration, $\bm{g} = - g\hat{z}$ acts in the vertical momentum equation, 
+in which case it is $\rho = \rho_0(1  - \alpha T_1)$.  
+Under these choices, the equations of motion are \cite{spiegel&veronis1960}
 \begin{gather}
 \DivU = 0, 
 	\label{eqn:dim_incompressible}
@@ -111,13 +114,15 @@ $T = T_0 + T_1$, and pressure $P$ are \cite{spiegel&veronis1960}
 \frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \kappa\grad^2 T_1,
 	\label{eqn:dim_bouss_energy}
 \end{gather}
-We non-dimensionalize these equations on a length scale of the layer height ($L_z$),
-a temperature of the (constant) initial temperature gradient across the layer ($\grad T_0$), and a timescale
-of the freefall timescale ($L_z / v_{\text{ff}}$, with $v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$, where $g$ is 
-uniform gravitational acceleration in the $-\hat{z}$ direction).
-We non-dimensionalize the equations and re-arrange the momentum equation, introducing a reduced pressure
-$\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where $\phi$ is the gravitational potential, we time evolve
-the following equations,
+We non-dimensionalize these equations such that length scales are in units of the layer height ($L_z$),
+temperature is in units of the initial temperature jump across the layer ($\Delta T_0 = L_z \grad T_0$), 
+and time is in units of the freefall timescale ($L_z / v_{\text{ff}}$), where the freefall velocity is
+$v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$.
+We further re-arrange the momentum equation by introducing a reduced pressure
+$\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where $\bm{g} = -\grad \phi$ is the gravitational potential.
+Despite containing a nonlinear $\bm{u}$ component, the nature of $P$ in \RB convection, as a (whatever it's called)
+allows us to treat $\varpi$ as a linear unknown, without a need to resolve its different components.
+We time evolve the equations in the form,
 \begin{gather}
 \DivU = 0, 
 	\label{eqn:incompressible}
@@ -128,8 +133,9 @@ the following equations,
 \frac{\partial T_1}{\partial t} - \mathcal{P}\grad^2 T_1 + w \frac{\partial T_0}{\partial z} = - \bm{u}\cdot\grad T_1,
 	\label{eqn:bouss_energy}
 \end{gather}
-where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity.  
-Here the dimensionless control parameters are the Rayleigh and Prandtl numbers,
+where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity. We find this form of the momentum equation to
+be slightly faster numerically than the standard form in Eq. (\ref{eqn:dim_bouss_momentum}).
+The dimensionless control parameters are set by the Rayleigh and Prandtl numbers,
 \begin{equation}
 \mathcal{R} \equiv \sqrt{\frac{\text{Pr}}{\text{Ra}}}, \qquad \mathcal{P} \equiv \frac{1}{\sqrt{\text{Pr}\,\text{Ra}}}, \qquad
 \text{Ra} = \frac{g \alpha L_z^4 \grad T_0}{\nu\chi} = \frac{(L_z\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}.
@@ -140,17 +146,6 @@ At the lower boundary, we employ a fixed flux condition such that $\partial T_1 
 at $z = -1/2$, and we impose a fixed temperature condition $T_1 = 0$ at $z = 1/2$. Both
 horizontal directions are periodic, extending over a range $x, y = [0, \Gamma]$, where
 the aspect ratio is $\Gamma = 2$.
-
-
-
-These equations are expressed with linear terms on the left-hand side and
-nonlinear terms on the right-hand side.  Because $P$ is a (whatever it's called) in boussinesq, \RB convection, we are able to
-evolve $\varpi$ as a linear variable even though it contains a nonlinear velocity component.  This formulation
-of the equations gives us a modest improvement in timestepping speed compared to Eqns. (\ref{eqn:dim_incompressible}-\ref{eqn:dim_bouss_energy}).
-have been expressed with the linear terms (which we solve implicitly) on the LHS, and the
-nonlinear terms on the RHS. Here, the reduced pressure is $\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$,
-where $\phi$ is the gravitational potential and where $P$ is a (I forget the word) that enforces incompressibility
-in the Boussinesq system.
 
 The chosen thermal boundary conditions at the upper and lower plates
 determine key quantities of the evolved state.
@@ -176,11 +171,8 @@ Dirichlet condition.  We choose these conditions in part to better understand th
 part because these conditions minimize the number of assumptions that must be made in
 setting up the boundary value problem.
 
-
-
-
 \subsection{The Boundary Value Problem}
-\begin{figure}[b]
+\begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/time_trace.png}
 \caption{Traces of system energies vs. time for a long thermal rundown (a) and BVP convergence
 (b) are shown for Ra = $1.30 \cdot 10^7$ ($S = 10^4$).  The two plots are scaled such that
@@ -192,76 +184,74 @@ rundown state are compared to the fluxes in the converged BVP solution, where th
 is shown in (e). \label{fig:time_trace} }
 \end{figure}
 
-The prohibitively long thermal timescale required to reach an equilibrium temperature profile
-in a Direct Numerical Simulation (DNS) can be skipped by coupling the DNS with a simple Boundary Value Problem
-(BVP) solve. Using information about the dynamics of the convection in the atmosphere, it is possible
-to skip a large portion of the thermal evolution, see Fig \ref{fig:time_trace}a\&b.
+It is a reasonable assumption to naively guess that convection will evolve the mean temperature profile that
+drives it over the course of a thermal diffusion time, $t_\chi \approx \mathcal{P}^{-1}$. Thus, as Ra
+increases, the timescale for achieving a thermally converged mean temperature profile becomes intractable.
+This prohibitively long thermal timescale in a Direct Numerical Simulation (DNS) 
+can be skipped by coupling the DNS with a simple Boundary Value Problem
+(BVP) solve. By using information about the evolved dynamical state of the atmosphere,
+a BVP can be used to solve for the evolved atmospheric state on short timescales.
+A comparison of a simulation running for the thermal timescale, and another where a BVP is used
+to fast-forward atmospheric evolution, are shown in Fig \ref{fig:time_trace}a\&b.
 
-The Boussinesq BVP contains equations of hydrostatic balance and thermal equilibrium,
+The Boussinesq BVP in essence contains equations of hydrostatic balance and thermal equilibrium,
 \begin{gather}
-\frac{\partial}{\partial z}\angles{\varpi} = \angles{T_1}\hat{z},
+\frac{\partial}{\partial z}\angles{\varpi} - \angles{T_1}\hat{z} = \angles{\bm{u}\times\bm{\omega}},
 	\label{eqn:bouss_BVP_momentum}
 \\
-\frac{\partial}{\partial z}\angles{wT_1} = \frac{1}{\text{Pr}\text{Ra}}\frac{\partial^2}{\partial z^2} \angles{T_1},
+\frac{\partial}{\partial z}\angles{wT_1} - \frac{1}{\text{Pr}\text{Ra}}\frac{\partial^2}{\partial z^2} \angles{T_1} = 0,
 	\label{eqn:bouss_BVP_energy}
 \end{gather}
 where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  
 These
-equations arise from taking time- and horizontal- averages of Eqns (\ref{eqn:bouss_momentum}\&\ref{eqn:bouss_energy}),
-neglecting terms that vanish due to symmetry, and assuming that the flows are in a stationary state.  
+equations arise from assuming that the atmosphere is in a steady state ($\partial_t \rightarrow 0$),
+then taking time and horizontal averages of Eqns (\ref{eqn:bouss_momentum}\&\ref{eqn:bouss_energy}) and
+neglecting terms that vanish due to the symmetry of the problem.
 Convective flows
-are perturbations around a thermal profile defined by these equations in the proper evolved state.
+are perturbations around a thermal profile defined by these equations in the proper evolved, statistically stationary state.
 
 Under eqns (\ref{eqn:bouss_BVP_momentum}\&\ref{eqn:bouss_BVP_energy}), 
 the thermal structure ($\angles{T_1}$, $\angles{\varpi}$) of the atmosphere is fully determined by the specification
-of the convective flux, $F_{conv} = \angles{w T_1}$.  If this profile is known, then 
+of two profiles: the convective flux, $F_{conv} = \angles{w T_1}$, and the nonlinear advection, $\angles{\bm{u}\times\bm{\omega}}$.  
+If these profiles are known, then 
 solving for $\angles{T_1}$ and
 $\angles{\varpi}$ depends only upon the choice of boundary conditions.
 
-By definition, the profile of $F_{conv}$ is \emph{not} in its time stationary state near the
-beginning of the simulation.  In fact, under mixed boundary conditions, as the atmosphere approaches the
-isotherm specified by the upper boundary condition, the motions display an asymmetric flux as energy
-leaks through the upper boundary condition (Fig. \ref{fig:time_trace}c).  
+By definition, the profile of $F_{conv}$ is not in its time stationary early in the DNS.  
+In fact, as the atmosphere approaches the
+isotherm specified by the upper (fixed $T$) boundary condition, the motions display an asymmetric flux as energy
+leaks through the upper boundary condition (Fig. \ref{fig:time_trace}c) in order to reach a lower temperature state.
 In order to construct the evolved convective flux from the current fluxes in the atmosphere,
-we acknowledge that the evolved solution will be in flux equilibrium, 
-carrying the amount of flux specified at the fixed-flux condition throughout the full depth of the atmosphere.  
-Thus, the steady-state profile of the convective flux can be approximated as
-\begin{equation}
-F_{\text{conv, steady}} = F_{\text{bot}}\frac{\angles{wT_1}}{\angles{wT_1 - \kappa \partial_z (T_0 + T_1)}}
-= F_{\text{bot}}\frac{\angles{F_{\text{conv, IVP}}}}{\angles{F_{\text{tot, IVP}}}}.
-\label{eqn:bouss_BVP_fconv}
-\end{equation}
-In essence, the construction of this profile assumes that the system appropriately picks out the ratios
+we assume that the atmospheric dynamics have properly developed the thickness of the boundary layers, 
+or that the quantities
 \begin{equation}
 f_{\text{conv}} = \frac{F_{\text{conv}}}{F_{\text{tot}}}\qquad
-f_{\text{cond}} = \frac{F_{\text{cond}}}{F_{\text{tot}}}.
+f_{\text{cond}} = \frac{F_{\text{cond}}}{F_{\text{tot}}}
 \end{equation}
-in the transient state.  Thus, even though the quantity of flux being carried is not correct, the
-system is carrying flux convectively where it needs to in the interior, and conductively in the boundaries.
+early in the evolution are the same as those in the final steady state solution. By definition, the
+evolved total flux through the atmosphere must be the same as the flux entering the atmosphere at the
+bottom boundary, $F_{\text{tot, steady}} = F_{\text{bot}}$.  The proper enthalpy flux profile to feed in
+to Eqn. (\ref{eqn:bouss_BVP_energy}) is then 
+$\angles{w T_1}_{\text{steady}} = F_{\text{tot, steady}} \cdot f_{\text{conv}}$.  Presumably, over the
+course of the simulation, the velocity field and temperature fluctuations naturally scale like
+$d(z) = \angles{w T_1}_{\text{steady}}/\angles{w T_1}$, and so it is necessary to multiply the velocity
+field and the fluctuations around the mean in $T_1$ by $\sqrt{d}$.  This also means that
+$\angles{\bm{u}\times\bm{\omega}}_{\text{steady}} = d \angles{\bm{u}\times\bm{\omega}}$. Once these profiles
+are appropriately adjusted, they can be used in the BVP solve to find the mean profiles of $T$ and $\varpi$.
 
-The choice of a fixed-flux boundary condition at the bottom appropriately scales the magnitude of
-$F_{\text{conv, steady}}$.  The choice of a fixed-temperature boundary condition at the top of the
-atmosphere appropriately sets the isotherm of the convective interior.  While this method can be used
-for other choices of thermal boundary conditions (see Discussion), dual fixed temperature conditions
-at the upper plate require a more careful handling of $F_{\text{bot}}$, and dual fixed flux boundary
-conditions have degenerate solutions for the constant offset of $T_1$.
-
-In general, the BVP solve takes the following form:
+In general, the BVP solve is completed in the following steps:
 \begin{enumerate}
-\item Run the convective IVP. Once the convection begins, start taking averages averages of $\angles{wT_1}$
-and $\partial_z^2\angles{T_1}$, which determine the fluxes through the system.  Update these averages every
-$\Delta t = 0.1$ freefall times.  Once these averages are converged to 1 part in 1000, the BVP is ready to be solved.
-\item Construct $F_{\text{conv, steady}}$ from the flux profiles, then use it to solve for $\angles{T_1}$ 
-and \angles{\varpi} of the
-evolved state.  Adjust the mean profiles in the BVP such that this is their mean profile.
-\item Divide the velocities and the $T_1$ fluctuations around the mean profile by 
-$\sqrt{\bar{F_{\text{bot}}/F_{\text{tot}}}}$. This lowers the convective flux through the system such that it is,
-on average, the convective flux used in the BVP solve.
-\item Continue running the IVP for a number of freefall times to allow the velocities and temperature perturbations
-to equilibrate to the new mean state.
+\item Run the convective DNS. Once the convection achieves a volume-averaged Re of $\sqrt{\text{Ra}/\text{Ra}_{\text{crit}}}$,
+wait for 50 time units.  Then, start taking the averages of $F_{\text{conv}}$ and $F_{\text{tot}}$, waiting either
+30 time units or until the profiles are converged to 1 part in 1000, whichever is a more difficult. This ensures that
+the profiles being used in the BVP are steady and smooth, and that they sample the full behavior of the convection.
+\item Construct $\angles{w T_1}_{\text{steady}}$ and $\angles{\bm{u}\times\bm{\omega}}_{\text{steady}}$
+from the flux profiles.
+\item Solve for $\angles{T_1}$ and \angles{\varpi} of the
+evolved state.  Adjust the mean profiles in the IVP.
+\item Multiply the velocity field and the fluctuations in $T_1$ about its horizontal average by $\sqrt{d}$ in the IVP. 
+\item Continue running the IVP for 50 time units to allow for the velocities to equilibrate to their new background state.
 \end{enumerate}
-This procedure seems to work quite well, see Fig. \ref{fig:time_trace}d\&e.
-
 
 \subsection{Numerics}
 We utilize the 
