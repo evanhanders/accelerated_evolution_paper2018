@@ -52,14 +52,6 @@ and discuss its extension to more complex scenarios, such as stratified, compres
 \end{abstract}
 \maketitle
 
-\section{To Do}
-\begin{enumerate}
-\item Get 3D cases in
-\item Continue Improving Figures
-\item Write figure captions
-\end{enumerate}
-
-
 \section{Introduction}
 \label{sec:intro}
 Natural convection occurs in the presence of disparate timescales. Granules on the
@@ -175,13 +167,17 @@ setting up the boundary value problem.
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/time_trace.png}
 \caption{Traces of system energies vs. time for a long thermal rundown (a) and BVP convergence
-(b) are shown for Ra = $1.30 \cdot 10^7$ ($S = 10^4$).  The two plots are scaled such that
-one time unit on the x-axis of either run takes up an equivalent amount of space on the paper
-to illustrate the time savings of the BVP run.  (c\&d) Flux plots, where black is the sum of the
-flux, blue is enthalphy flux and red is condcutive flux. (c) Fluxes are shown for the IVP at an early
-time to illustrate the asymmetry of the flux through the system. (d) Fluxes through the converged,
-rundown state are compared to the fluxes in the converged BVP solution, where their difference
-is shown in (e). \label{fig:time_trace} }
+(b) are shown for Ra = $1.30 \cdot 10^8$ ($S = 10^5$).  The horizontal extent of the subplots is set
+such that one simulation time unit takes up an equal amount of paper space in (a) and (b).
+The dashed vertical line on (a) represents the time at which the BVP is solved on the run in (b),
+and the horizontal dashed lines show the equilibrium value of the energies.
+(c) System fluxes early in the run (the orange highlights in (a)).  Black is the sum of the flux, purple
+is the convective flux, and red is the conductive flux.
+(d) Fluxes in the converged rundown IVP compared to the ``converged'' BVP.  The sum of flux is shown in
+black \& grey, the convective flux is shown in purple \& pink, and the conductive flux is shown in red \& orange.
+(e) The differences between the BVP and rundown fluxes is shown.  While not in perfect agreement, the BVP fluxes
+are much closer to the converged state than the initial fluxes, as in (c).
+\label{fig:time_trace} }
 \end{figure}
 
 It is a reasonable assumption to naively guess that convection will evolve the mean temperature profile that
@@ -322,38 +318,45 @@ of a similar morphology in order to see a clear trend.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
-\caption{We compare the time-variant dynamics in our 2D solutions by showing probability distribution
-functions of the values of vertical velocity (a), horizontal velocity (b), and nonlinear heat
-transport (c) in our converged solutions.  The horizontal velocities are very similar, with a
-KS test similarity of X.  The vertical velocities, too, are similar, with a KS similarity of
-Y.  The nonlinear heat transport, while overall quite similar, shows that the BVP experiences
-a greater number of extreme events.  The peak around zero for all three PDFs reflects the
-no-slip boundary conditions.\label{fig:pdf_comparison} }
+\caption{Frequency distribution functions of the vertical velocity (a), horizontal velocity (b), and nonlinear
+vertical transport (c) are shown for a 2D run at $S = 10^5$.  We sample flows every 0.1 time units for 500 freefall
+times, and include the flows at all points on the grid at each of these samples in these distributions.  All
+distributions are biased by the no-slip, impenetrable boundary conditions, coupled with the dense spacing of our
+Chebyshev grids near the boundaries, so there is a large peak around zero. The distributions, and thus the nonlinear
+dynamics, are broadly similar, but they do not pass a two-tailed Kolmogorov-Smirnov similarity test. (NOTE TO
+CO-AUTHORS: I NEED TO THINK BETTER ON HOW TO COMPARE PDFS, IF YOU HAVE IDEAS PLEASE SEND THEM)
+\label{fig:pdf_comparison} }
 \end{figure}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/temp_comparison.png}
-\caption{Here we compare the evolved thermodynamic state of a BVP to that of a rundown IVP that
-has been run through a thermal timescale.  (a) The temperature profiles, as a function of height,
-are shown. (b) The percentage difference between the temperature profiles, as a function of height,
-is shown.  (c) PDFs comparing the values of the point-by-point temperatures over the averaging
-window.  While the median of the PDF has a distinct offset between the two runs, the
-thermal fluctuations about the mean which drive the convection are nearly the same.
+\caption{Comparisons of the evolved thermodynamic states of a BVP solution and a long IVP rundown at
+$S = 10^5$ are shown.  (a) Evolved temperature profiles, as a function of height.
+(b) The percentage difference between the temperature profiles (as shown in (a)), as a function of height.
+(c) Frequency distributions, as in Fig. \ref{fig:pdf_comparison},
+comparing the values of the point-by-point temperatures over the averaging
+window. The mode of the frequency distribution has a distinct offset between the two runs due to
+the clear difference between the profiles in (a), but the
+thermal fluctuations about the mean which drive the convection are similar (AS IN FIG. \ref{fig:pdf_comparison},
+I NEED TO THINK MORE ON THE PDF COMPARISON).
 \label{fig:temp_comparison} }
 \end{figure}
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
-\caption{Here we demonstrate the efficacy of the BVP method at many values of Ra.  We show
-(a) Nusselt number scaling, (b) Reynolds number scaling, and (c) scaling of the mean temperature
-over the whole simulation.  (a) The Nusselt number follows a classic 2/7 scaling law
-\cite{johnston&doering2009}, until it reaches S = $10^{3 + 2/3}$, at which point the
-two-roll solution begins oscillating horizontally, showing time-variant Nu.  The range of Nu
-over the averaging window is (blah), and the trend of Nu (the variance of the mean Nu) is shown
-as (blah).  (b) Re follows an expected 1/2 scaling law. (c) The mean value of temperature, minus
-the value at the fixed-temperature boundary, is shown.  As Ra increases, the boundary layers shrink,
-and the convection becomes more efficient, we anticipate this value to get closer and closer to
-zero as the atmosphere approaches the isotherm defined by the upper boundary.
+\caption{Compensated scaling plots are shown for the Nusselt number (a), the
+Reynolds number (b), and the volume-averaged temperature (c).  All plots are linear(y)-log(x),
+and any differences vertically are generally small.  Symbols represent the mean value of
+a measurement, vertical lines represent the standard deviation of the measurement over the
+time window, and error bars represent the shift in the mean value over the window.
+(a) Nu, which measures heat transport, scales roughly like $Ra^{1/5}$, and above Ra$\geq 10^6$,
+simulations display horizontally oscillating plumes which have oscillating periods of high transport
+and low transport.  The mean value is marginally diminished as a result, and the range of Nu over time
+is large. (b) Re, which measures the level of turbulence in the evolved solution, scales as
+Ra$^{0.45}$ in 2D and (something else) in 3D. (c) The average temperature flucutation, minus the top
+temperature, gives us a measure of the extent of the upper boundary, and is in some ways a more stationary
+proxy for Nu, and it displays similar scaling.  The temperature profile is slow to adjust, and differences between
+BVP solutions and rundown solutions are easier to pick out.
 \label{fig:parameter_space_comparison} }
 \end{figure}
 

@@ -71,7 +71,7 @@ for a, base_dir in enumerate(base_dirs_post):
 
 
 print(info['{}_0'.format(ra_runs)].keys())
-plt.figure(figsize=(8, 2.5))
+plt.figure(figsize=(8, 1.5))
 gs     = gridspec.GridSpec(*(1000,1000))
 
 
@@ -90,11 +90,14 @@ plt.legend(frameon=False, loc='upper right', fontsize=10)
 axes[-1].set_xlabel('z')
 axes[-1].set_ylabel(r'$T$' + ' profile')
 
+y_ticks = [-0.5, -0.48, -0.46, -0.44, -0.42]
+axes[-1].set_yticks(y_ticks)
+
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
 
 axes[-1].plot(info[base_label]['z_profile'], 100*np.abs(info[base_label]['T_profile'][0,:] - info[bvp_label]['T_profile'][0,:])/np.abs(info[base_label]['T_profile'][0,:]))
-y_ticks = np.array([0, 0.5, 1])
+y_ticks = np.array([0, 0.5, 1, 1.5, 2])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
@@ -103,14 +106,14 @@ axes[-1].set_ylabel('% difference')
 
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
-axes[-1].fill_between(info[base_label]['T_xs_pdf'], 0, info[base_label]['T_pdf_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['T_xs_pdf'], info[base_label]['T_pdf_pdf'], c='blue')
-axes[-1].fill_between(info[bvp_label]['T_xs_pdf'], 0, info[bvp_label]['T_pdf_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'], c='red')
-x_ticks = np.array([-0.5, np.max(info[base_label]['T_xs_pdf'])])
+axes[-1].fill_between(info[base_label]['T_xs_pdf'], 0, info[base_label]['T_pdf_pdf']*info[base_label]['T_denorm_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['T_xs_pdf'], info[base_label]['T_pdf_pdf']*info[base_label]['T_denorm_pdf'], c='blue')
+axes[-1].fill_between(info[bvp_label]['T_xs_pdf'], 0, info[bvp_label]['T_pdf_pdf']*info[bvp_label]['T_denorm_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf']*info[bvp_label]['T_denorm_pdf'], c='red')
+x_ticks = np.array([-0.5, -0.45, -0.40])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('T')
-axes[-1].set_ylabel('Probability')
+axes[-1].set_ylabel('Frequency')
 axes[-1].set_yscale('log')
 axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
 

@@ -125,6 +125,7 @@ for i in range(4):
         f = 0.5 + info[this_label]['IE_scalar']
         df = np.abs(f[1:] - f[:-1])
         t_bvp_ind = np.argmax(df) + 1
+        axes[0].axvline(info['{}_1'.format(ra_runs)]['sim_time'][t_bvp_ind], ls='--', c='k')
         axes[i % 2].plot(info[this_label]['sim_time'][:t_bvp_ind], info[this_label]['KE_scalar'][:t_bvp_ind], c='k')
         axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:], info[this_label]['KE_scalar'][t_bvp_ind:], c='k')
         axes[i % 2].set_yscale('log')
@@ -136,6 +137,13 @@ for i in range(4):
         axes_share[i % 2].set_ylim(1e-2, 5e-1)
 
     else:
+        if i == 2:
+            axes[0].axhline(np.mean(info[this_label]['KE_scalar']), c= 'k', ls = '--')
+            axes_share[0].axhline(np.mean(info[this_label]['IE_scalar']) + 0.5, c= 'r', ls = '--')
+            axes[1].axhline(np.mean(info[this_label]['KE_scalar']), c= 'k', ls = '--')
+            axes_share[1].axhline(np.mean(info[this_label]['IE_scalar']) + 0.5, c= 'r', ls = '--')
+            
+
         axes[i % 2].plot(info[this_label]['sim_time'], info[this_label]['KE_scalar'], c='k')
         axes[i % 2].set_yscale('log')
         axes[i % 2].set_ylim(1e-3, 1e-1)
@@ -149,6 +157,10 @@ for i in range(4):
 #Axes formatting
 axes[0].set_xlim(info['{}_0'.format(ra_runs)]['sim_time'][0], info['{}_2'.format(ra_runs)]['sim_time'][-1])
 axes[1].set_xlim(info['{}_1'.format(ra_runs)]['sim_time'][0], info['{}_3'.format(ra_runs)]['sim_time'][-1])
+x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1], 2000, 4000, 6000, 8000, 10000]
+axes[0].set_xticks(x_ticks)
+x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1]]
+axes[1].set_xticks(x_ticks)
 axes[0].set_ylabel(r'$\mathrm{Kinetic\,\, Energy}$')
 axes[0].set_xlabel('Simulation Time (freefall units)', labelpad=0)
 x, y = axes[0].xaxis.get_label().get_position()

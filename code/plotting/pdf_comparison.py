@@ -103,7 +103,7 @@ for a, base_dir in enumerate(base_dirs_post):
 
 
 print(info['{}_0'.format(ra_runs)].keys())
-plt.figure(figsize=(8, 2.5))
+plt.figure(figsize=(8, 1.5))
 gs     = gridspec.GridSpec(*(1000,1000))
 
 
@@ -117,14 +117,17 @@ axes.append(plt.subplot(gs.new_subplotspec(*gs_info[0])))
 base_label = '{}_0'.format(ra_runs)
 bvp_label = '{}_1'.format(ra_runs)
 
-axes[-1].fill_between(info[base_label]['w_xs_pdf'], 0, info[base_label]['w_pdf_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['w_xs_pdf'], info[base_label]['w_pdf_pdf'], c='blue')
-axes[-1].fill_between(info[bvp_label]['w_xs_pdf'], 0, info[bvp_label]['w_pdf_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf'], c='red')
+axes[-1].fill_between(info[base_label]['w_xs_pdf'], 0, info[base_label]['w_pdf_pdf']*info[base_label]['w_denorm_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['w_xs_pdf'], info[base_label]['w_pdf_pdf']*info[base_label]['w_denorm_pdf'], c='blue')
+axes[-1].fill_between(info[bvp_label]['w_xs_pdf'], 0, info[bvp_label]['w_pdf_pdf']*info[bvp_label]['w_denorm_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf']*info[bvp_label]['w_denorm_pdf'], c='red')
 axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w_xs_pdf']))
-axes[-1].set_xlabel('w\'')
-axes[-1].set_ylabel('Probability')
+axes[-1].set_xlabel('Vertical velocity', labelpad=-1)
+axes[-1].set_ylabel('Frequency')
 axes[-1].set_yscale('log')
+
+for tick in axes[-1].get_xticklabels():
+    tick.set_rotation(45)
 
 #plt.figure()
 #cdf_x_bvp, cdf_y_bvp = calculate_CDF(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
@@ -141,26 +144,32 @@ axes[-1].set_yscale('log')
 
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
-axes[-1].fill_between(info[base_label]['u_xs_pdf'], 0, info[base_label]['u_pdf_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf'], c='blue')
-axes[-1].fill_between(info[bvp_label]['u_xs_pdf'], 0, info[bvp_label]['u_pdf_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'], c='red')
+axes[-1].fill_between(info[base_label]['u_xs_pdf'], 0, info[base_label]['u_pdf_pdf']*info[base_label]['u_denorm_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf']*info[base_label]['u_denorm_pdf'], c='blue')
+axes[-1].fill_between(info[bvp_label]['u_xs_pdf'], 0, info[bvp_label]['u_pdf_pdf']*info[bvp_label]['u_denorm_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf']*info[bvp_label]['u_denorm_pdf'], c='red')
 axes[-1].set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
-axes[-1].set_xlabel('u\'')
-axes[-1].set_ylabel('Probability')
+axes[-1].set_xlabel('Horizontal velocity', labelpad=-0.5)
 axes[-1].set_yscale('log')
+
+
+for tick in axes[-1].get_xticklabels():
+    tick.set_rotation(45)
 
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
-axes[-1].fill_between(info[base_label]['w*T_xs_pdf'], 0, info[base_label]['w*T_pdf_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'], c='blue', label='rundown')
-axes[-1].fill_between(info[bvp_label]['w*T_xs_pdf'], 0, info[bvp_label]['w*T_pdf_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'], c='red', label='BVP')
+axes[-1].fill_between(info[base_label]['w*T_xs_pdf'], 0, info[base_label]['w*T_pdf_pdf']*info[base_label]['w*T_denorm_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf']*info[base_label]['w*T_denorm_pdf'], c='blue', label='Rundown')
+axes[-1].fill_between(info[bvp_label]['w*T_xs_pdf'], 0, info[bvp_label]['w*T_pdf_pdf']*info[bvp_label]['w*T_denorm_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf']*info[bvp_label]['w*T_denorm_pdf'], c='red', label='BVP')
 axes[-1].set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label]['w*T_xs_pdf']))
-plt.legend(frameon=False, fontsize=10, loc='upper right')
-axes[-1].set_xlabel('w*T\'')
-axes[-1].set_ylabel('Probability')
+plt.legend(frameon=False, fontsize=8, loc='upper right')
+axes[-1].set_xlabel(r'$w(T - \bar{T})$', labelpad=-5)
 axes[-1].set_yscale('log')
+
+
+for tick in axes[-1].get_xticklabels():
+    tick.set_rotation(45)
 
 
 
