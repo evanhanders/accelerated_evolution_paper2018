@@ -307,7 +307,6 @@ class BVPSolverBase:
                     else:
                         self.do_bvp = False
                     self.bvp_l2_last_check_time = solver_sim_time
-                self.time_since_avg_adjust = 0.
                 self.first_l2 = False
 
 
@@ -349,13 +348,14 @@ class BVPSolverBase:
     def _reset_fields(self):
         """ Reset all local fields after doing a BVP """
         self.do_bvp = False
-        self.first_l2 = False
+        self.first_l2 = True
         # Reset profile arrays for getting the next bvp average
         for fd, info in self.FIELDS.items():
             if self.rank == 0:
                 self.profiles_dict[fd]      *= 0
             self.current_local_avg[fd]  *= 0
             self.current_local_l2[fd]  *= 0
+            self.current_avg_times *= 0
 
     def _set_subs(self, problem):
         pass

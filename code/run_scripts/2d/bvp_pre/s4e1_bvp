@@ -12,7 +12,7 @@ cd $PBS_O_WORKDIR
 
 RA=1.30e7
 s=4_1.00
-label=bvp_newform
+label=bvp2
 
 mkdir $dedalus_dir
 
@@ -31,8 +31,10 @@ mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --no_slip \
         --output_dt=0.25 \
         --do_bvp \
-        --num_bvps=1 \
-        --bvp_final_equil_time=300 \
+        --num_bvps=2 \
+        --bvp_convergence_factor=1e-3 \
+        --min_bvp_time=30 \
+        --bvp_final_equil_time=50 \
         --label=$label \
 		--root_dir=$dedalus_dir \
 		 > $dedalus_dir/out.s$s.$PBS_JOBID
