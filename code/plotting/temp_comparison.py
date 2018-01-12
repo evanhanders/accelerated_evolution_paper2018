@@ -89,6 +89,7 @@ axes[-1].plot(info[bvp_label]['z_profile'], info[bvp_label]['T_profile'][0,:], c
 plt.legend(frameon=False, loc='upper right', fontsize=10)
 axes[-1].set_xlabel('z')
 axes[-1].set_ylabel(r'$T$' + ' profile')
+axes[-1].annotate(r'$\mathrm{(a)}$', (0.04, -0.494), fontsize=10)
 
 y_ticks = [-0.5, -0.48, -0.46, -0.44, -0.42]
 axes[-1].set_yticks(y_ticks)
@@ -103,6 +104,7 @@ x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('z')
 axes[-1].set_ylabel('% difference')
+axes[-1].annotate(r'$\mathrm{(b)}$', (0.04, 0.15), fontsize=10)
 
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
@@ -116,6 +118,7 @@ axes[-1].set_xlabel('T')
 axes[-1].set_ylabel('Frequency')
 axes[-1].set_yscale('log')
 axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
+axes[-1].annotate(r'$\mathrm{(c)}$', (-0.495, 1.2e8), fontsize=10)
 
 
 

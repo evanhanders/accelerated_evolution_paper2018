@@ -170,17 +170,20 @@ for i,k in enumerate(fields):
     ax.legend(fontsize=8, loc='upper left', ncol=2, scatterpoints=1, handlelength=1, frameon=False)
 
     if k == 'IE':
+        ax.annotate(r'$\mathrm{(c)}$', (1.8e3, 1.82), fontsize=10)
         label_end = '{:.2g}'.format(-pIE)
         label_end = '$(\\langle T_1\\rangle - T_{\mathrm{top}})\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end), fontsize=10, labelpad=4)
 #        ax.set_ylabel(r'$\langle T_1 \rangle - T_{\mathrm{top}}$', fontsize=10, labelpad=4)
         ax.set_ylim(1, 2)
     elif k == 'Nu':
+        ax.annotate(r'$\mathrm{(a)}$', (1.8e3, 0.225), fontsize=10)
         label_end = '-{:.2g}'.format(pNu)
         label_end = '$\\langle\\mathrm{Nu}\\rangle\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end), fontsize=10, labelpad=0)
         ax.set_ylim(2e-1, 5e-1)
     elif k == 'Re':
+        ax.annotate(r'$\mathrm{(b)}$', (1e8, 0.12), fontsize=10)
         label_end = '-{:.3g}'.format(pRe)
         label_end = '$\\langle\\mathrm{Re}\\rangle\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end),fontsize=10, labelpad=0)
