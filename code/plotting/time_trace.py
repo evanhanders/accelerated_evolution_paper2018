@@ -45,6 +45,7 @@ fields = ['Nu', 'Re', 'IE', 'KE', 'TE']
 
 ra_runs = '1.30e8'
 
+pre_flux_file = None
 ##### INFO grabbing from post-plot buddy files
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_pre + base_dirs_post):
@@ -53,6 +54,8 @@ for a, base_dir in enumerate(base_dirs_pre + base_dirs_post):
     for i, d in enumerate(glob.glob('{:s}/*Ra{:s}*/'.format(base_dir, ra_runs))):
         ra = d.split('_Ra')[-1].split('_')[0]
         ra += '_{}'.format(a)
+        if a == 1 and ra_runs in d:
+            pre_flux_file = h5py.File('{:s}/bvp_plots/profile_dict_file_0000.h5'.format(d), 'r')
 
         info[ra] = OrderedDict()
         try:
@@ -199,9 +202,16 @@ axes = []
 gs_info = (((550,0), 450, 267), ((550, 366), 450, 267), ((550, 800), 450, 200))
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[0])))
 this_label = '{}_0'.format(ra_runs)
-enth = info[this_label]['enth_flux_profile'][1,:]*np.sqrt(float(ra_runs))
-kappa = info[this_label]['kappa_flux_profile'][1,:]*np.sqrt(float(ra_runs))
-sum_f = (enth + kappa)
+#enth = info[this_label]['enth_flux_profile'][1,:]*np.sqrt(float(ra_runs))
+#kappa = info[this_label]['kappa_flux_profile'][1,:]*np.sqrt(float(ra_runs))
+#sum_f = (enth + kappa)
+
+enth = pre_flux_file['enth_flux_IVP'].value*np.sqrt(float(ra_runs))
+sum_f = pre_flux_file['tot_flux_IVP'].value*np.sqrt(float(ra_runs))
+kappa = sum_f - enth
+
+
+
 axes[-1].axhline(1, c='k', ls='-.')
 axes[-1].axhline(0, c='orange', ls='--')
 axes[-1].plot(info[this_label]['z_profile'], enth,  c=f_conv_color)
@@ -217,7 +227,7 @@ axes[-1].set_xlabel('z')
 [axes[-1].tick_params(axis=axis, colors='orange') for axis in axis_names]
 [t.set_color('k') for t in axes[-1].get_xticklabels()]
 [t.set_color('k') for t in axes[-1].get_yticklabels()]
-axes[-1].annotate(r'$\mathrm{(c)}$', (0.04, 6.2), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (0.04, 14.5), fontsize=10)
 
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))

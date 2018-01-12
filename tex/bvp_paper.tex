@@ -43,9 +43,9 @@
 \title{Accelerated convergence of convective simulations using boundary value problems}
 
 \begin{abstract}
-We present a method for using coupling Boundary value problems (BVPs) with Initial value problems (IVPs)
+We present a method for coupling Boundary value problems (BVPs) with Initial value problems (IVPs)
 in order to achieve thermally converged convective solutions on dynamical timescales, rather than the
-long thermal timescale.  We demonstrate the similarity between the solution reached via BVP and the
+long thermal timescale.  We demonstrate the similarity between the solution reached by BVP and the
 solution reached by a long thermal rundown of the IVP, and demonstrate that this method works at a
 large range of supercriticalities.  We use this method to achieve converged solutions at high Ra,
 and discuss its extension to more complex scenarios, such as stratified, compressible convection.
@@ -61,7 +61,7 @@ Both of these dynamical timescales are vastly shorter than the Sun's average tim
 which is the Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
 As simulations aim to model natural convection
 by increasing into the high-Rayleigh Number (Ra) regime, where diffusive timescales are much
-longer than dynamical timescales \cite{Anders&Brown2017}, achieving converged simulations will 
+longer than dynamical timescales \cite{anders&brown2017}, achieving converged simulations will 
 require runs which span a greater number of convective timescales in order to thermally converge.
 Furthermore, with increasing Ra and decreasing diffusivities, motions become more turbulent
 and require finer grid meshes and shorter timesteps to resolve turbulent motions, increasing the simulation
@@ -72,7 +72,7 @@ simulations an intractable problem using modern numerical tools.
 Prior studies of stratified convection in which a convective layer lies between stable layers
 have used the knowledge of Mixing Length Theory (MLT) to adjust the initial thermodynamic structure of
 the atmosphere to a state which is closer to the adiabat chosen by convection \cite{brandenburg&all2005}.
-However, most studies of convection do not contain stable layers above and below the convection
+However, many modern studies of convection do not contain stable layers above and below the convection
 zone, and the presence of hard boundaries and the boundary layers that they form make it difficult to
 know the correct evolved adiabat \emph{a priori}.
 
@@ -80,9 +80,9 @@ Here we present a method for using simple boundary value problems (BVPs),
 along with information about the evolved flow fields,
 to fast-forward the slow thermal evolution of convecting simulations.  
 We run two sets of experiments: one in which we allow convective simulations to evolve for a
-full thermal timescale before taking measurements, and another in which we employ a fast-forwarding,
+full thermal timescale before taking measurements, and another in which we employ a fast,
 BVP technique which occurs on dynamical timescales. We compare these two sets of simulations to
-show the validity of the BVP technique.  Then, we use the BVP technique to run simulations
+show the validity of the BVP technique.  We use the BVP technique to run simulations
 at high Ra, in the regime where running for thermal timescales becomes computationally intractable.
 
 \section{Experiment}
@@ -90,7 +90,7 @@ at high Ra, in the regime where running for thermal timescales becomes computati
 We adopt the Oberbeck-Boussinesq approximation.  Under this choice, the
 fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
 of thermal expansion ($\alpha$). The variables of the fluid that are evolved are the velocity,
-$\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, the temperature $T = T_0 + T_1$, and the pressure.
+$\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, the temperature $T = T_0 + T_1$, and the pressure, $P$.
 The density of the fluid is a constant $\rho_0$, except on the
 term where the constant gravitational acceleration, $\bm{g} = - g\hat{z}$ acts in the vertical momentum equation, 
 in which case it is $\rho = \rho_0(1  - \alpha T_1)$.  
@@ -110,9 +110,10 @@ We non-dimensionalize these equations such that length scales are in units of th
 temperature is in units of the initial temperature jump across the layer ($\Delta T_0 = L_z \grad T_0$), 
 and time is in units of the freefall timescale ($L_z / v_{\text{ff}}$), where the freefall velocity is
 $v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$.
-We further re-arrange the momentum equation by introducing a reduced pressure
+We further re-arrange the momentum equation by introducing a reduced kinematic pressure,
 $\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where $\bm{g} = -\grad \phi$ is the gravitational potential.
-Despite containing a nonlinear $\bm{u}$ component, the nature of $P$ in \RB convection, as a (whatever it's called)
+Despite containing a nonlinear $\bm{u}$ component, the nature of $P$ in \RB convection, as a
+Lagrange multiplier,
 allows us to treat $\varpi$ as a linear unknown, without a need to resolve its different components.
 We time evolve the equations in the form,
 \begin{gather}
@@ -125,7 +126,7 @@ We time evolve the equations in the form,
 \frac{\partial T_1}{\partial t} - \mathcal{P}\grad^2 T_1 + w \frac{\partial T_0}{\partial z} = - \bm{u}\cdot\grad T_1,
 	\label{eqn:bouss_energy}
 \end{gather}
-where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity. We find this form of the momentum equation to
+where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity. We find Eq. (\ref{eqn:bouss_momentum}) to
 be slightly faster numerically than the standard form in Eq. (\ref{eqn:dim_bouss_momentum}).
 The dimensionless control parameters are set by the Rayleigh and Prandtl numbers,
 \begin{equation}
@@ -137,7 +138,8 @@ we impose no-slip, impenetrable boundary conditions such that $w = u = v = 0$ at
 At the lower boundary, we employ a fixed flux condition such that $\partial T_1 / \partial z = 0$
 at $z = -1/2$, and we impose a fixed temperature condition $T_1 = 0$ at $z = 1/2$. Both
 horizontal directions are periodic, extending over a range $x, y = [0, \Gamma]$, where
-the aspect ratio is $\Gamma = 2$.
+the aspect ratio is $\Gamma = 2$. In our 2D cases, we only examine the $x$ and $z$ dimensions
+and we set $v = \partial_y = 0$.
 
 The chosen thermal boundary conditions at the upper and lower plates
 determine key quantities of the evolved state.
@@ -161,7 +163,9 @@ systems, but simulations which employ these boundary conditions suffer from a lo
 thermal relaxation as the atmosphere loses energy and approaches the adiabat chosen by the
 Dirichlet condition.  We choose these conditions in part to better understand them, and in
 part because these conditions minimize the number of assumptions that must be made in
-setting up the boundary value problem.
+setting up the boundary value problem.  For this choice of boundary conditions, the
+critical Ra is Ra$_{\text{crit}} = 1295.78$, and we will often speak in terms of the
+supercriticality, $S = \text{Ra}/\text{Ra}_{\text{crit}}$.
 
 \subsection{The Boundary Value Problem}
 \begin{figure}[t]
@@ -180,13 +184,13 @@ are much closer to the converged state than the initial fluxes, as in (c).
 \label{fig:time_trace} }
 \end{figure}
 
-It is a reasonable assumption to naively guess that convection will evolve the mean temperature profile that
-drives it over the course of a thermal diffusion time, $t_\chi \approx \mathcal{P}^{-1}$. Thus, as Ra
+It is reasonable to assume that convection will evolve the mean temperature profile that
+drives it over the course of a thermal diffusion time, $t_\chi = \mathcal{P}^{-1}$. Thus, as Ra
 increases, the timescale for achieving a thermally converged mean temperature profile becomes intractable.
-This prohibitively long thermal timescale in a Direct Numerical Simulation (DNS) 
-can be skipped by coupling the DNS with a simple Boundary Value Problem
-(BVP) solve. By using information about the evolved dynamical state of the atmosphere,
-a BVP can be used to solve for the evolved atmospheric state on short timescales.
+This prohibitively long thermal timescale in an Initial Value Problem (IVP)
+can be skipped by coupling the IVP with a simple Boundary Value Problem
+(BVP) solve. By using information about the convecting dynamical state of an unconverged solution,
+a BVP can be used to solve for the evolved system state.
 A comparison of a simulation running for the thermal timescale, and another where a BVP is used
 to fast-forward atmospheric evolution, are shown in Fig \ref{fig:time_trace}a\&b.
 
@@ -195,7 +199,7 @@ The Boussinesq BVP in essence contains equations of hydrostatic balance and ther
 \frac{\partial}{\partial z}\angles{\varpi} - \angles{T_1}\hat{z} = \angles{\bm{u}\times\bm{\omega}},
 	\label{eqn:bouss_BVP_momentum}
 \\
-\frac{\partial}{\partial z}\angles{wT_1} - \frac{1}{\text{Pr}\text{Ra}}\frac{\partial^2}{\partial z^2} \angles{T_1} = 0,
+\frac{\partial}{\partial z}\angles{wT_1} - \mathcal{P}\frac{\partial^2}{\partial z^2} \angles{T_1} = 0,
 	\label{eqn:bouss_BVP_energy}
 \end{gather}
 where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  
@@ -213,40 +217,50 @@ If these profiles are known, then
 solving for $\angles{T_1}$ and
 $\angles{\varpi}$ depends only upon the choice of boundary conditions.
 
-By definition, the profile of $F_{conv}$ is not in its time stationary early in the DNS.  
+By definition, the profile of $F_{\text{conv}}$ is not in a time stationary state early in the IVP.  
 In fact, as the atmosphere approaches the
 isotherm specified by the upper (fixed $T$) boundary condition, the motions display an asymmetric flux as energy
 leaks through the upper boundary condition (Fig. \ref{fig:time_trace}c) in order to reach a lower temperature state.
 In order to construct the evolved convective flux from the current fluxes in the atmosphere,
-we assume that the atmospheric dynamics have properly developed the thickness of the boundary layers, 
-or that the quantities
+we assume that the atmospheric dynamics have properly developed the thickness of the boundary layers.
+In other words, if we know the quantities $F_{\text{conv}}$, $F_{\text{cond}} = \angles{-P \partial_z T}$,
+and $F_{\text{tot}} = F_{\text{conv}} + F_{\text{cond}}$, we assume that the profiles
 \begin{equation}
-f_{\text{conv}} = \frac{F_{\text{conv}}}{F_{\text{tot}}}\qquad
-f_{\text{cond}} = \frac{F_{\text{cond}}}{F_{\text{tot}}}
+f_{\text{conv}}(z) = \frac{F_{\text{conv}}}{F_{\text{tot}}},\qquad
+f_{\text{cond}}(z) = \frac{F_{\text{cond}}}{F_{\text{tot}}}
+\label{eqn:bvp_ratios}
 \end{equation}
-early in the evolution are the same as those in the final steady state solution. By definition, the
+early in the evolution are the same as they will be in the final steady state solution. By definition, the
 evolved total flux through the atmosphere must be the same as the flux entering the atmosphere at the
-bottom boundary, $F_{\text{tot, steady}} = F_{\text{bot}}$.  The proper enthalpy flux profile to feed in
-to Eqn. (\ref{eqn:bouss_BVP_energy}) is then 
-$\angles{w T_1}_{\text{steady}} = F_{\text{tot, steady}} \cdot f_{\text{conv}}$.  Presumably, over the
-course of the simulation, the velocity field and temperature fluctuations naturally scale like
-$d(z) = \angles{w T_1}_{\text{steady}}/\angles{w T_1}$, and so it is necessary to multiply the velocity
-field and the fluctuations around the mean in $T_1$ by $\sqrt{d}$.  This also means that
-$\angles{\bm{u}\times\bm{\omega}}_{\text{steady}} = d \angles{\bm{u}\times\bm{\omega}}$. Once these profiles
-are appropriately adjusted, they can be used in the BVP solve to find the mean profiles of $T$ and $\varpi$.
+bottom boundary, $F_{\text{tot, steady}} = F_{\text{bot}}$.  The proper convective flux profile to use in
+Eqn. (\ref{eqn:bouss_BVP_energy}) is then 
+$\angles{w T_1}_{\text{steady}} = F_{\text{tot, steady}} \cdot f_{\text{conv}}$.  
+
+In order to carry the converged amount of flux appropriately, 
+the velocity field and temperature fluctuations in the system must be scaled by a quantity
+$\xi(z) = \angles{w T_1}_{\text{steady}}/\angles{w T_1}$.  Thus, we multiply the velocities
+and the thermal fluctuations, $T - \angles{T}$, by $\sqrt{\xi}$, such that the product of all fluctuations
+(which carry the convective flux) are diminished by a factor of $\xi$.  This also means that
+$\angles{\bm{u}\times\bm{\omega}}_{\text{steady}} = \xi \angles{\bm{u}\times\bm{\omega}}$. Once these profiles
+are appropriately adjusted, they can be used in the BVP solve to find $\angles{T}$ and $\angles{\varpi}$.
 
 In general, the BVP solve is completed in the following steps:
 \begin{enumerate}
-\item Run the convective DNS. Once the convection achieves a volume-averaged Re of $\sqrt{\text{Ra}/\text{Ra}_{\text{crit}}}$,
-wait for 50 time units.  Then, start taking the averages of $F_{\text{conv}}$ and $F_{\text{tot}}$, waiting either
-30 time units or until the profiles are converged to 1 part in 1000, whichever is a more difficult. This ensures that
+\item Run the convective IVP. Once the convection achieves a volume-averaged Re of $\sqrt{\text{Ra}/\text{Ra}_{\text{crit}}}$,
+wait for 50 freefall time units.  
+\item Start taking the averages of $F_{\text{conv}}$, $F_{\text{tot}}$, and $\angles{\bm{u} \times \bm{\omega}}$, waiting either
+30 freefall time units or until the average profiles change by no more than 1 part in 1000 on a
+given timestep, whichever is a more difficult criterion. This ensures that
 the profiles being used in the BVP are steady and smooth, and that they sample the full behavior of the convection.
-\item Construct $\angles{w T_1}_{\text{steady}}$ and $\angles{\bm{u}\times\bm{\omega}}_{\text{steady}}$
+\item Construct $\angles{w T_1}_{\text{steady}}$, $\xi$, and $\angles{\bm{u}\times\bm{\omega}}_{\text{steady}}$
 from the flux profiles.
 \item Solve for $\angles{T_1}$ and \angles{\varpi} of the
 evolved state.  Adjust the mean profiles in the IVP.
-\item Multiply the velocity field and the fluctuations in $T_1$ about its horizontal average by $\sqrt{d}$ in the IVP. 
-\item Continue running the IVP for 50 time units to allow for the velocities to equilibrate to their new background state.
+\item Multiply the velocity field and the fluctuations in $T_1$ about its horizontal average by $\sqrt{\xi}$ in the IVP. 
+\item Continue running the IVP for freefall 50 time units to allow for the velocities to equilibrate to their new background state.
+\item Repeat steps 2-6 to complete a second BVP and get closer to the right solution now that we
+are far from the very unstable transient period.
+\item Take averages for the amount of time specified for the given run in Appendix \ref{section:appendix_table}.
 \end{enumerate}
 
 \subsection{Numerics}
@@ -262,9 +276,6 @@ In our 2D runs, $v = 0$.
 Variables are time-evolved on a dealiased Chebyshev (vertical)
 and Fourier (horizontal, periodic) domain in which the
 physical grid dimensions are 3/2 the size of the coefficient grid.  
-Domain sizes range from
-32x128 coefficients at the lowest values of 
-Ra to 1024x4096 coefficients at Ra $> 10^{9}$ in 2D.
 
 As initial conditions, we fill $T_1$ with
 random white noise whose magnitude is $10^{-6}(\text{Ra Pr})^{-1/2}$.
@@ -274,59 +285,12 @@ We filter this noise spectrum in coefficient space,
 such that only the lower 25\% of the coefficients
 have power.
 
-In 2D, there are often multiple steady state solutions (e.g., 2-roll and 3-roll
-solutions) which have slightly different flow properties (heat transport, etc.).
-Even though the initial perturbations are very small, they shape the convective
-transient and thus determine the nature of the steady state convection, at least in
-the laminar regime.  In order to ensure that our results are not biased by differences
-in flow structure, we ran the simulations using distinct random temperature perturbations
-so as to compare statistics in comparable flow fields.  In 3D, rolls are nonstationary over
-convective timescales, and so these effects need not be considered there.
-
 \section{Results}
-While the differences in the fluxes in Fig. \ref{fig:time_trace} are small, it is important
-to determine if the velocity fluctuations and point-by-point nonlinear transport are the same
-in the evolved state.  Fig. \ref{fig:pdf_comparison} overlays the probability distribution functions
-of the vertical and horizontal velocities, as well as the fully nonlinear portion of the convective
-flux for the same case as is shown in Fig. \ref{fig:time_trace}.  The PDFs are quite similar visually,
-and have a similarity of (XYZ) according to a Kolmogorov-Smirnov statistic.
-
-In addition to getting the nonlinear dynamics mostly correct, we show that the BVP method retrieves the
-proper temperature profile, see e.g., Fig. \ref{fig:temp_comparison}.  Here the BVP profile retrieves the
-mean profile of the temperature to within 1\% accuracy, and temperature fluctuations in the two runs
-have a similarity of (XYZ) according to a Kolmogorov-Smirnov statistic.
-
-This method works across a broad range of supercriticality.  In Fig. \ref{fig:parameter_space_comparison},
-we show measurements of the volume-averaged Nusselt number, Reynolds number, and temperature.
-We use standard definitions of the Nusselt number and Reynolds numbers,
-\begin{equation}
-\text{Nu} = \frac{\angles{wT - (\text{Ra Pr})^{-1/2}\grad T}}{\angles{- (\text{Ra Pr})^{-1/2} \grad T}} =
-1 + \frac{\angles{wT}}{-\Delta T}\sqrt{\text{Ra Pr}}, \qquad \text{Re} = \frac{|\bm{u}| L_z}{\nu},
-\end{equation}
-where $\Delta T = T(z = 1/2) - T(z = -1/2)$ is the evolved temperature difference
-between the top and bottom plates.  This form of the Nusselt number is valid even when
-the system is not yet in flux equilibrium, and reduces to the standard fixed flux definition
-of Nu  = $[1 - \angles{wT} / P]^{-1}$ \cite{johnston&doering2009}. We find a scaling law of
-Nu $\propto \text{Ra}^{2/3}$, much steeper than a standard 2/7 or 1/3 scaling law
-\cite{johnston&doering2009}. Furthermore, we find that Re$\propto \text{Ra}^{0.425}$. The average temperature
-approaches the value at the top of the domain as Ra increases.  
-
-The final morphology of the flows is very important in determining the exact value of Nu and Re.  In general,
-a two-roll state vs. a three-roll state will have entirely different statistics -- different Nu, Re, and average
-temprature (and as a result, different size boundary layers).  Thus, in 2D studies, it is essential to study flows
-of a similar morphology in order to see a clear trend. 
-
-\begin{figure}[t]
-\includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
-\caption{Frequency distribution functions of the vertical velocity (a), horizontal velocity (b), and nonlinear
-vertical transport (c) are shown for a 2D run at $S = 10^5$.  We sample flows every 0.1 time units for 500 freefall
-times, and include the flows at all points on the grid at each of these samples in these distributions.  All
-distributions are biased by the no-slip, impenetrable boundary conditions, coupled with the dense spacing of our
-Chebyshev grids near the boundaries, so there is a large peak around zero. The distributions, and thus the nonlinear
-dynamics, are broadly similar, but they do not pass a two-tailed Kolmogorov-Smirnov similarity test. (NOTE TO
-CO-AUTHORS: I NEED TO THINK BETTER ON HOW TO COMPARE PDFS, IF YOU HAVE IDEAS PLEASE SEND THEM)
-\label{fig:pdf_comparison} }
-\end{figure}
+While Fig. \ref{fig:time_trace} shows us that the post-BVP and post-rundown solutions
+exhibit similar system energies and fluxes, it is important to examine other aspects of
+the evolved solution. The BVP mainly serves to adjust the thermodynamic state of the solution;
+in \RB convection, this means that the evolved temperature profile is a good measure of whether
+or not the BVP achieves the proper solution.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/temp_comparison.png}
@@ -341,6 +305,85 @@ thermal fluctuations about the mean which drive the convection are similar (AS I
 I NEED TO THINK MORE ON THE PDF COMPARISON).
 \label{fig:temp_comparison} }
 \end{figure}
+
+
+The temperature profiles of a 2D run at $S = 10^5$ 
+for both the BVP solve and the long rundown are shown in
+Fig. \ref{fig:temp_comparison}a.  While they are not perfectly aligned they are within less than
+2\% of each other throughout the depth of the atmosphere, as shown in Fig. \ref{fig:temp_comparison}b.
+While the mean temperature profile is interesting, the point-by-point fluctuations in the
+temperature are what lead to convective transport, and thus examining the spread of temperature
+and the allowed values that it can take are important to characterizing the system.  As seen
+in Fig. \ref{fig:temp_comparison}c, aside from the noticeable difference in the mode of the
+temperatures, the two runs exhibit largely the same spread of temperatures, with the rundown
+achieving higher temperatures at the base of the atmosphere.  These two profiles do not pass
+a Kolmogorov-Smirnov test for similarity (AUTHOR NOTE: we need to collaborate on different measures
+of comparing PDFs).
+
+In addition to examining the thermodynamics of the solutions, we are especially interested in
+determining if the post-BVP solution appropriately captures key features of the nonlinear dynamics.
+We show point-by-point frequency distributions of the horizontal velocity, vertical velocity,
+and nonlinear transport in Fig. \ref{fig:pdf_comparison}.  All of these measures have a sharp
+peak at zero due to the no-slip, impenetrable boundary conditions and the denser grid sampling
+near the boundaries of our Chebyshev grid.  Regardless, we see that the velocities of the 
+two solutions are largely consistent.  The nonlinear transport in Fig. \ref{fig:pdf_comparison}
+shows that the post-BVP solution experiences more extreme events which carry a large amount of
+flux than the rundown solution, which is to be expected since it is not quite in equilibrium,
+as shown in Fig. \ref{fig:time_trace}d.  None of these profiles pass a KS test for similarity
+(AUTHOR NOTE: see previous paragraph comment).
+
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
+\caption{Frequency distribution functions of the vertical velocity (a), horizontal velocity (b), and nonlinear
+vertical transport (c) are shown for a 2D run at $S = 10^5$.  We sample flows every 0.1 time units for 500 freefall
+times, and include the flows at all points on the grid at each of these samples in these distributions.  All
+distributions are biased by the no-slip, impenetrable boundary conditions, coupled with the dense spacing of our
+Chebyshev grids near the boundaries, so there is a large peak around zero. The distributions, and thus the nonlinear
+dynamics, are broadly similar, but they do not pass a two-tailed Kolmogorov-Smirnov similarity test. (NOTE TO
+CO-AUTHORS: I NEED TO THINK BETTER ON HOW TO COMPARE PDFS, IF YOU HAVE IDEAS PLEASE SEND THEM)
+\label{fig:pdf_comparison} }
+\end{figure}
+
+
+
+The goodness of this method has been tested across a broad range of supercriticality.  We have
+examined both Rundown and BVP solutions in the range $S = [10^{1/3}, 10^5]$ in 2D and
+$S = [10^1, 10^4]$ in 3D (3D points to come).  We have also further explored up to $S = 10^6$
+(AUTHOR NOTE: should we go up to $10^8$?  $10^7$ is easily in reach. Also, 3D data points are
+sparse and will change -- need to rerun with proper BVP procedure).  We compare scalar, 
+volume-averaged measurements of all of these runs in Fig. \ref{fig:parameter_space_comparison}.
+
+In Fig. \ref{fig:parameter_space_comparison}a, we compare the Nusselt number scaling in 2D,
+3D, and for BVP and rundown solutions.  We use a classic definition of the Nusselt number
+to measure the heat transport in these systems, where
+\begin{equation}
+\text{Nu} = \frac{\angles{F_{\text{conv}} + F_{\text{cond}}}}{\angles{F_{\text{cond, ref}}}}
+ = \frac{\angles{wT - (\text{Ra Pr})^{-1/2}\grad T}}{\angles{- (\text{Ra Pr})^{-1/2} \grad T}}.
+\end{equation}
+At small values of $S$, we achieve a steady state solution with a clear value of Nu.  Near
+$S \sim 10^3$, our simulations begin to achieve a horizontally oscillatory state.  Due to the
+use of no-slip boundaries, these states never give way to full scale shearing states, but they
+do reduce the overall heat transport through the system and cause the systems to oscillate between
+periods of high- and low- heat transport.  The vertical lines represent the standard deviation 
+of Nu associated with these oscillations, while the error bars show the drift of the mean
+value of Nu over the averaging window.  We find that $\text{Nu} \propto \text{Ra}^{1/5}$,
+a weaker scaling law than that seen in traditional \RB convection \cite{johnston&doering2009},
+but similar to that seen in shearing states [cite Goluskin].
+(AUTHOR NOTE: Ben, I think this is entirely because of the oscillatory states.  I wonder what
+would happen if we included viscous fluxes...)
+
+In Fig. \ref{fig:parameter_space_comparison}b, we measure the rms Reynolds number, where
+$\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  We find that this scales roughly as
+$\text{Re} \propto \text{Ra}^{0.45}$, and find good agreement between BVP and rundown solutions.
+
+In Fig. \ref{fig:parameter_space_comparison}c, we measure the volume averaged 
+temperature of our solution, then subtract out the value at the upper (fixed $T$) boundary.
+If the atmosphere were perfectly isothermal, this value would be exactly zero.  Thus, this is
+a measure of the temperature jump across the boundary layers, and it provides insight both
+into whether or not the temperature profiles of two runs are the same and into whether
+the fluxes through the two systems are the same (it is in some ways an alternate measure of Nu
+[cite King 2009 supp materials]).
+We find that this measure is $\propto \text{Ra}^{-1/5}$, approaching zero, as expected.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
@@ -361,39 +404,48 @@ BVP solutions and rundown solutions are easier to pick out.
 \end{figure}
 
 
-
 \section{Discussion \& Conclusions}
 \label{sec:results}
-While imperfect, the method presented here is a first step towards taking meaningful measurements
+The method presented here is a first step towards taking meaningful measurements
 of highly turbulent convection on manageable, human timescales.  As demonstrated in Figs.
 1-4, this BVP method quickly converges simulations to within a few percent of the true final
-state, while preserving the natural behavior of the convective solution (such as the oscillatory
-nature of high-Ra 2D states in \ref{fig:parameter_space_comparison}).  
+state. Furthermore, the total simulation time required to use the BVPs does not change drastically from
+low $S$ to high $S$, so the main prohibition on high Ra states is the difficulty of timesteps becoming
+increasingly small as turbulence increases.  Additionally, post-BVP, we generally see an increase of the
+timestep size by nearly a factor of two due to the less intense driving of the near-converged state that
+is achieved quickly.
 
-While not perfect, the BVP method here has one major benefit over some of the other methods
-currently being used to achieve high Ra solutions.  One oft-used method is that of bootstrapping,
+One major benefit of the BVP method used here is that it preserves the natural behavior of 
+the convective solution (such as the horizontally oscillatory rolls
+of high-Ra 2D states in Fig. \ref{fig:parameter_space_comparison}).
+One frequently used method of measuring dynamics in high-Ra simulations is that of bootstrapping,
 in which the converged solution of a low-Ra state is used as initial conditions for a higher-Ra
-simulation.  While these methods are extremely powerful, they are influenced by hysteresis effects,
-and the powerful, steady rolls achieved at low Ra can result in an artifically over-stable high-Ra
-roll solution.  The BVP method can be used with random noise initial conditions which allow the
-convective solution to be naturally chosen by the dynamics.
+simulation.  While this method is powerful, it can be influenced by hysteresis effects,
+and the steady rolls achieved at low Ra can result in an artifically over-stable high-Ra
+roll solution.  The BVP method we present here uses random noise initial conditions which allows the
+convective solution to naturally choose the dynamics.
 
-One benefit of the method presented here is that it can be easily extended to more complicated
+Another benefit of our BVP method is that it can be easily extended to more complicated
 configurations.  For example, to use this method in simulations of stratified compressible convection,
-one need only adapt the BVP equations to the appropriate equations of hydrostatic equilibrium,
-$\grad P = -\rho \bm{g}$, and thermal equilibrium, $\Div{F_{\text{cond}} + F_{\text{conv}}} = \text{sources}$,
-for the problem at hand.  In compressible convection, where the density is allowed to change,
-one must also use the knowledge of stellar structure codes and add an equation of mass conservation
-in order to ensure that the BVP does not spuriously add or remove mass from the system.
+one need only adapt the BVP equations to the appropriate equations of hydrostatic equilibrium
+and thermal equilibrium obtained by averaging the fully compressible, ideal gas
+steady state momentum and energy equations \cite{anders&brown2017, lecoanet&all2014}.
+In compressible convection, where the density is allowed to change,
+it is also essential to conserve mass by adding boundary conditions on the integrated mas density at
+the upper and lower boundaries, much as stellar structure codes do \cite{paxton&all2011}.
 
-This method can be extended to other boundary conditions, as well.  To solve for fixed temperature
-boundary conditions, the difficulty is in finding the amount of flux through the system -- but
-this can be done by using the ratios $f_{\text{conv}}$ and $f_{\text{cond}}$.  In the case of
-fixed flux boundary conditions, there is degeneracy in the temperature solution which can come
-out of the BVP, but in using knowledge about the system -- such as the initial symmetry of the
-RB state around $T_1 = 0$, the final solution can be pegged onto the proper profile.
+While we have not chosen to use them here, this BVP method can be extended to other boundary conditions.  
+To solve for fixed temperature boundary conditions, the 
+main difficulty is in finding the amount of flux through the system, $F_{\text{tot, steady}}$.
+However, by knowing the averaged value of the conductive flux (from the boundary conditions)
+and the ratios in Eqn. (\ref{eqn:bvp_ratios}), $F_{\text{tot, steady}}$ can be found.
+In the case of
+fixed flux boundary conditions, the temperature solution is degenerate.
+However, using knowledge about the system -- such as the initial symmetry of the
+RB state around $T = 0$, the final solution can be pegged onto the proper profile.
 
-
+Future work will aim to apply the methods presented here to compressible systems,
+internally heated systems, and systems with more complex forms of the conductive flux.
 
 
 \begin{acknowledgments}
@@ -409,30 +461,31 @@ with allocations GID s1647 and GID g26133.
 
 \appendix
 \section{Table of Runs}
+\label{section:appendix_table}
 \begin{center}
-\begin{tabularx}{\textwidth}{ X X X X X X X }
-\hline													
-Ra	&	Supercriticality	&	nz	&	nx	&	$t_{\text{therm}}$	&	$t_{\text{post BVP}}$	&	$t_{\text{avg}}$	\\[1ex]
-\hline		\hline											
-$2.79 \cdot 10^3$	&	$10^{1/3}$	&	32	&	128	&	$52.8$	&	50	&	100	\\
-$6.01 \cdot 10^3$	&	$10^{2/3}$	&	32	&	128	&	$77.6$	&	50	&	100	\\
-$1.30 \cdot 10^4$	&	$10^1$	&	32	&	128	&	$114$	&	50	&	100	\\
-$2.79 \cdot 10^4$	&	$10^{1 + 1/3}$	&	32	&	128	&	$167$	&	50	&	100	\\
-$6.01 \cdot 10^4$	&	$10^{1 + 2/3}$	&	32	&	128	&	$245$	&	50	&	100	\\
-$1.30 \cdot 10^5$	&	$10^2$	&	64	&	256	&	$360$	&	100	&	100	\\
-$2.79 \cdot 10^5$	&	$10^{2 + 1/3}$	&	64	&	256	&	$528$	&	100	&	100	\\
-$6.01 \cdot 10^5$	&	$10^{2 + 2/3}$	&	64	&	256	&	$776$	&	100	&	100	\\
-$1.30 \cdot 10^6$	&	$10^3$	&	128	&	512	&	$1.14 \cdot 10^3$	&	100	&	200	\\
-$2.79 \cdot 10^6$	&	$10^{3 + 1/3}$	&	128	&	512	&	$1.67 \cdot 10^3$	&	200	&	200	\\
-$6.01 \cdot 10^6$	&	$10^{3 + 2/3}$	&	256	&	1024	&	$2.45 \cdot 10^3$	&	200	&	200	\\
-$1.30 \cdot 10^7$	&	$10^4$	&	256	&	1024	&	$3.60 \cdot 10^3$	&	200	&	200	\\
-$2.79 \cdot 10^7$	&	$10^{4 + 1/3}$	&	256	&	1024	&	$5.28 \cdot 10^3$	&	200	&	200	\\
-$6.01 \cdot 10^7$	&	$10^{4 + 2/3}$	&	256	&	1024	&	$7.76 \cdot 10^3$	&	200	&	200	\\
-$1.30 \cdot 10^8$	&	$10^5$	&	512	&	2048	&	$1.14 \cdot 10^4$	&	500	&	500	\\
-$2.79 \cdot 10^8$	&	$10^{5 + 1/3}$	&	512	&	2048	&	$1.67 \cdot 10^4$	&	500	&	500	\\
-$6.01 \cdot 10^8$	&	$10^{5 + 2/3}$	&	512	&	2048	&	$2.45 \cdot 10^4$	&	500	&	500	\\
-$1.30 \cdot 10^9$	&	$10^6$	&	1024	&	4096	&	$3.60 \cdot 10^4$	&	500	&	500	\\
-\hline													
+\begin{tabularx}{\textwidth}{ X X X X X X X X X}
+\hline															
+$S$	&	Ra	&	nz	&	nx, ny	&	$t_{\text{therm}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{rundown}}$	&	Nu$_{\text{BVP}}$	\\
+\hline															
+$10^{1/3}$	&	$2.79 \cdot 10^3$	&	32	&	128	&	$52.8$	&	100	&	(TBD)	&	(TBD)	\\
+$10^{2/3}$	&	$6.01 \cdot 10^3$	&	32	&	128	&	$77.6$	&	100	&	--	&	--	\\
+$10^1$	&	$1.30 \cdot 10^4$	&	32	&	128	&	$114$	&	100	&	--	&	--	\\
+$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$	&	32	&	128	&	$167$	&	100	&	--	&	--	\\
+$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$	&	32	&	128	&	$245$	&	100	&	--	&	--	\\
+$10^2$	&	$1.30 \cdot 10^5$	&	64	&	256	&	$360$	&	100	&	--	&	--	\\
+$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$	&	64	&	256	&	$528$	&	100	&	--	&	--	\\
+$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$	&	64	&	256	&	$776$	&	100	&	--	&	--	\\
+$10^3$	&	$1.30 \cdot 10^6$	&	128	&	512	&	$1.14 \cdot 10^3$	&	200	&	--	&	--	\\
+$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$	&	128	&	512	&	$1.67 \cdot 10^3$	&	500	&	--	&	--	\\
+$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$	&	256	&	1024	&	$2.45 \cdot 10^3$	&	500	&	--	&	--	\\
+$10^4$	&	$1.30 \cdot 10^7$	&	256	&	1024	&	$3.60 \cdot 10^3$	&	500	&	--	&	--	\\
+$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$	&	256	&	1024	&	$5.28 \cdot 10^3$	&	500	&	--	&	--	\\
+$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$	&	256	&	1024	&	$7.76 \cdot 10^3$	&	500	&	--	&	--	\\
+$10^5$	&	$1.30 \cdot 10^8$	&	512	&	2048	&	$1.14 \cdot 10^4$	&	500	&	--	&	--	\\
+$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	2048	&	$1.67 \cdot 10^4$	&	500	&	--	&	--	\\
+$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	2048	&	$2.45 \cdot 10^4$	&	500	&	--	&	--	\\
+$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	4096	&	$3.60 \cdot 10^4$	&	500	&	--	&	--	\\
+\hline															
 \end{tabularx}
 \end{center}
 
