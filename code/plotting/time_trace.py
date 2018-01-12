@@ -44,6 +44,7 @@ base_dirs_post = [
 fields = ['Nu', 'Re', 'IE', 'KE', 'TE']
 
 ra_runs = '1.30e8'
+ra_runs = '6.01e7'
 
 pre_flux_file = None
 ##### INFO grabbing from post-plot buddy files
@@ -128,30 +129,34 @@ for i in range(4):
         f = 0.5 + info[this_label]['IE_scalar']
         df = np.abs(f[1:] - f[:-1])
         t_bvp_ind = np.argmax(df) + 1
-        axes[0].axvline(info['{}_1'.format(ra_runs)]['sim_time'][t_bvp_ind], ls='--', c='k')
+        df[t_bvp_ind-1] = 0
+        t_bvp_ind2 = np.argmax(df) + 1
+        axes[0].axvline(info['{}_1'.format(ra_runs)]['sim_time'][-1], ls='--', c='k')
         axes[i % 2].plot(info[this_label]['sim_time'][:t_bvp_ind], info[this_label]['KE_scalar'][:t_bvp_ind], c='k')
-        axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:], info[this_label]['KE_scalar'][t_bvp_ind:], c='k')
+        axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:t_bvp_ind2], info[this_label]['KE_scalar'][t_bvp_ind:t_bvp_ind2], c='k')
+        axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind2:], info[this_label]['KE_scalar'][t_bvp_ind2:], c='k')
         axes[i % 2].set_yscale('log')
         axes[i % 2].set_ylim(1e-3, 1e-1)
 
         axes_share[i % 2].plot(info[this_label]['sim_time'][:t_bvp_ind], 0.5 + info[this_label]['IE_scalar'][:t_bvp_ind], c='r')
-        axes_share[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:], 0.5 + info[this_label]['IE_scalar'][t_bvp_ind:], c='r')
+        axes_share[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:t_bvp_ind2], 0.5 + info[this_label]['IE_scalar'][t_bvp_ind:t_bvp_ind2], c='r')
+        axes_share[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind2:], 0.5 + info[this_label]['IE_scalar'][t_bvp_ind2:], c='r')
 #        axes_share[i % 2].set_yscale('log')
         axes_share[i % 2].set_ylim(1e-2, 5e-1)
 
     else:
         if i == 2:
             axes[0].axhline(np.mean(info[this_label]['KE_scalar']), c= 'k', ls = '--')
-            axes_share[0].axhline(np.mean(info[this_label]['IE_scalar']) + 0.5, c= 'r', ls = '--')
+            axes_share[0].axhline(np.mean(info[this_label]['IE_scalar']) + 0.5, c= 'r', dashes=(2,2))
             axes[1].axhline(np.mean(info[this_label]['KE_scalar']), c= 'k', ls = '--')
-            axes_share[1].axhline(np.mean(info[this_label]['IE_scalar']) + 0.5, c= 'r', ls = '--')
+            axes_share[1].axhline(np.mean(info[this_label]['IE_scalar']) + 0.5, c= 'r', dashes=(2,2))
             
 
         axes[i % 2].plot(info[this_label]['sim_time'], info[this_label]['KE_scalar'], c='k')
         axes[i % 2].set_yscale('log')
         axes[i % 2].set_ylim(1e-3, 1e-1)
         if i > 1:
-            axes[i % 2].axvline(info[this_label]['sim_time'][0], ls='-.')
+            axes[i % 2].axvline(info[this_label]['sim_time'][0], ls='-')
 
         axes_share[i % 2].plot(info[this_label]['sim_time'], 0.5 + info[this_label]['IE_scalar'], c='red')
 #        axes_share[i % 2].set_yscale('log')
@@ -160,7 +165,8 @@ for i in range(4):
 #Axes formatting
 axes[0].set_xlim(info['{}_0'.format(ra_runs)]['sim_time'][0], info['{}_2'.format(ra_runs)]['sim_time'][-1])
 axes[1].set_xlim(info['{}_1'.format(ra_runs)]['sim_time'][0], info['{}_3'.format(ra_runs)]['sim_time'][-1])
-x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1], 2000, 4000, 6000, 8000, 10000]
+#x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1], 2000, 4000, 6000, 8000, 10000]
+x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1], 2000, 4000, 6000, 7500]
 axes[0].set_xticks(x_ticks)
 x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1]]
 axes[1].set_xticks(x_ticks)
@@ -185,7 +191,7 @@ axis_names   = ['x', 'y']
 
 
 axes[0].annotate(r'$\mathrm{(a)}$', (200, 7e-2), fontsize=10)
-axes[1].annotate(r'$\mathrm{(b)}$', (250, 7e-2), fontsize=10)
+axes[1].annotate(r'$\mathrm{(b)}$', (400, 7e-2), fontsize=10)
 
 ##################################
 # Bottom three plots
@@ -205,19 +211,20 @@ this_label = '{}_0'.format(ra_runs)
 #enth = info[this_label]['enth_flux_profile'][1,:]*np.sqrt(float(ra_runs))
 #kappa = info[this_label]['kappa_flux_profile'][1,:]*np.sqrt(float(ra_runs))
 #sum_f = (enth + kappa)
-
+print([print(k) for k in pre_flux_file.keys()])
 enth = pre_flux_file['enth_flux_IVP'].value*np.sqrt(float(ra_runs))
 sum_f = pre_flux_file['tot_flux_IVP'].value*np.sqrt(float(ra_runs))
 kappa = sum_f - enth
+z = pre_flux_file['z'].value
 
 
 
 axes[-1].axhline(1, c='k', ls='-.')
 axes[-1].axhline(0, c='orange', ls='--')
-axes[-1].plot(info[this_label]['z_profile'], enth,  c=f_conv_color)
-axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color)
-axes[-1].plot(info[this_label]['z_profile'], sum_f, c=f_sum_color)
-y_ticks = np.array([0, 0.5, 1, np.ceil(np.max(sum_f))])
+axes[-1].plot(z, enth,  c=f_conv_color)
+axes[-1].plot(z, kappa, c=f_cond_color)
+axes[-1].plot(z, sum_f, c=f_sum_color)
+y_ticks = np.array([0, 1, np.ceil(np.max(sum_f))])
 axes[-1].set_yticks(y_ticks)
 axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
 x_ticks = np.array([0, 0.5, 1])
@@ -227,7 +234,7 @@ axes[-1].set_xlabel('z')
 [axes[-1].tick_params(axis=axis, colors='orange') for axis in axis_names]
 [t.set_color('k') for t in axes[-1].get_xticklabels()]
 [t.set_color('k') for t in axes[-1].get_yticklabels()]
-axes[-1].annotate(r'$\mathrm{(c)}$', (0.04, 14.5), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (0.04, 10.8), fontsize=10)
 
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
@@ -279,7 +286,7 @@ axes[-1].plot(info[this_label]['z_profile'], ((sum_f - base_sum_f)), c=f_sum_col
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_ylabel(r'$\mathrm{(BVP - Rundown)}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
-axes[-1].annotate(r'$\mathrm{(e)}$', (0.04, -0.185), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(e)}$', (0.04, -0.028), fontsize=10)
 
 
 plt.savefig('time_trace.png'.format(k), bbox_inches='tight', dpi=200)
