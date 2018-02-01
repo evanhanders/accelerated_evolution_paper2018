@@ -56,11 +56,13 @@ class BVPSolverBase:
         files_saved         - The number of BVP files that have been saved
         final_equil_time    - How long to allow the solution to equilibrate after the final bvp
         first_l2            - If True, we haven't taken an L2 average for convergence yet.
+        first_bvp_time      - Like min_bvp_time, but only for the first BVP.
+        first_run_threshold - Like bvp_run_threshold, but only for the first BVP.
         flow                - A dedalus flow_tools.GlobalFlowProperty object for the IVP solver which is tracking
                                 the Reynolds number, and will track FIELDS variables
         mesh                - processor mesh of the IVP in [ny, nz] form
-        min_bvp_time        - Minimum simulation time to wait between BVPs.
         min_avg_dt          - Minimum simulation time to wait between adjusting average profiles.
+        min_bvp_time        - Minimum simulation time to wait between BVPs.
         nz_per_proc          - Number of z-points per core (for parallelization)
         num_bvps            - Total (max) number of BVPs to complete
         nx                  - x-resolution of the IVP grid
@@ -76,6 +78,7 @@ class BVPSolverBase:
         size                - comm size
         solver              - The corresponding dedalus IVP solver object
         solver_states       - The states of VARS in solver
+        vel_solver_states   - The states of VEL_VARS in solver.
 
     """
     
@@ -84,27 +87,32 @@ class BVPSolverBase:
     VEL_VARS   = None
     LOCAL_TRACK = None
 
-    def __init__(self, nx, ny, nz, flow, comm, solver, num_bvps, bvp_equil_time, bvp_transient_time=20,
-                 bvp_run_threshold=1e-2, first_run_threshold=1e-2, bvp_l2_check_time=1, min_bvp_time=35, first_bvp_time=20, plot_dir=None,
-                 min_avg_dt=0.05, final_equil_time = None, mesh=None):
+    def __init__(self, nx, ny, nz, flow, comm, solver, num_bvps, bvp_equil_time,
+                 bvp_l2_check_time=1, bvp_run_threshold=1e-2, 
+                 bvp_transient_time=20, final_equil_time=None, 
+                 first_bvp_time=20, first_run_threshold=1e-2, 
+                 mesh=None, min_avg_dt=0.05, min_bvp_time=35, plot_dir=None):
         """
         Initializes the object; grabs solver states and makes room for profile averages
         
         Arguments:
-        nx                  - the horizontal resolution of the IVP
-        nz                  - the vertical resolution of the IVP
+        nx,ny,nz            - the (x,y,z) resolution of the IVP
         flow                - a dedalus.extras.flow_tools.GlobalFlowProperty for the IVP solver
         comm                - An MPI comm object for the IVP solver
         solver              - The IVP solver
-        min_bvp_time        - Minimum sim time to do average over before doing a bvp
-        min_avg_dt          - Minimum sim time to wait between adjusting averages
         num_bvps            - Maximum number of BVPs to solve
         bvp_equil_time      - Sim time to wait after a bvp before beginning averages for the next one
-        bvp_transient_time  - Sim time to wait at beginning of simulation before starting average
-        bvp_run_threshold   - Level of convergence that must be reached in statistical averages
-                                before doing a BVP (1e-2 = 1% variation OK, 1e-3 = 0.1%, so on)
         bvp_l2_check_time   - Sim time to wait between communications to see if we're converged
                                 (so that we don't "check for convergence" on all processes at every timestep)
+        bvp_run_threshold   - Level of convergence that must be reached in statistical averages
+                                before doing a BVP (1e-2 = 1% variation OK, 1e-3 = 0.1%, so on)
+        bvp_transient_time  - Sim time to wait before starting averages after required reynolds number is reached
+        final_equil_time    - If not None, amount of sim time to wait after final BVP before stopping simulation.
+        first_bvp_time      - Like min_bvp_time, but only for first BVP.
+        first_run_threshold - Like bvp_run_threshold, but only for first BVP.
+        mesh                - If not None, the processor mesh distribution
+        min_avg_dt          - Minimum sim time to wait between adjusting averages
+        min_bvp_time        - Minimum sim time to do average over before doing a bvp
         plot_dir            - If not None, save plots to this directory during bvps.
         """
         #Get info about IVP
@@ -193,11 +201,8 @@ class BVPSolverBase:
 
     def get_local_profile(self, prof_name):
         """
-        Given a profile name, which is a key to the class FIELDS dictionary, 
-        update the average on the local core based on the current flows.
-
-        Arguments:
-            prof_name       - A string, which is a key to the class FIELDS dictionary
+        Given a profile name, which is tracked by self.flow, grab the current values of
+        the z-components of that profile.
         """
         field = self.flow.properties['{}'.format(prof_name)]['g']
         if len(field.shape) == 3:
@@ -211,38 +216,40 @@ class BVPSolverBase:
 
     def get_full_profile(self, dictionary, prof_name):
         """
-        Given a profile name, which is a key to the class FIELDS dictionary, communicate the
-        full vertical profile across all processes, then return the full profile as a function
-        of depth.
+        Given a dictionary of tracked (local) z-profiles and the
+        name of the desired profile, returns the full, stitched z-profile.
 
         Arguments:
-            prof_name       - A string, which is a key to the class FIELDS dictionary
-            avg_type        - If 0, horiz avg.  If 1, full 2D field.
+            dictionary      - A dictionary of local partial z-profiles
+            prof_name       - A string, which is a key to dictionary
         """
         local = np.zeros(self.nz)
-        glob  = np.zeros(self.nz)
+        globl  = np.zeros(self.nz)
         if isinstance(self.mesh, type(None)):
             local[self.nz_per_proc*self.rank:self.nz_per_proc*(self.rank+1)] = \
                     dictionary[prof_name]
         elif self.rank < self.mesh[-1]:
             local[self.nz_per_proc*self.rank:self.nz_per_proc*(self.rank+1)] = \
                     dictionary[prof_name]
-        self.comm.Allreduce(local, glob, op=MPI.SUM)
+        self.comm.Allreduce(local, globl, op=MPI.SUM)
 
-        profile = glob
+        profile = globl
         return profile
 
     def update_avgs(self, dt, Re_avg, min_Re = 1):
         """
-        If proper conditions are met, this function adds the time-weighted vertical profile
-        of all profiles in FIELDS to the appropriate arrays which are tracking classes. The
-        size of the timestep is also recorded.
+        If proper conditions are met, this function updates current averages
+        of profiles in FIELDS and also updates profiles in LOCAL_TRACK with their
+        current value.
 
-        The averages taken by this class are time-weighted averages of horizontal averages, such
-        that sum(dt * Profile) / sum(dt) = <time averaged profile used for BVP>
+        The averages taken by this class are time-weighted averages of 
+        horizontally averaged profiles.  The trapezoidal rule of integration is
+        used to take the sum in time for the time average
 
         Arguments:
             dt          - The size of the current timestep taken.
+            Re_avg      - The current volume average of Re. If > min_Re, start
+                            averaging.
             min_Re      - Only count this timestep toward the average if vol_avg(Re) is greater than this.
         """
         solver_sim_time = self.solver.sim_time

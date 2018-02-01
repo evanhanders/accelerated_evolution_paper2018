@@ -94,7 +94,8 @@ for a, base_dir in enumerate(base_dirs_post):
         except:
             print('cannot find profile file in {:s}'.format(d))
         try:
-            with h5py.File('{:s}/slice_pdfs/slice_pdf_data.h5'.format(d), 'r') as f:
+            with h5py.File('{:s}/new_pdfs/slice_pdf_data.h5'.format(d), 'r') as f:
+            #with h5py.File('{:s}/slice_pdfs/slice_pdf_data.h5'.format(d), 'r') as f:
                 for k in f.keys():
                     info[ra][k+'_pdf'] = f[k].value
         except:
@@ -130,17 +131,21 @@ axes[-1].annotate(r'$\mathrm{(a)}$', (-0.15, 1e8), fontsize=10)
 for tick in axes[-1].get_xticklabels():
     tick.set_rotation(45)
 
-#plt.figure()
-#cdf_x_bvp, cdf_y_bvp = calculate_CDF(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
-#cdf_x_base, cdf_y_base = calculate_CDF(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf'])
-#plt.plot(cdf_x_bvp, cdf_y_bvp)
-#plt.plot(cdf_x_base, cdf_y_base)
-#plt.yscale('log')
-#
-#max_diff, comp = ks_test(cdf_x_bvp, cdf_y_bvp, info[bvp_label]['u_denorm_pdf'],\
-#                         cdf_x_base, cdf_y_base, info[base_label]['u_denorm_pdf'])
-#print(max_diff, comp, max_diff/comp)
-#plt.show()
+
+
+plt.figure()
+for k in ['u', 'w', 'w*T']:
+    cdf_x_bvp, cdf_y_bvp = calculate_CDF(info[bvp_label]['{}_xs_pdf'.format(k)], info[bvp_label]['{}_pdf_pdf'.format(k)])
+    cdf_x_base, cdf_y_base = calculate_CDF(info[base_label]['{}_xs_pdf'.format(k)], info[base_label]['{}_pdf_pdf'.format(k)])
+    plt.plot(cdf_x_bvp, cdf_y_bvp)
+    plt.plot(cdf_x_base, cdf_y_base)
+    plt.yscale('log')
+
+    max_diff, comp = ks_test(cdf_x_bvp, cdf_y_bvp, info[bvp_label]['u_denorm_pdf'],\
+                             cdf_x_base, cdf_y_base, info[base_label]['u_denorm_pdf'])
+    print('for {}, max diff is {}'.format(k, max_diff))
+#    print(max_diff, comp, max_diff/comp)
+    plt.show()
 
 
 #Plot 2
