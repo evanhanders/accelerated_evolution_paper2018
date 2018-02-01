@@ -42,8 +42,8 @@ base_dirs_post = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
             ]
-ra_runs = '6.01e4'
 ra_runs = '1.30e8'
+ra_runs = '6.01e7'
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_post):
@@ -98,13 +98,13 @@ axes[-1].set_yticks(y_ticks)
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
 
 axes[-1].plot(info[base_label]['z_profile'], 100*np.abs(info[base_label]['T_profile'][0,:] - info[bvp_label]['T_profile'][0,:])/np.abs(info[base_label]['T_profile'][0,:]))
-y_ticks = np.array([0, 0.5, 1, 1.5, 2])
+y_ticks = np.array([0, 0.1, 0.25])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('z')
 axes[-1].set_ylabel('% difference')
-axes[-1].annotate(r'$\mathrm{(b)}$', (0.04, 0.15), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(b)}$', (0.04, 0.03), fontsize=10)
 
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))

@@ -74,8 +74,8 @@ base_dirs_post = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
             ]
-ra_runs = '6.01e4'
 ra_runs = '1.30e8'
+ra_runs = '6.01e7'
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_post):
@@ -125,7 +125,7 @@ axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w
 axes[-1].set_xlabel('Vertical velocity', labelpad=-1)
 axes[-1].set_ylabel('Frequency')
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(a)}$', (-0.145, 1e8), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(a)}$', (-0.15, 1e8), fontsize=10)
 
 for tick in axes[-1].get_xticklabels():
     tick.set_rotation(45)
@@ -152,7 +152,7 @@ axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf']*info[bvp
 axes[-1].set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
 axes[-1].set_xlabel('Horizontal velocity', labelpad=-0.5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(b)}$', (-0.175, 1e8), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(b)}$', (-0.175, 2e7), fontsize=10)
 
 
 for tick in axes[-1].get_xticklabels():
@@ -168,7 +168,7 @@ axes[-1].set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label][
 plt.legend(frameon=False, fontsize=8, loc='upper right')
 axes[-1].set_xlabel(r'$w(T - \bar{T})$', labelpad=-5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(c)}$', (-1.2e-3, 5e8), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (-1.2e-3, 1e8), fontsize=10)
 
 
 for tick in axes[-1].get_xticklabels():

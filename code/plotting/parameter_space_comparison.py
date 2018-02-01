@@ -27,7 +27,7 @@ import matplotlib.gridspec as gridspec
 
 import dedalus.public as de
 
-COLORS=['indigo', 'orange']
+COLORS=['indigo', 'red']
 MARKERS=['s', 'o', 'd', '*']
 MARKERSIZE=[5,4,5,7]
 
@@ -116,6 +116,10 @@ for i,k in enumerate(fields):
             mrkr = 'o'
             threeD = False
         ind = int(j) % 2
+        if ind == 1:
+            mec = 'black'
+        else:
+            mec = None
 
         if threeD:
             s = 20*(3 - 2*int(ind))
@@ -172,20 +176,20 @@ for i,k in enumerate(fields):
     if k == 'IE':
         ax.annotate(r'$\mathrm{(c)}$', (1.8e3, 1.82), fontsize=10)
         label_end = '{:.2g}'.format(-pIE)
-        label_end = '$(\\langle T_1\\rangle - T_{\mathrm{top}})\\mathrm{ Ra}^{' + label_end + '}$'
+        label_end = '$(\\overline{T} - T_{\mathrm{top}})\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end), fontsize=10, labelpad=4)
 #        ax.set_ylabel(r'$\langle T_1 \rangle - T_{\mathrm{top}}$', fontsize=10, labelpad=4)
         ax.set_ylim(1, 2)
     elif k == 'Nu':
         ax.annotate(r'$\mathrm{(a)}$', (1.8e3, 0.225), fontsize=10)
         label_end = '-{:.2g}'.format(pNu)
-        label_end = '$\\langle\\mathrm{Nu}\\rangle\\mathrm{ Ra}^{' + label_end + '}$'
+        label_end = '$\\overline{\\mathrm{Nu}}\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end), fontsize=10, labelpad=0)
         ax.set_ylim(2e-1, 5e-1)
     elif k == 'Re':
         ax.annotate(r'$\mathrm{(b)}$', (1e8, 0.12), fontsize=10)
         label_end = '-{:.3g}'.format(pRe)
-        label_end = '$\\langle\\mathrm{Re}\\rangle\\mathrm{ Ra}^{' + label_end + '}$'
+        label_end = '$\\overline{\\mathrm{Re}}\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end),fontsize=10, labelpad=0)
 #        ax.set_title(r'$\langle\mathrm{Re}\rangle \mathrm{Ra}^{-1/2}$', fontsize=10)
         ax.set_ylim(1e-1, 3e-1)
