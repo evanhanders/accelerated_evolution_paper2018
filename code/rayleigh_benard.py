@@ -45,13 +45,15 @@ Options:
     --root_dir=<dir>           Root directory for output [default: ./]
 
     --do_bvp                             If flagged, do BVPs at regular intervals when Re > 1 to converge faster
-    --num_bvps=<num>                     Max number of bvps to solve [default: 1]
-    --bvp_equil_time=<time>              How long to wait after a previous BVP before starting to average for next one, in tbuoy [default: 50]
+    --num_bvps=<num>                     Max number of bvps to solve [default: 3]
+    --bvp_equil_time=<time>              How long to wait after a previous BVP before starting to average for next one, in tbuoy [default: 30]
     --bvp_final_equil_time=<time>        How long to wait after last bvp before ending simulation 
-    --bvp_transient_time=<time>          How long to wait at beginning of run before starting to average for next one, in tbuoy [default: 50]
+    --bvp_transient_time=<time>          How long to wait at beginning of run before starting to average for next one, in tbuoy [default: 20]
     --min_bvp_time=<time>                Minimum avg time for a bvp (in tbuoy) [default: 30]
+    --first_bvp_time=<time>                Minimum avg time for a bvp (in tbuoy) [default: 20]
     --bvp_resolution_factor=<mult>       an int, how many times larger than nz should the bvp nz be? [default: 1]
     --bvp_convergence_factor=<fact>      How well converged time averages need to be for BVP [default: 1e-3]
+    --first_bvp_convergence_factor=<fact>      How well converged time averages need to be for BVP [default: 1e-2]
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -77,8 +79,9 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                     run_time=23.5, run_time_buoyancy=None, run_time_iter=np.inf, run_time_therm=1,
                     max_writes=20, max_slice_writes=20, output_dt=0.2,
                     data_dir='./', coeff_output=True, verbose=False, no_join=False,
-                    do_bvp=False, num_bvps=10, bvp_convergence_factor=1e-2, bvp_equil_time=10, bvp_resolution_factor=1,
+                    do_bvp=False, num_bvps=10, bvp_convergence_factor=1e-3, bvp_equil_time=10, bvp_resolution_factor=1,
                     bvp_transient_time=30, bvp_final_equil_time=None, min_bvp_time=50,
+                    first_bvp_time=20, first_bvp_convergence_factor=1e-2,
                     threeD=False, seed=42, mesh=None, overwrite=False):
     import os
     from dedalus.tools.config import config
@@ -210,6 +213,8 @@ def Rayleigh_Benard(Rayleigh=1e6, Prandtl=1, nz=64, nx=None, ny=None, aspect=4,
                                    bvp_transient_time=bvp_transient_time, \
                                    bvp_run_threshold=bvp_convergence_factor, \
                                    bvp_l2_check_time=1, mesh=mesh,\
+                                   first_bvp_time=first_bvp_time,
+                                   first_run_threshold=first_bvp_convergence_factor,\
                                    plot_dir='{}/bvp_plots/'.format(data_dir),\
                                    min_avg_dt=1e-10, final_equil_time=bvp_final_equil_time,
                                    min_bvp_time=min_bvp_time)
@@ -435,6 +440,8 @@ if __name__ == "__main__":
                     threeD=args['--3D'],
                     mesh=mesh,
                     seed=int(args['--seed']),
-                    overwrite=args['--overwrite'])
+                    overwrite=args['--overwrite'],
+                    first_bvp_convergence_factor=float(args['--first_bvp_convergence_factor']),
+                    first_bvp_time=float(args['--first_bvp_time']))
     
 

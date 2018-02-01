@@ -85,7 +85,7 @@ class BVPSolverBase:
     LOCAL_TRACK = None
 
     def __init__(self, nx, ny, nz, flow, comm, solver, num_bvps, bvp_equil_time, bvp_transient_time=20,
-                 bvp_run_threshold=1e-2, bvp_l2_check_time=1, min_bvp_time=20, plot_dir=None,
+                 bvp_run_threshold=1e-2, first_run_threshold=1e-2, bvp_l2_check_time=1, min_bvp_time=35, first_bvp_time=20, plot_dir=None,
                  min_avg_dt=0.05, final_equil_time = None, mesh=None):
         """
         Initializes the object; grabs solver states and makes room for profile averages
@@ -118,6 +118,7 @@ class BVPSolverBase:
         #Specify how BVPs work
         self.num_bvps           = num_bvps
         self.min_bvp_time       = min_bvp_time
+        self.first_bvp_time     = first_bvp_time
         self.min_avg_dt         = min_avg_dt
         self.completed_bvps     = 0
         self.avg_time_elapsed   = 0.
@@ -129,6 +130,7 @@ class BVPSolverBase:
 
         # Stop parameters for bvps
         self.bvp_run_threshold      = bvp_run_threshold
+        self.first_run_threshold    = first_run_threshold
         self.bvp_l2_check_time      = 1
         self.bvp_l2_last_check_time = 0
         self.do_bvp                 = False
@@ -301,11 +303,16 @@ class BVPSolverBase:
                     for i, k in enumerate(self.FIELDS.keys()):
                         local[i] = np.max(self.current_local_l2[k])
                     self.comm.Allreduce(local, globl, op=MPI.MAX)
-                    logger.info('MAX ABS DIFFERENCE IN L2 NORM FOR CONVERGENCE: {:.4g} / {:.4g} FOR BVP SOLVE'.format(np.max(globl), self.bvp_run_threshold))
-                    if np.max(globl) < self.bvp_run_threshold:
-                        self.do_bvp = True
+
+                    self.do_bvp = False
+                    if self.completed_bvps == 0:
+                        logger.info('MAX ABS DIFFERENCE IN L2 NORM FOR CONVERGENCE: {:.4g} / {:.4g} FOR BVP SOLVE'.format(np.max(globl), self.first_run_threshold))
+                        if np.max(globl) < self.first_run_threshold:
+                            self.do_bvp = True
                     else:
-                        self.do_bvp = False
+                        logger.info('MAX ABS DIFFERENCE IN L2 NORM FOR CONVERGENCE: {:.4g} / {:.4g} FOR BVP SOLVE'.format(np.max(globl), self.bvp_run_threshold))
+                        if np.max(globl) < self.bvp_run_threshold:
+                            self.do_bvp = True
                     self.bvp_l2_last_check_time = solver_sim_time
                 self.first_l2 = False
 
@@ -314,7 +321,12 @@ class BVPSolverBase:
     def check_if_solve(self):
         """ Returns a boolean.  If True, it's time to solve a BVP """
 #        logger.debug('start bvp {}'.format((self.avg_started and self.avg_time_elapsed >= self.min_bvp_time) and (self.do_bvp and (self.completed_bvps < self.num_bvps))))
-        return (self.avg_started and self.avg_time_elapsed >= self.min_bvp_time) and (self.do_bvp and (self.completed_bvps < self.num_bvps))
+        if self.completed_bvps == 0:
+            term1 = self.avg_time_elapsed >= self.first_bvp_time
+        else:
+            term1 = self.avg_time_elapsed >= self.min_bvp_time
+        term2 = self.completed_bvps < self.num_bvps
+        return self.avg_started and term1 and term2 and self.do_bvp
 
     def _save_file(self):
         """  Saves profiles dict to file """

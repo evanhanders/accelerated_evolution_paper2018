@@ -12,7 +12,7 @@ cd $PBS_O_WORKDIR
 
 RA=2.79e7
 s=4_2.15
-label=bvp2
+label=bvp3
 
 mkdir $dedalus_dir
 
@@ -31,7 +31,7 @@ mpiexec_mpt -np 128 ~/.python3 $dedalus_script.py \
         --no_slip \
         --output_dt=0.25 \
         --do_bvp \
-        --num_bvps=2 \
+        --num_bvps=3 \
         --bvp_final_equil_time=50 \
         --label=$label \
 		--root_dir=$dedalus_dir \
