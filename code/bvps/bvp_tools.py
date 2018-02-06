@@ -324,7 +324,6 @@ class BVPSolverBase:
                 self.first_l2 = False
 
 
-
     def check_if_solve(self):
         """ Returns a boolean.  If True, it's time to solve a BVP """
 #        logger.debug('start bvp {}'.format((self.avg_started and self.avg_time_elapsed >= self.min_bvp_time) and (self.do_bvp and (self.completed_bvps < self.num_bvps))))
@@ -408,8 +407,7 @@ class BoussinesqBVPSolver(BVPSolverBase):
     Solves energy equation.  Makes no approximations other than time-stationary dynamics.
     """
 
-    # 0 - full avg profile
-    # 1 - stdev profile
+
     FIELDS = OrderedDict([  
                 ('enth_flux_IVP',       'w*(T0+T1)'),                      
                 ('tot_flux_IVP',        '(w*(T0+T1) - P*(T0_z+T1_z))'),                      
@@ -506,7 +504,6 @@ class BoussinesqBVPSolver(BVPSolverBase):
             plt.plot(z, init_kappa_flux + init_enth_flux)
             plt.plot(z, init_kappa_flux)
             plt.plot(z, init_enth_flux)
-            plt.plot(z, self.profiles_dict['enth_flux_IVP'], lw=2, ls='--')
             plt.plot(z, flux_through_system)
             plt.savefig('{}/fluxes_before_{:04d}.png'.format(self.plot_dir, self.plot_count))
             plt.close()
@@ -589,7 +586,6 @@ class BoussinesqBVPSolver(BVPSolverBase):
             while np.sum(np.abs(pert)) > tolerance:
                 solver.newton_iteration()
                 logger.info('Perturbation norm: {}'.format(np.sum(np.abs(pert))))
-
 
             T1 = solver.state['T1']
             P1   = solver.state['p1']

@@ -43,31 +43,34 @@
 \title{Accelerated convergence of convective simulations using boundary value problems}
 
 \begin{abstract}
-We present a method for coupling Boundary value problems (BVPs) with Initial value problems (IVPs)
+We present a method for coupling boundary value problems (BVPs) with initial value problems (IVPs)
 in order to achieve thermally converged convective solutions on dynamical timescales, rather than the
-long thermal timescale.  We demonstrate the similarity between the solution reached by BVP and the
-solution reached by a long thermal rundown of the IVP, and demonstrate that this method works at a
-large range of supercriticalities.  We use this method to achieve converged solutions at high Ra,
-and discuss its extension to more complex scenarios, such as stratified, compressible convection.
+long thermal timescale. We study this method in the context of \RB convection. 
+We demonstrate that the solution reached by BVP and the
+solution reached by a long thermal rundown of the IVP are similar, and demonstrate that this method works at a
+large range of supercriticalities.  The BVP method is used to achieve converged solutions at high supercriticality ($10^8$),
+and its extensions to more complex scenarios are discussed.
 \end{abstract}
 \maketitle
 
 \section{Introduction}
 \label{sec:intro}
 Natural convection occurs in the presence of disparate timescales. Granules on the
-solar surface overturn on the order of 10 minutes, whereas deep motions in the Sun are likely at
-low Mach number and constrained by the solar rotation rate of $\sim$1 month.  
-Both of these dynamical timescales are vastly shorter than the Sun's average timescale of energy transport,
-which is the Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
-As simulations aim to model natural convection
-by increasing into the high-Rayleigh Number (Ra) regime, where diffusive timescales are much
-longer than dynamical timescales \cite{anders&brown2017}, achieving converged simulations will 
-require runs which span a greater number of convective timescales in order to thermally converge.
-Furthermore, with increasing Ra and decreasing diffusivities, motions become more turbulent
-and require finer grid meshes and shorter timesteps to resolve turbulent motions, increasing the simulation
-time required for each overturn timescale.  
-These two effects conspire to make achieving thermally converged, high-Ra, astrophysically interesting
-simulations an intractable problem using modern numerical tools.
+solar surface overturn on the order of 10 minutes, whereas deep motions in the Sun at
+low Mach number are constrained by the solar rotation rate of $\sim$1 month.  
+These dynamical timescales are vastly shorter than the Sun's 
+Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
+Modern simulations aim to model natural convection
+by increasing into the high-Rayleigh-Number (Ra) regime, in which energy transportation occurs on
+timescales much larger than dynamical timescales \cite{anders&brown2017}.
+In this regime, simulations must pass through a great number
+of convective timescales to reach a thermally converged state.
+Furthermore, as Ra increases and diffusivities correspondingly decrease, 
+motions become more turbulent. To properly resolve these turbulent motions, fine grid meshes
+and short timesteps are required; these requirements increase the computational
+cost of evolving through a single convective overturn time.
+In short, achieving thermally converged, high-Ra, astrophysically interesting
+simulations is an intractably expensive problem using modern numerical tools.
 
 Prior studies of stratified convection in which a convective layer lies between stable layers
 have used the knowledge of Mixing Length Theory (MLT) to adjust the initial thermodynamic structure of
@@ -91,9 +94,9 @@ We adopt the Oberbeck-Boussinesq approximation.  Under this choice, the
 fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
 of thermal expansion ($\alpha$). The variables of the fluid that are evolved are the velocity,
 $\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, the temperature $T = T_0 + T_1$, and the pressure, $P$.
-The density of the fluid is a constant $\rho_0$, except on the
-term where the constant gravitational acceleration, $\bm{g} = - g\hat{z}$ acts in the vertical momentum equation, 
-in which case it is $\rho = \rho_0(1  - \alpha T_1)$.  
+The density of the fluid is a constant, $\rho_0$, except on the
+term where the constant gravitational acceleration, $\bm{g} = - g\hat{z}$, acts in the vertical momentum equation, 
+where $\rho = \rho_0(1  - \alpha T_1)$.  
 Under these choices, the equations of motion are \cite{spiegel&veronis1960}
 \begin{gather}
 \DivU = 0, 
@@ -106,15 +109,16 @@ Under these choices, the equations of motion are \cite{spiegel&veronis1960}
 \frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \kappa\grad^2 T_1,
 	\label{eqn:dim_bouss_energy}
 \end{gather}
-We non-dimensionalize these equations such that length scales are in units of the layer height ($L_z$),
-temperature is in units of the initial temperature jump across the layer ($\Delta T_0 = L_z \grad T_0$), 
-and time is in units of the freefall timescale ($L_z / v_{\text{ff}}$), where the freefall velocity is
-$v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$.
+We non-dimensionalize these equations on the layer height ($L_z$),
+the initial temperature jump across the layer ($\Delta T_0 = L_z \grad T_0$), 
+and the freefall velocity ($v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$).
+by these choices, one time unit is a freefall time ($L_z/v_{ff}$).
 We further re-arrange the momentum equation by introducing a reduced kinematic pressure,
-$\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where $\bm{g} = -\grad \phi$ is the gravitational potential.
-Despite containing a nonlinear $\bm{u}$ component, the nature of $P$ in \RB convection, as a
+$\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where the gravitational
+potential, $\phi$, is defined such that $\bm{g} = -\grad \phi$.
+The nature of $P$ in \RB convection, as a
 Lagrange multiplier,
-allows us to treat $\varpi$ as a linear unknown, without a need to resolve its different components.
+allows the treatment of $\varpi$ as a linear variable.
 We time evolve the equations in the form,
 \begin{gather}
 \DivU = 0, 
@@ -126,17 +130,19 @@ We time evolve the equations in the form,
 \frac{\partial T_1}{\partial t} - \mathcal{P}\grad^2 T_1 + w \frac{\partial T_0}{\partial z} = - \bm{u}\cdot\grad T_1,
 	\label{eqn:bouss_energy}
 \end{gather}
-where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity. We find Eq. (\ref{eqn:bouss_momentum}) to
+where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity, and the temperature
+has been decomposed as $T \equiv T_0 + T_1$ where $T_0$ is the initial temperature
+profile. We find Eq. (\ref{eqn:bouss_momentum}) to
 be slightly faster numerically than the standard form in Eq. (\ref{eqn:dim_bouss_momentum}).
 The dimensionless control parameters are set by the Rayleigh and Prandtl numbers,
 \begin{equation}
 \mathcal{R} \equiv \sqrt{\frac{\text{Pr}}{\text{Ra}}}, \qquad \mathcal{P} \equiv \frac{1}{\sqrt{\text{Pr}\,\text{Ra}}}, \qquad
 \text{Ra} = \frac{g \alpha L_z^4 \grad T_0}{\nu\chi} = \frac{(L_z\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}.
 \end{equation}
-The dimensionless vertical extent of the domain is $z = [-1/2, 1/2]$, and at the boundaries
-we impose no-slip, impenetrable boundary conditions such that $w = u = v = 0$ at $z = \pm 1/2$.
+The dimensionless vertical extent of the domain is $z = [-1/2, 1/2]$, and at the top and bottom boundaries
+we impose no-slip, impenetrable boundary conditions such that $u = v = w = 0$ at $z = \pm 1/2$.
 At the lower boundary, we employ a fixed flux condition such that $\partial T_1 / \partial z = 0$
-at $z = -1/2$, and we impose a fixed temperature condition $T_1 = 0$ at $z = 1/2$. Both
+at $z = -1/2$, and we impose a fixed temperature condition of $T_1 = 0$ at $z = 1/2$. Both
 horizontal directions are periodic, extending over a range $x, y = [0, \Gamma]$, where
 the aspect ratio is $\Gamma = 2$. In our 2D cases, we only examine the $x$ and $z$ dimensions
 and we set $v = \partial_y = 0$.
@@ -148,20 +154,20 @@ employ fixed temperature (Dirichlet) or fixed heat flux
 (Neumann) boundary conditions at both plates.  
 Dirichlet conditions represent plates of infinite conductivity,
 whereas Neumann conditions model plates of finite conductivity.  
-In both cases, choosing symmetric boundary conditions maintains overall system symmetry, 
-and despite evolving towards different thermal structures, both types of conditions
-transport heat in the same manner \cite{johnston&doering2009}.
+Both types of conditions
+transport heat in the same manner \cite{johnston&doering2009},
+at least when the upper and lower conditions are symmetric.
 Studies of convection which aim to model
 astrophysical systems such as stars often employ a mixture of these
 two types of boundary conditions \cite{hurlburt&all1984, cattaneo&all1991, korre&all2017}.  
 The flux at the lower boundary is fixed, modeling
 the constant energy generation of the stellar core, 
 while the outer boundary condition is held at a fixed temperature,
-modeling the surface of a star which must output the energy generated internally.
+modeling the stellar surface which must output the energy generated internally.
 This setup is a useful model for understanding natural
 systems, but simulations which employ these boundary conditions suffer from a long 
 thermal relaxation as the atmosphere loses energy and approaches the adiabat chosen by the
-Dirichlet condition.  We choose these conditions in part to better understand them, and in
+Dirichlet condition.  We choose these mixed conditions in part to better understand them, and in
 part because these conditions minimize the number of assumptions that must be made in
 setting up the boundary value problem.  For this choice of boundary conditions, the
 critical Ra is Ra$_{\text{crit}} = 1295.78$, and we will often speak in terms of the
@@ -275,6 +281,8 @@ pseudospectral framework \cite{burns&all2016} to time-evolve
 (\ref{eqn:incompressible})-(\ref{eqn:bouss_energy}) 
 using an implicit-explicit (IMEX), third-order, four-step 
 Runge-Kutta timestepping scheme RK443 \cite{ascher&all1997}.  
+The linear terms (on the LHS of the equations) are solved implicitly,
+while the nonlinear terms (RHS) are explicitly solved.
 The temperature field is decomposed as $T = T_0(z) + T_1(x, y, z, t)$
 and the velocity is $\bm{u} = w\bm{\hat{z}} + u\bm{\hat{x}} + v\bm{\hat{y}}$.
 In our 2D runs, $v = 0$.
@@ -302,10 +310,10 @@ or not the BVP achieves the proper solution.
 \caption{Comparisons of the evolved thermodynamic states of a BVP solution and a long IVP rundown at
 $S = 10^{4 + 2/3}$ are shown.  (a) Evolved temperature profiles, as a function of height.
 (b) The percentage difference between the temperature profiles (as shown in (a)), as a function of height.
-(c) Frequency distributions of point-by-point measurements of $T$ throughout the two domains over the
-averaging windows are shown.
-The BVP shows excellent agreement with the thermal rundown (AUTHOR NOTE: I need to perform quantitative PDF
-comparisons, still).
+(c) Probability distributions of point-by-point measurements of $T$ throughout the two domains over the
+averaging windows are shown.  The cumulative distribution functions are overplotted and the maximum
+difference between them in 0.0407. This difference arises due to the imperfect alignment of the
+mean domain temperatures, but it is clear that otherwise the statistics are quite similar.
 \label{fig:temp_comparison} }
 \end{figure}
 
@@ -319,42 +327,47 @@ temperature are what lead to convective transport, and thus examining the spread
 and the allowed values that it can take are important to characterizing the system.  As seen
 in Fig. \ref{fig:temp_comparison}c, aside from the noticeable difference in the mode of the
 temperatures, the two runs exhibit largely the same spread of temperatures.
-(AUTHOR NOTE: I'll run a Kolmogorov-Smirnov test to compare the PDFs, but I need to collaborate on this
-to make sure that what I'm planning on doing makes sense -- we should talk about this.)
+(AUTHOR NOTE: we aren't quite sure how to do a KS test properly here, but we can at least
+list the KS statistic -- currently this is in the caption.)
 
 In addition to examining the thermodynamics of the solutions, we are especially interested in
 determining if the post-BVP solution appropriately captures key features of the nonlinear dynamics.
-We show point-by-point frequency distributions of the horizontal velocity, vertical velocity,
+We show point-by-point probability distributions of the horizontal velocity, vertical velocity,
 and nonlinear transport in Fig. \ref{fig:pdf_comparison}.  All of these measures have a sharp
 peak at zero due to the no-slip, impenetrable boundary conditions and the denser grid sampling
 near the boundaries of our Chebyshev grid.  Regardless, we see that the velocities of the 
-two solutions are largely consistent.  The nonlinear transport in Fig. \ref{fig:pdf_comparison}
-shows that the rundown solution experiences more extreme events which carry a large amount of
-flux than the BVP solution, but the distributions are largely consistent.
-(AUTHOR NOTE: see previous paragraph comment).
+two solutions are largely consistent.  The nonlinear transport in Fig. \ref{fig:pdf_comparison}c
+shows that the rundown solution experiences a larger number of energetic, extreme events,
+but the BVP displays a larger number of moderately energetic events than the IVP (as
+evidenced by the differences in the cumulative distribution functions).
 
 \begin{figure}[b]
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
-\caption{Frequency distribution functions of the vertical velocity (a), horizontal velocity (b), and nonlinear
+\caption{Probability distribution functions of the vertical velocity (a), horizontal velocity (b), and nonlinear
 vertical transport (c) are shown for a 2D run at $S = 10^{4 + 2/3}$.  We sample flows every 0.1 time units for 500 freefall
 times, and include the flows at all points on the grid at each of these samples in these distributions.  All
 distributions are biased by the no-slip, impenetrable boundary conditions, coupled with the dense spacing of our
-Chebyshev grids near the boundaries, so there is a large peak around zero. The distributions, and thus the nonlinear
-dynamics, are broadly similar, but they  (maybe?) do not pass a two-tailed Kolmogorov-Smirnov similarity test. (AUTHOR NOTE: 
-I just revamped the BVP method a bit on 1/12/2018, so I haven't had the time to run full tests on all the plots here)
+Chebyshev grids near the boundaries, so there is a large peak around zero. 
+The cumulative distribution function is overplotted on each plot, with a maximum difference of
+(a) 0.027, (b) 0.0061, and (c) 0.035. There is an excess of higher-flux carrying
+elements in the BVP solution than in the IVP rundown, despite the rundown's distribution
+having more powerful, rare events.
 \label{fig:pdf_comparison} }
 \end{figure}
 
 
 The goodness of this method has been tested across a broad range of supercriticality.  We have
 examined both Rundown and BVP solutions in the range $S = [10^{1/3}, 10^5]$ in 2D and
-$S = [10^1, 10^4]$ in 3D (3D points to come).  We have also further explored up to $S = 10^6$
-(AUTHOR NOTE: should we go up to $10^8$?  $10^7$ is easily in reach. Also, 3D data points are
-sparse and will change -- need to rerun with proper BVP procedure).  We compare scalar, 
-volume-averaged measurements of all of these runs in Fig. \ref{fig:parameter_space_comparison}.
+$S = [10^1, 10^4]$ in 3D.  We have also further explored up to $S = 10^6$
+(AUTHOR NOTE: we're going up to $10^8$ in 2D right now, need to mention this is state of
+the art and give refs).
+We show the volume averaged Nusselt number, RMS Reynolds number, and mean temperature in
+the evolved BVP solutions in in Fig. \ref{fig:parameter_space_comparison}a-c.
+The relative error of the BVP measurements of these values is compared to the IVP
+measurements for these values in Fig. \ref{fig:parameter_space_comparison}d-f.
 
-In Fig. \ref{fig:parameter_space_comparison}a, we compare the Nusselt number scaling in 2D,
-3D, and for BVP and rundown solutions.  We use a classic definition of the Nusselt number
+In Fig. \ref{fig:parameter_space_comparison}a, we show the Nusselt number scaling in 2D and
+3D.  We use a classic definition of the Nusselt number
 to measure the heat transport in these systems, where
 \begin{equation}
 \text{Nu} = \frac{\angles{F_{\text{conv}} + F_{\text{cond}}}}{\angles{F_{\text{cond, ref}}}}
@@ -374,7 +387,7 @@ would happen if we included viscous fluxes...)
 
 In Fig. \ref{fig:parameter_space_comparison}b, we measure the rms Reynolds number, where
 $\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  We find that this scales roughly as
-$\text{Re} \propto \text{Ra}^{0.45}$, and find good agreement between BVP and rundown solutions.
+$\text{Re} \propto \text{Ra}^{0.45}$.
 
 In Fig. \ref{fig:parameter_space_comparison}c, we measure the volume averaged 
 temperature of our solution, then subtract out the value at the upper (fixed $T$) boundary.
@@ -385,24 +398,30 @@ the fluxes through the two systems are the same (it is in some ways an alternate
 [cite King 2009 supp materials]).
 We find that this measure is $\propto \text{Ra}^{-1/5}$, approaching zero, as expected.
 
+For each of these measurements, the BVP achieves the same value as the IVP to
+within about 3\% (Fig. \ref{fig:parameter_space_comparison}d-f).  This is good agreement,
+and the residuals have a scattered distribution of positive and negative values, indicating
+that the method is not biased towards the wrong answer in a clear manner.
+
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
-\caption{Compensated scaling plots are shown for the Nusselt number (a), the
-Reynolds number (b), and the volume-averaged temperature (c).  All plots are linear(y)-log(x),
-and any differences vertically are generally small.  Symbols represent the mean value of
+\caption{Scaling plots are shown for the Nusselt number (a), the
+Reynolds number (b), and the volume-averaged temperature (c).  
+Symbols represent the mean value of
 a measurement, vertical lines represent the standard deviation of the measurement over the
 time window, and error bars represent the shift in the mean value over the window.
-All data points are staggered slightly off of their original value in the x-direction
-so as to show clearly the values of overlapping points at the same value of Ra. 
 (a) Nu, which measures heat transport, scales roughly like $Ra^{1/5}$, and above Ra$\geq 10^6$,
 simulations display horizontally oscillating plumes which have oscillating periods of high transport
 and low transport.  The mean value is marginally diminished as a result, and the variance of Nu with time
 is large. (b) Re, which measures the level of turbulence in the evolved solution, scales as
-Ra$^{0.45}$ in 2D and (something else?) in 3D. (c) The average temperature flucutation, minus the top
+Ra$^{0.45}$ in 2D and is not distinctly different in 3D. (c) The average temperature flucutation, minus the top
 temperature, which is a scalar measure of the final average thermodynamic state and should approach zero
 in the limit of infinitely large Ra.
 The temperature profile is slow to adjust, and differences between
-BVP solutions and rundown solutions are quite easy to pick out in this measure.
+BVP solutions and rundown solutions are quite easy to pick out in this measure. (d-f)
+Relative error is shown between the BVP and IVP measurements of Nu (d), Re (e), and the
+mean temperature (f). The grey box indicates the region in which only BVP runs were
+carried out due to computational expense.
 \label{fig:parameter_space_comparison} }
 \end{figure}
 
@@ -416,7 +435,14 @@ state. Furthermore, the total simulation time required to use the BVPs does not 
 low $S$ to high $S$, so the main prohibition on high Ra states is the difficulty of timesteps becoming
 increasingly small as turbulence increases.  Additionally, post-BVP, we generally see an increase of the
 timestep size by nearly a factor of two due to the less intense driving of the near-converged state that
-is achieved quickly.
+is achieved quickly.  
+
+It is important to note that the measurements made in
+this paper were generally done for short timescales (a few hundred buoyancy times) in
+order to show the precise differences between the BVP solutions and the IVP solutions.
+Where there are differences, the BVP solution is trending towards the IVP solution,
+and if measurements were taken over long timescales (e.g., a thermal time), the
+differences between the BVP solution and IVP solution would be negligible.
 
 One major benefit of the BVP method used here is that it preserves the natural behavior of 
 the convective solution (such as the horizontally oscillatory rolls

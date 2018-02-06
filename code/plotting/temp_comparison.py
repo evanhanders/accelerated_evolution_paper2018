@@ -13,6 +13,7 @@ Options:
 import matplotlib   
 matplotlib.rcParams.update({'font.size': 11})
 import matplotlib.pyplot as plt
+plt.rc('font',family='Times New Roman')
 from matplotlib.colors import ColorConverter
 import os
 import numpy as np
@@ -26,6 +27,41 @@ import matplotlib.gridspec as gridspec
 
 
 import dedalus.public as de
+from scipy.interpolate import interp1d
+
+
+
+def calculate_CDF(x, pdf):
+    """ Calculate the CDF of a PDF using trapezoidal rule integration """
+    dx = np.diff(x)
+    new_x = x[0:-1] + dx
+    d_cdf   = (dx/2) * (pdf[0:-1] + pdf[1:])
+    cdf = np.zeros_like(d_cdf)
+    for i in range(len(cdf)):
+        cdf[i] = np.sum(d_cdf[:i+1])
+    return new_x, cdf
+
+def ks_test(x1, y1, N1, x2, y2, N2, n=1000):
+    x_range = [np.min(x1), np.max(x1)]
+    if np.min(x2) > x_range[0]:
+        x_range[0] = np.min(x2)
+    if np.max(x2) < x_range[1]:
+        x_range[1] = np.max(x2)
+
+    x_points = np.linspace(*tuple(x_range), n)
+
+    f1 = interp1d(x1, y1, bounds_error=False, assume_sorted=True)#, fill_value='extrapolate')
+    f2 = interp1d(x2, y2, bounds_error=False, assume_sorted=True)#, fill_value='extrapolate')
+
+    y1_interp = f1(x_points)
+    y2_interp = f2(x_points)
+    print(y1_interp - y2_interp)
+    diff = np.abs(y1_interp - y2_interp)
+    
+    max_diff = np.max(diff)
+    return max_diff, np.sqrt((N1+N2)/(N1*N2))
+
+
 
 EPSILON_ORDER=[1e-7, 1e0, 1e-4, 5e-1]
 FORCE_WRITE=False
@@ -108,19 +144,33 @@ axes[-1].annotate(r'$\mathrm{(b)}$', (0.04, 0.03), fontsize=10)
 
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
-axes[-1].fill_between(info[base_label]['T_xs_pdf'], 0, info[base_label]['T_pdf_pdf']*info[base_label]['T_denorm_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['T_xs_pdf'], info[base_label]['T_pdf_pdf']*info[base_label]['T_denorm_pdf'], c='blue')
-axes[-1].fill_between(info[bvp_label]['T_xs_pdf'], 0, info[bvp_label]['T_pdf_pdf']*info[bvp_label]['T_denorm_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf']*info[bvp_label]['T_denorm_pdf'], c='red')
+axes[-1].fill_between(info[base_label]['T_xs_pdf'], 0, info[base_label]['T_pdf_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['T_xs_pdf'], info[base_label]['T_pdf_pdf'], c='blue')
+axes[-1].fill_between(info[bvp_label]['T_xs_pdf'], 0, info[bvp_label]['T_pdf_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'], c='red')
 x_ticks = np.array([-0.5, -0.45, -0.40])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('T')
-axes[-1].set_ylabel('Frequency')
+axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
 axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
-axes[-1].annotate(r'$\mathrm{(c)}$', (-0.495, 1.2e8), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (-0.495, 1e2), fontsize=10)
+
+T_cdf_x_bvp, T_cdf_y_bvp = calculate_CDF(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'])
+T_cdf_x_base, T_cdf_y_base = calculate_CDF(info[base_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'])
+
+share = axes[-1].twinx()
+share.plot(T_cdf_x_bvp, T_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
+share.plot(T_cdf_x_base, T_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
+share.set_ylim(0, 1)
+axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
+share.set_ylabel('CDF', rotation=270, labelpad=10)
 
 
+max_diff, comp = ks_test(T_cdf_x_bvp, T_cdf_y_bvp, info[bvp_label]['T_denorm_pdf'],\
+                             T_cdf_x_base, T_cdf_y_base, info[base_label]['T_denorm_pdf'])
+
+print('for {}, max diff is {}'.format('T', max_diff))
 
 
 plt.savefig('temp_comparison.png'.format(k), bbox_inches='tight', dpi=200)

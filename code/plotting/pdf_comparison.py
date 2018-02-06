@@ -13,6 +13,7 @@ Options:
 import matplotlib   
 matplotlib.rcParams.update({'font.size': 11})
 import matplotlib.pyplot as plt
+plt.rc('font',family='Times New Roman')
 from matplotlib.colors import ColorConverter
 import os
 import numpy as np
@@ -118,62 +119,99 @@ axes.append(plt.subplot(gs.new_subplotspec(*gs_info[0])))
 base_label = '{}_0'.format(ra_runs)
 bvp_label = '{}_1'.format(ra_runs)
 
-axes[-1].fill_between(info[base_label]['w_xs_pdf'], 0, info[base_label]['w_pdf_pdf']*info[base_label]['w_denorm_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['w_xs_pdf'], info[base_label]['w_pdf_pdf']*info[base_label]['w_denorm_pdf'], c='blue')
-axes[-1].fill_between(info[bvp_label]['w_xs_pdf'], 0, info[bvp_label]['w_pdf_pdf']*info[bvp_label]['w_denorm_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf']*info[bvp_label]['w_denorm_pdf'], c='red')
+axes[-1].fill_between(info[base_label]['w_xs_pdf'], 0, info[base_label]['w_pdf_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['w_xs_pdf'], info[base_label]['w_pdf_pdf'], c='blue')
+axes[-1].fill_between(info[bvp_label]['w_xs_pdf'], 0, info[bvp_label]['w_pdf_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf'], c='red')
 axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w_xs_pdf']))
-axes[-1].set_xlabel('Vertical velocity', labelpad=-1)
-axes[-1].set_ylabel('Frequency')
+axes[-1].set_xlabel('Vertical Velocity', labelpad=-1)
+axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(a)}$', (-0.15, 1e8), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(a)}$', (-0.17, 2e1), fontsize=10)
+axes[-1].set_ylim(1e-3, 1e2)
+
+
+w_cdf_x_bvp, w_cdf_y_bvp = calculate_CDF(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf'])
+w_cdf_x_base, w_cdf_y_base = calculate_CDF(info[base_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf'])
+
+share = axes[-1].twinx()
+share.plot(w_cdf_x_bvp, w_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
+share.plot(w_cdf_x_base, w_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
+share.set_ylim(0, 1)
+share.set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w_xs_pdf']))
 
 for tick in axes[-1].get_xticklabels():
     tick.set_rotation(45)
 
+for tick in share.get_yticklabels():
+    tick.set_visible(False)
 
 
-plt.figure()
+#plt.figure()
 for k in ['u', 'w', 'w*T']:
     cdf_x_bvp, cdf_y_bvp = calculate_CDF(info[bvp_label]['{}_xs_pdf'.format(k)], info[bvp_label]['{}_pdf_pdf'.format(k)])
     cdf_x_base, cdf_y_base = calculate_CDF(info[base_label]['{}_xs_pdf'.format(k)], info[base_label]['{}_pdf_pdf'.format(k)])
-    plt.plot(cdf_x_bvp, cdf_y_bvp)
-    plt.plot(cdf_x_base, cdf_y_base)
-    plt.yscale('log')
+#    plt.plot(cdf_x_bvp, cdf_y_bvp)
+#    plt.plot(cdf_x_base, cdf_y_base)
+#    plt.yscale('log')
 
     max_diff, comp = ks_test(cdf_x_bvp, cdf_y_bvp, info[bvp_label]['u_denorm_pdf'],\
                              cdf_x_base, cdf_y_base, info[base_label]['u_denorm_pdf'])
     print('for {}, max diff is {}'.format(k, max_diff))
-#    print(max_diff, comp, max_diff/comp)
-    plt.show()
+##    print(max_diff, comp, max_diff/comp)
+#    plt.show()
 
 
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
-axes[-1].fill_between(info[base_label]['u_xs_pdf'], 0, info[base_label]['u_pdf_pdf']*info[base_label]['u_denorm_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf']*info[base_label]['u_denorm_pdf'], c='blue')
-axes[-1].fill_between(info[bvp_label]['u_xs_pdf'], 0, info[bvp_label]['u_pdf_pdf']*info[bvp_label]['u_denorm_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf']*info[bvp_label]['u_denorm_pdf'], c='red')
+axes[-1].fill_between(info[base_label]['u_xs_pdf'], 0, info[base_label]['u_pdf_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf'], c='blue')
+axes[-1].fill_between(info[bvp_label]['u_xs_pdf'], 0, info[bvp_label]['u_pdf_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'], c='red')
 axes[-1].set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
-axes[-1].set_xlabel('Horizontal velocity', labelpad=-0.5)
+axes[-1].set_xlabel('Horizontal Velocity', labelpad=-0.5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(b)}$', (-0.175, 2e7), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(b)}$', (-0.175, 2e1), fontsize=10)
+axes[-1].set_ylim(1e-3, 1e2)
 
+u_cdf_x_bvp, u_cdf_y_bvp = calculate_CDF(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
+u_cdf_x_base, u_cdf_y_base = calculate_CDF(info[base_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
+
+share = axes[-1].twinx()
+share.plot(u_cdf_x_bvp, u_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
+share.plot(u_cdf_x_base, u_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
+share.set_ylim(0, 1)
+share.set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
+
+
+for tick in share.get_yticklabels():
+    tick.set_visible(False)
 
 for tick in axes[-1].get_xticklabels():
     tick.set_rotation(45)
 
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
-axes[-1].fill_between(info[base_label]['w*T_xs_pdf'], 0, info[base_label]['w*T_pdf_pdf']*info[base_label]['w*T_denorm_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf']*info[base_label]['w*T_denorm_pdf'], c='blue', label='Rundown')
-axes[-1].fill_between(info[bvp_label]['w*T_xs_pdf'], 0, info[bvp_label]['w*T_pdf_pdf']*info[bvp_label]['w*T_denorm_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf']*info[bvp_label]['w*T_denorm_pdf'], c='red', label='BVP')
+axes[-1].fill_between(info[base_label]['w*T_xs_pdf'], 0, info[base_label]['w*T_pdf_pdf'], color='blue', alpha=0.4)
+axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'], c='blue', label='Rundown')
+axes[-1].fill_between(info[bvp_label]['w*T_xs_pdf'], 0, info[bvp_label]['w*T_pdf_pdf'], color='red', alpha=0.4)
+axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'], c='red', label='BVP')
 axes[-1].set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label]['w*T_xs_pdf']))
 plt.legend(frameon=False, fontsize=8, loc='upper right')
-axes[-1].set_xlabel(r'$w(T - \bar{T})$', labelpad=-5)
+axes[-1].set_xlabel(r'$w(T - \bar{T}\,)$', labelpad=-5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(c)}$', (-1.2e-3, 1e8), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (-1.2e-3, 1e3), fontsize=10)
+
+wT_cdf_x_bvp, wT_cdf_y_bvp = calculate_CDF(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'])
+wT_cdf_x_base, wT_cdf_y_base = calculate_CDF(info[base_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'])
+
+share = axes[-1].twinx()
+share.plot(wT_cdf_x_bvp, wT_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
+share.plot(wT_cdf_x_base, wT_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
+share.set_ylim(0, 1)
+share.set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label]['w*T_xs_pdf']))
+share.set_ylabel('CDF', rotation=270, labelpad=10)
+
 
 
 for tick in axes[-1].get_xticklabels():

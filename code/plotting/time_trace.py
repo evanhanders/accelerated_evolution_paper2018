@@ -13,6 +13,7 @@ Options:
 import matplotlib   
 matplotlib.rcParams.update({'font.size': 11})
 import matplotlib.pyplot as plt
+plt.rc('font',family='Times New Roman')
 from matplotlib.colors import ColorConverter
 import os
 import numpy as np
@@ -287,6 +288,7 @@ x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_ylabel(r'$\mathrm{(BVP - Rundown)}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
 axes[-1].annotate(r'$\mathrm{(e)}$', (0.04, -0.028), fontsize=10)
+axes[-1].set_xlabel('z')
 
 
 plt.savefig('time_trace.png'.format(k), bbox_inches='tight', dpi=200)
