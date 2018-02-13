@@ -45,7 +45,7 @@ base_dirs_post = [
 fields = ['Nu', 'Re', 'IE', 'KE', 'TE']
 
 ra_runs = '1.30e8'
-ra_runs = '6.01e7'
+#ra_runs = '6.01e7'
 
 pre_flux_file = None
 ##### INFO grabbing from post-plot buddy files

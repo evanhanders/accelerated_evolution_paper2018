@@ -19,23 +19,7 @@ archivePrefix = "arXiv",
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%% TEXTBOOKS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@book{landau&lifshitz1959,
-  title={Fluid Mechanics, by L.D. Landau and E.M. Lifshitz},
-  author={Landau, L.D. and Lifshits, E.M.},
-  series={Teoreticheskai︠a︡ fizika},
-  url={https://books.google.com/books?id=CVbntgAACAAJ},
-  year={1959},
-  publisher={Pergamon Press}
-}
 
-@book{HKT,
-	title={Stellar Interiors: Physical Principles, Structure, and Evolution},
-	author={Hansen, Carl J. and Kawaler, Steven D. and Trimble, Virginia},
-	year={2004},
-	publisher={Springer},
-	series={Astronomy and Astrophysics Library}
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% DEDALUS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -128,38 +112,6 @@ archivePrefix = "arXiv",
   adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
 
-@article{miles1986,
-   author = "Miles, John",
-   title = "Richardson’s criterion for the stability of stratified shear flow",
-   journal = "Physics of Fluids",
-   year = "1986",
-   volume = "29",
-   number = "10", 
-   pages = "3470-3471",
-   url = "http://scitation.aip.org/content/aip/journal/pof1/29/10/10.1063/1.865812",
-   doi = "http://dx.doi.org/10.1063/1.865812" 
-}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%% ZONAL FLOWS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%Zonal flows driven by deep convection in Jupiter
-@article {zhang&schubert1996,
-	author = {Zhang, Keke and Schubert, Gerald},
-	title = {Penetrative Convection and Zonal Flow on Jupiter},
-	volume = {273},
-	number = {5277},
-	pages = {941--943},
-	year = {1996},
-	doi = {10.1126/science.273.5277.941},
-	publisher = {American Association for the Advancement of Science},
-	abstract = {Measurements by the Galileo probe support the possibility that the zonal winds in Jupiter{\textquoteright}s atmosphere originate from convection that takes place in the deep hydrogen-helium interior. However, according to models based on recent opacity data and the probe{\textquoteright}s temperature measurements, there may be radiative and nonconvective layers in the outer part of the jovian interior, raising the question of how deep convection could extend to the surface. A theoretical model is presented to demonstrate that, because of predominant rotational effects and spherical geometry, thermal convection in the deep jovian interior can penetrate into any outer nonconvective layer. These penetrative convection rolls interact nonlinearly and efficiently in the model to generate and sustain a mean zonal wind with a larger amplitude than that of the nonaxisymmetric penetrative convective motions, a characteristic of the wind field observed at the cloud level on Jupiter.},
-	issn = {0036-8075},
-	URL = {http://science.sciencemag.org/content/273/5277/941},
-	eprint = {http://science.sciencemag.org/content/273/5277/941.full.pdf},
-	journal = {Science}
-}
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%  MESA %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,64 +188,9 @@ archivePrefix = "arXiv",
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%% RAYLEIGH BENARD CONVECTION %%%%%%%%%%%%%%%%%%  
+%%%%%%%%%%%%%%%%%%%%%%%% BOUSSINESQ CONVECTION %%%%%%%%%%%%%%%%%%  
 
 
-@ARTICLE{jones&all1976,
-   author = {{Jones}, C.~A. and {Moore}, D.~R. and {Weiss}, N.~O.},
-    title = "{Axisymmetric convection in a cylinder}",
-  journal = {J. Fluid Mech.},
- keywords = {Axisymmetric Flow, Benard Cells, Boussinesq Approximation, Convective Flow, Three Dimensional Flow, Boundary Value Problems, Convective Heat Transfer, Cylindrical Bodies, Nusselt Number, Perturbation Theory, Prandtl Number, Rayleigh Number},
-     year = 1976,
-    month = jan,
-   volume = 73,
-    pages = {353-388},
-      doi = {10.1017/S0022112076001407},
-   adsurl = {http://adsabs.harvard.edu/abs/1976JFM....73..353J},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-@ARTICLE{korre&all2017,
-   author = {{Korre}, L. and {Brummell}, N. and {Garaud}, P.},
-    title = "{Weakly non-Boussinesq convection in a gaseous spherical shell}",
-  journal = {\pre},
-archivePrefix = "arXiv",
-   eprint = {1704.00817},
- primaryClass = "physics.flu-dyn",
-     year = 2017,
-    month = sep,
-   volume = 96,
-   number = 3,
-      eid = {033104},
-    pages = {033104},
-      doi = {10.1103/PhysRevE.96.033104},
-   adsurl = {http://adsabs.harvard.edu/abs/2017PhRvE..96c3104K},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-
-
-
-%First experiments on RB convection
-@article{benard1900,
-	author = {B\'{e}nard,H.},
-	title  = "{Les tourbillons cellulaires dans une nappe liquide}",
-	journal= {Rev. G\'{e}n. Sci. Pure Appl.},
-	volume = {11},
-	pages  = {1261-1271},
-	year   = {1900}
-}
-
-%First theoretical description of RB convection
-@article{rayleigh1916,
-	author = {Rayleigh},
-	title  = "{On convection currents in a horizontal layer of fluid, when the higher temperature is on the under side}",
-	journal= {Phil. Mag.},
-	series = {6},
-	volume = {32},
-	pages  = {529-546},
-	year   = {1916}
-}
 
 %Compressible boussinesq equations
 @ARTICLE{spiegel&veronis1960,
@@ -486,23 +383,90 @@ archivePrefix = "arXiv",
   adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
 
-% Direct experiments characterizing the viscous boundary layer as a function of time
-@ARTICLE{zhou2010,
-   author = {{Zhou}, Q. and {Xia}, K.-Q.},
-    title = "{Measured Instantaneous Viscous Boundary Layer in Turbulent Rayleigh-B{\'e}nard Convection}",
-  journal = {Phys. Rev. Lett.},
+%Cool stiffness study in Boussinesq convection
+@ARTICLE{couston&all2017,
+   author = {{Couston}, L.-A. and {Lecoanet}, D. and {Favier}, B. and {Le Bars}, M.
+	},
+    title = "{Dynamics of mixed convective-stably-stratified fluids}",
+  journal = {Physical Review Fluids},
 archivePrefix = "arXiv",
-   eprint = {0909.1629},
+   eprint = {1709.06454},
  primaryClass = "physics.flu-dyn",
- keywords = {Natural convection, Boundary layer heat flow, Turbulent flows},
-     year = 2010,
-    month = mar,
-   volume = 104,
-   number = 10,
-      eid = {104301},
-    pages = {104301},
-      doi = {10.1103/PhysRevLett.104.104301},
-   adsurl = {http://adsabs.harvard.edu/abs/2010PhRvL.104j4301Z},
+     year = 2017,
+    month = sep,
+   volume = 2,
+   number = 9,
+      eid = {094804},
+    pages = {094804},
+      doi = {10.1103/PhysRevFluids.2.094804},
+   adsurl = {http://adsabs.harvard.edu/abs/2017PhRvF...2i4804C},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+%spherical sorta stratified convection, mixed BCs.
+@ARTICLE{korre&all2017,
+   author = {{Korre}, L. and {Brummell}, N. and {Garaud}, P.},
+    title = "{Weakly non-Boussinesq convection in a gaseous spherical shell}",
+  journal = {\pre},
+archivePrefix = "arXiv",
+   eprint = {1704.00817},
+ primaryClass = "physics.flu-dyn",
+     year = 2017,
+    month = sep,
+   volume = 96,
+   number = 3,
+      eid = {033104},
+    pages = {033104},
+      doi = {10.1103/PhysRevE.96.033104},
+   adsurl = {http://adsabs.harvard.edu/abs/2017PhRvE..96c3104K},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+%Cylindrical studies that some new, super high Ra studies are based on
+@ARTICLE{verzicco&camussi1997,
+   author = {{Verzicco}, R. and {Camussi}, R.},
+    title = "{Transitional regimes of low-Prandtl thermal convection in a cylindrical cell}",
+  journal = {Physics of Fluids},
+     year = 1997,
+    month = may,
+   volume = 9,
+    pages = {1287-1295},
+      doi = {10.1063/1.869244},
+   adsurl = {http://adsabs.harvard.edu/abs/1997PhFl....9.1287V},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+%Ra=1e12 convection sims (cylinders)
+@ARTICLE{stevens&all2011,
+   author = {{Stevens}, R.~J.~A.~M. and {Lohse}, D. and {Verzicco}, R.},
+    title = "{Prandtl and Rayleigh number dependence of heat transport in high Rayleigh number thermal convection}",
+  journal = {Journal of Fluid Mechanics},
+archivePrefix = "arXiv",
+   eprint = {1102.2307},
+ primaryClass = "physics.flu-dyn",
+     year = 2011,
+    month = dec,
+   volume = 688,
+    pages = {31-43},
+      doi = {10.1017/jfm.2011.354},
+   adsurl = {http://adsabs.harvard.edu/abs/2011JFM...688...31S},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
+
+######################### SOLAR DYNAMO STUFF #########################
+
+@ARTICLE{stix2003,
+   author = {{Stix}, M.},
+    title = "{On the time scale of energy transport in the sun}",
+  journal = {Solar Physics},
+     year = 2003,
+    month = jan,
+   volume = 212,
+    pages = {3-6},
+      doi = {10.1023/A:1022952621810},
+   adsurl = {http://adsabs.harvard.edu/abs/2003SoPh..212....3S},
   adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
 
@@ -696,297 +660,9 @@ archivePrefix = "arXiv",
     adsurl    = {https://adsabs.harvard.edu/#abs/2015arXiv150403189B/abstract}
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%% SOLAR SURFACE CONVECTION %%%%%%%%%%%%%%%%%%%%%
-
-%Spruit says a bunch of pretty things, and introduces the idea of entropy rain.
-@ARTICLE{spruit1997,
-   author = {{Spruit}, H.},
-    title = "{Convection in stellar envelopes: a changing paradigm}",
-  journal = {Mem. Societa Astronomica Italiana},
-   eprint = {astro-ph/9605020},
-     year = 1997,
-   volume = 68,
-    pages = {397},
-   adsurl = {http://adsabs.harvard.edu/abs/1997MmSAI..68..397S},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
 
 
-%Here, some results are found that make lots of people really skeptical and
-% launch lots of research.  Namely, smaller convective amplitudes than
-% predicted by DNS or MLT are observed.
-@ARTICLE{hanasoge&all2012,
-   author = {{Hanasoge}, S.~M. and {Duvall}, T.~L. and {Sreenivasan}, K.~R.
-    },
-    title = "{Anomalously weak solar convection}",
-  journal = {Proceedings of the National Academy of Science},
-archivePrefix = "arXiv",
-   eprint = {1206.3173},
- primaryClass = "astro-ph.SR",
-     year = 2012,
-    month = jul,
-   volume = 109,
-    pages = {11928-11932},
-      doi = {10.1073/pnas.1206570109},
-   adsurl = {http://adsabs.harvard.edu/abs/2012PNAS..10911928H},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-%Here, Ben Greer basically refutes Hanasoge's 2012 results by showing
-% ring-diagram helioseismic results which agree with MLT.
-@ARTICLE{greer&all2015L,
-   author = {{Greer}, B.~J. and {Hindman}, B.~W. and {Featherstone}, N.~A. and 
-    {Toomre}, J.},
-    title = "{Helioseismic Imaging of Fast Convective Flows throughout the Near-surface Shear Layer}",
-  journal = {\apjl},
-archivePrefix = "arXiv",
-   eprint = {1504.00699},
- primaryClass = "astro-ph.SR",
- keywords = {Sun: helioseismology},
-     year = 2015,
-    month = apr,
-   volume = 803,
-      eid = {L17},
-    pages = {L17},
-      doi = {10.1088/2041-8205/803/2/L17},
-   adsurl = {http://adsabs.harvard.edu/abs/2015apj...803L..17G},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%% SOLAR DYNAMO OBSERVATION %%%%%%%%%%%%%%%%%%%%%
-
-
-@ARTICLE{stix2003,
-   author = {{Stix}, M.},
-    title = "{On the time scale of energy transport in the sun}",
-  journal = {Solar Physics},
-     year = 2003,
-    month = jan,
-   volume = 212,
-    pages = {3-6},
-      doi = {10.1023/A:1022952621810},
-   adsurl = {http://adsabs.harvard.edu/abs/2003SoPh..212....3S},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-%A new approach to binning the butterfly diagram & its implications for minimum magnetic
-% field regions
-@ARTICLE{munoz-jaramillo&all2015,
-   author = {{Mu{\~n}oz-Jaramillo}, A. and {Senkpeil}, R.~R. and {Longcope}, D.~W. and 
-    {Tlatov}, A.~G. and {Pevtsov}, A.~A. and {Balmaceda}, L.~A. and 
-    {DeLuca}, E.~E. and {Martens}, P.~C.~H.},
-    title = "{The Minimum of Solar Cycle 23: As Deep as It Could Be?}",
-  journal = {\apj},
-archivePrefix = "arXiv",
-   eprint = {1508.01222},
- primaryClass = "astro-ph.SR",
- keywords = {Sun: activity, Sun: magnetic fields, Sun: photosphere, sunspots},
-     year = 2015,
-    month = may,
-   volume = 804,
-      eid = {68},
-    pages = {68},
-      doi = {10.1088/0004-637X/804/1/68},
-   adsurl = {http://adsabs.harvard.edu/abs/2015apj...804...68M},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-
-
-%A discussion of how the butterfly diagram might just mean there's a surface dynamo
-@Online{munoz-jaramillo2016T,
-    author = {Mu\~{n}oz{-}Jaramillo, Andr\'{e}s},
-     title = "The Rails Inside the Sun and the Butterflies That Ride Them", 
-      year = 2016,
-     month = 03,
-       url = {https://www.youtube.com/watch?v=nnbKee0b2gU}
-}
-
-@ARTICLE{petrie&ettinger2015,
-   author = {{Petrie}, G. and {Ettinger}, S.},
-    title = "{Polar Field Reversals and Active Region Decay}",
-  journal = {Solar Sci Rev},
- keywords = {Solar magnetic fields, Activity cycle, Solar poles, Photosphere, Chromosphere, Corona, Solar interior, Magnetic flux-transport models},
-     year = 2015,
-    month = jul,
-      doi = {10.1007/s11214-015-0189-0},
-   adsurl = {http://adsabs.harvard.edu/abs/2015SSRv..tmp...70P},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-%Hale's law -- active regions appear in bipolar formations and their leading/trailing
-% polarities match in each hemisphere, and are opposite in n/s hemisphere, and swap
-% in each hemisphere every 11 years.
-@ARTICLE{hale&nicholson1925,
-   author = {{Hale}, G.~E. and {Nicholson}, S.~B.},
-    title = "{The Law of Sun-Spot Polarity}",
-  journal = {\apj},
-     year = 1925,
-    month = nov,
-   volume = 62,
-    pages = {270},
-      doi = {10.1086/142933},
-   adsurl = {http://adsabs.harvard.edu/abs/1925apj....62..270H},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-%Joy's Law -- bipoles have an average tilt such that leading polarity is closer to
-% the equator than the trailing polarity
-@ARTICLE{hale&all1919,
-   author = {{Hale}, G.~E. and {Ellerman}, F. and {Nicholson}, S.~B. and 
-    {Joy}, A.~H.},
-    title = "{The Magnetic Polarity of Sun-Spots}",
-  journal = {\apj},
-     year = 1919,
-    month = apr,
-   volume = 49,
-    pages = {153},
-      doi = {10.1086/142452},
-   adsurl = {http://adsabs.harvard.edu/abs/1919apj....49..153H},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%% HELIOSEISMOLOGY %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%They coin the term tachocline
-@ARTICLE{spiegel&zahn1992,
-   author = {{Spiegel}, E.~A. and {Zahn}, J.-P.},
-    title = "{The solar tachocline}",
-  journal = {Astronomy \& Astrophysics},
- keywords = {Solar Convection (Astronomy), Solar Interior, Solar Rotation, Angular Momentum, Helioseismology, Stellar Models, Turbulence Effects, Turbulent Boundary Layer},
-     year = 1992,
-    month = nov,
-   volume = 265,
-    pages = {106-114},
-   adsurl = {http://adsabs.harvard.edu/abs/1992A%26A...265..106S},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-
-@ARTICLE{schou&all1998,
-   author = {{Schou}, J. and {Antia}, H.~M. and {Basu}, S. and {Bogart}, R.~S. and 
-    {Bush}, R.~I. and {Chitre}, S.~M. and {Christensen-Dalsgaard}, J. and 
-    {Di Mauro}, M.~P. and {Dziembowski}, W.~A. and {Eff-Darwich}, A. and 
-    {Gough}, D.~O. and {Haber}, D.~A. and {Hoeksema}, J.~T. and 
-    {Howe}, R. and {Korzennik}, S.~G. and {Kosovichev}, A.~G. and 
-    {Larsen}, R.~M. and {Pijpers}, F.~P. and {Scherrer}, P.~H. and 
-    {Sekii}, T. and {Tarbell}, T.~D. and {Title}, A.~M. and {Thompson}, M.~J. and 
-    {Toomre}, J.},
-    title = "{Helioseismic Studies of Differential Rotation in the Solar Envelope by the Solar Oscillations Investigation Using the Michelson Doppler Imager}",
-  journal = {\apj},
- keywords = {CONVECTION, SUN: INTERIOR, SUN: OSCILLATIONS, SUN: ROTATION, Convection, Sun: Interior, Sun: Oscillations, Sun: Rotation},
-     year = 1998,
-    month = sep,
-   volume = 505,
-    pages = {390-417},
-      doi = {10.1086/306146},
-   adsurl = {http://adsabs.harvard.edu/abs/1998apj...505..390S},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-%Here the 2010 Science report of Hathaway and Rightmire is basically refuted, showing
-% How active region cooling can cause the observed change in meridional flow
-@ARTICLE{cameron&schussler2010,
-   author = {{Cameron}, R.~H. and {Sch{\"u}ssler}, M.},
-    title = "{Changes of the Solar Meridional Velocity Profile During Cycle 23 Explained by Flows Toward the Activity Belts}",
-  journal = {\apj},
-archivePrefix = "arXiv",
-   eprint = {1007.2548},
- primaryClass = "astro-ph.SR",
- keywords = {Sun: photosphere, Sun: surface magnetism},
-     year = 2010,
-    month = sep,
-   volume = 720,
-    pages = {1030-1032},
-      doi = {10.1088/0004-637X/720/2/1030},
-   adsurl = {http://adsabs.harvard.edu/abs/2010apj...720.1030C},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-% Basically the same result as Hathaway and Rightmire, but they didn't get in Science
-@ARTICLE{basu&anita2010,
-   author = {{Basu}, S. and {Antia}, H.~M.},
-    title = "{Characteristics of Solar Meridional Flows during Solar Cycle 23}",
-  journal = {apj},
-archivePrefix = "arXiv",
-   eprint = {1005.3031},
- primaryClass = "astro-ph.SR",
- keywords = {Sun: activity, Sun: helioseismology, Sun: interior},
-     year = 2010,
-    month = jul,
-   volume = 717,
-    pages = {488-495},
-      doi = {10.1088/0004-637X/717/1/488},
-   adsurl = {http://adsabs.harvard.edu/abs/2010apj...717..488B},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-%The meridional flow speed seems to have an inverse correlation with solar cycle
-% strength
-@ARTICLE{hathaway&rightmire2010,
-   author = {{Hathaway}, D.~H. and {Rightmire}, L.},
-    title = "{Variations in the Sun's Meridional Flow over a Solar Cycle}",
-  journal = {Science},
-     year = 2010,
-    month = mar,
-   volume = 327,
-    pages = {1350},
-      doi = {10.1126/science.1181990},
-   adsurl = {http://adsabs.harvard.edu/abs/2010Sci...327.1350H},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-
-%A poleward and equatorward meridional flow are dtected using 2 years of SDO/HMI
-% data.  A dual-cell meridional flow is proposed.
-@ARTICLE{zhao&all2013,
-   author = {{Zhao}, J. and {Bogart}, R.~S. and {Kosovichev}, A.~G. and {Duvall}, Jr., T.~L. and 
-    {Hartlep}, T.},
-    title = "{Detection of Equatorward Meridional Flow and Evidence of Double-cell Meridional Circulation inside the Sun}",
-  journal = {\apjl},
-archivePrefix = "arXiv",
-   eprint = {1307.8422},
- primaryClass = "astro-ph.SR",
- keywords = {Sun: helioseismology, Sun: interior, Sun: oscillations},
-     year = 2013,
-    month = sep,
-   volume = 774,
-      eid = {L29},
-    pages = {L29},
-      doi = {10.1088/2041-8205/774/2/L29},
-   adsurl = {http://adsabs.harvard.edu/abs/2013apj...774L..29Z},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-% Zonal Flows
-@ARTICLE{howe&all2009,
-   author = {{Howe}, R. and {Christensen-Dalsgaard}, J. and {Hill}, F. and 
-    {Komm}, R. and {Schou}, J. and {Thompson}, M.~J.},
-    title = "{A Note on the Torsional Oscillation at Solar Minimum}",
-  journal = {\apjl},
-archivePrefix = "arXiv",
-   eprint = {0907.2965},
- primaryClass = "astro-ph.SR",
- keywords = {Sun: activity, Sun: helioseismology, Sun: rotation},
-     year = 2009,
-    month = aug,
-   volume = 701,
-    pages = {L87-L90},
-      doi = {10.1088/0004-637X/701/2/L87},
-   adsurl = {http://adsabs.harvard.edu/abs/2009apj...701L..87H},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-}
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%% DYNAMO SIMULATIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%% DYNAMO SIMULATIONS / PRETTY SPHERES %%%%%%%%%%%%%%%%%%%%%%%%%%%
 @ARTICLE{brown&all2010,
    author = {{Brown}, B.~P. and {Browning}, M.~K. and {Brun}, A.~S. and {Miesch}, M.~S. and 
     {Toomre}, J.},
@@ -1025,6 +701,27 @@ archivePrefix = "arXiv",
    adsurl = {http://adsabs.harvard.edu/abs/2016apj...819..104G},
   adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
+
+
+@ARTICLE{featherstone&hindman2016,
+   author = {{Featherstone}, N.~A. and {Hindman}, B.~W.},
+    title = "{The Spectral Amplitude of Stellar Convection and Its Scaling in the High-Rayleigh-number Regime}",
+  journal = {\apj},
+archivePrefix = "arXiv",
+   eprint = {1511.02396},
+ primaryClass = "astro-ph.SR",
+ keywords = {stars: fundamental parameters, stars: interiors, stars: kinematics and dynamics, Sun: helioseismology, Sun: interior, Sun: magnetic fields},
+     year = 2016,
+    month = feb,
+   volume = 818,
+      eid = {32},
+    pages = {32},
+      doi = {10.3847/0004-637X/818/1/32},
+   adsurl = {http://adsabs.harvard.edu/abs/2016ApJ...818...32F},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+
+
 
 
 

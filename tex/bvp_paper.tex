@@ -72,16 +72,39 @@ cost of evolving through a single convective overturn time.
 In short, achieving thermally converged, high-Ra, astrophysically interesting
 simulations is an intractably expensive problem using modern numerical tools.
 
-Prior studies of stratified convection in which a convective layer lies between stable layers
-have used the knowledge of Mixing Length Theory (MLT) to adjust the initial thermodynamic structure of
-the atmosphere to a state which is closer to the adiabat chosen by convection \cite{brandenburg&all2005}.
-However, many modern studies of convection do not contain stable layers above and below the convection
-zone, and the presence of hard boundaries and the boundary layers that they form make it difficult to
-know the correct evolved adiabat \emph{a priori}.
+The vast difference between convective and diffusive timescales has long plagued
+numericists studying convection, and a vast number of approaches has been used to
+study thermally converged solutions. ``Bootstrapping'' is the process of using
+a converged solution at lower Ra as initial conditions for a simulation at a higher
+Ra.  This method has been used with great success \cite{johnston&doering2009, verzicco&camussi1997},
+but it is not without its faults.  This method is likely to run into hystersis
+effects, in which large-scale convective structures present in the
+low Ra solution imprint onto the dynamics of the new, high Ra solution. 
+For moderate-Ra solutions, a commonly-used tactic is to use initial conditions from
+a simpler model of the full convective state.  For example, using the results of
+a linear solve \cite{hurlburt&all1984} or using an axisymmetric solution for a full
+3D cylinder of convection \cite{verzicco&camussi1997}. In certain systems, 
+the physics of the evolved solution can be approximately known based on the initial
+conditions, and there a better set of initial conditions can be solved for analytically
+\cite{couston&all2017} or by using knowledge of Mixing Length Theory or other convective
+theories to adjust the initial profile towards the proper adiabat \cite{brandenburg&all2005}.
 
-Here we present a method for using simple boundary value problems (BVPs), 
-along with information about the evolved flow fields,
-to fast-forward the slow thermal evolution of convecting simulations.  
+Regardless, the most straightforward way of achieving a thermally converged solution
+is by simply allowing a simulation to run for a thermal timescale, which some
+studies do \cite{featherstone&hindman2016}.  Unfortunately, such a procedure is
+\emph{expensive}, and state-of-the-art simulations can often only be reasonably run
+for tens to hundreds of buoyancy times \cite{stevens&all2011}, much less the
+thousands-to-millions of buoyancy timescales required to reach a thermal time
+at high Ra.
+
+One further method of adjusting the atmospheric profile is by using information about
+the convective dynamics, as well as knowledge about energy balances and fluxes in
+the evolved solution, to carefully adjust the mean thermodynamic profile towards
+its proper solution.  Such methods have some history, \cite{hurlburt&all1986}, but
+a clear presentation of such a method and a comparison of such a method to solutions
+which were achieved through a long thermal rundown are lacking.
+Here we present a simple 1D model that uses information about evolving flow fields
+to accelerate the evolution of the thermal profile in convective simulations.
 We run two sets of experiments: one in which we allow convective simulations to evolve for a
 full thermal timescale before taking measurements, and another in which we employ a fast,
 BVP technique which occurs on dynamical timescales. We compare these two sets of simulations to

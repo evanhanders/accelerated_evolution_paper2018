@@ -208,11 +208,11 @@ gs_info = (((500,0), 400, 250), ((500, 370), 400, 250), ((500, 750), 400, 250))
 for i,k in enumerate(fields):
     ax = plt.subplot(gs.new_subplotspec(*gs_info[i]))
     if i == 0:
-        ax.annotate(r'$\mathrm{(d)}$', (2e3, 0.03), fontsize=10)
+        ax.annotate(r'$\mathrm{(d)}$', (2e3, 0.015), fontsize=10)
     if i == 1:
-        ax.annotate(r'$\mathrm{(e)}$', (2e3, 0.03), fontsize=10)
+        ax.annotate(r'$\mathrm{(e)}$', (2e3, 0.015), fontsize=10)
     if i == 2:
-        ax.annotate(r'$\mathrm{(f)}$', (2e3, 0.03), fontsize=10)
+        ax.annotate(r'$\mathrm{(f)}$', (2e3, 0.015), fontsize=10)
     mean_lists = []
     for j in range(len(base_dirs)):
         ra_list = []
@@ -255,7 +255,8 @@ for i,k in enumerate(fields):
     ax.axhline(0, ls='--', c='k')
     ax.axvline(2.79e8, ls='--', c='k')
     ax.fill_between(np.logspace(np.log10(2.79e8), 15, 2), -0.05, 0.05, color='grey', alpha=0.4)
-    ax.scatter(mean_lists[1][0][:twoD_len], twoD_diff)
+    ax.scatter(mean_lists[1][0][:twoD_len], twoD_diff, color='indigo')
+    ax.scatter(mean_lists[3][0][:threeD_len], threeD_diff, marker='*', color='red')
 #    ax.set_yscale('log')
     ax.set_xscale('log')
     ax.set_xlim(1e3, 1e10)
@@ -263,9 +264,9 @@ for i,k in enumerate(fields):
     if i == 0:
         ax.set_ylabel ('( BVP - IVP ) / IVP')
 
-    ax.set_ylim(-0.02, 0.04)
+    ax.set_ylim(-0.05, 0.03)
 
-    ax.set_yticks([-0.02, -0.01, 0, 0.01, 0.02, 0.03])
+    ax.set_yticks([-0.04, -0.02, 0, 0.02])
 
     [t.set_fontsize(10) for t in ax.get_xticklabels()]
     [t.set_fontsize(10) for t in ax.get_yticklabels()]
