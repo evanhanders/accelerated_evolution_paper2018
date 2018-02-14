@@ -192,6 +192,7 @@ are set by the Rayleigh and Prandtl numbers,
 \mathcal{R} \equiv \sqrt{\frac{\text{Pr}}{\text{Ra}}}, \qquad \mathcal{P} \equiv \frac{1}{\sqrt{\text{Pr}\,\text{Ra}}}, \qquad
 \text{Ra} = \frac{g \alpha L_z^4 \grad T_0}{\nu\kappa} = \frac{(L_z\,v_{\text{ff}})^2}{\nu\kappa}, \qquad \text{Pr} = \frac{\nu}{\kappa}.
 \end{equation}
+We hold Pr$ = 1$ constant throughout this work, such that $\mathcal{P} = \mathcal{R}$.
 
 We study 2D and 3D convection in which the domain is a cartesian box, 
 whose dimensionless vertical extent is $z \in [-1/2, 1/2]$, 
@@ -239,17 +240,15 @@ have power.
 
 \subsection{The method of accelerated evolution}
 \label{subsection:ae}
-Here we describe a method of Accelerated Evolution (AE), and compare it to Standard Evolution
-(SE).
-It is reasonable to assume that convection will evolve the mean temperature profile that
-drives it over the course of a thermal diffusion time, $t_\chi = \mathcal{P}^{-1}$. Thus, as Ra
-increases, the timescale for achieving a thermally converged mean temperature profile becomes intractable.
-This prohibitively long thermal timescale in an Initial Value Problem (IVP)
-can be skipped by coupling the IVP with a simple Boundary Value Problem
-(BVP) solve. By using information about the convecting dynamical state of an unconverged solution,
-a BVP can be used to solve for the evolved system state.
-A comparison of a simulation running for the thermal timescale, and another where a BVP is used
-to fast-forward atmospheric evolution, are shown in Fig \ref{fig:time_trace}a\&b.
+Here we describe a method of Accelerated Evolution (AE). We use this method to quickly evolve the
+thermodynamic state of our solutions.  We compare this method to Standard Evolution
+(SE), in which we naively evolve the atmosphere for one thermal diffusion time,
+$t_\kappa = \mathcal{P}^{-1}$. As Ra increases, SE solutions become intractable, 
+while the timeframe of convergence for an AE solution remains nearly constant
+(in units of freefall times).
+For an example of time saving achieved by using AE, we compare
+energy traces at $S = 10^5$ from a SE run in Fig \ref{fig:time_trace}a to an AE run
+in Fig. \ref{fig:time_trace}b.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/time_trace.png}
@@ -272,58 +271,60 @@ are much closer to the converged state than the initial fluxes, as in (c).
 \label{fig:time_trace} }
 \end{figure}
 
-
-
-The Boussinesq BVP in essence contains equations of hydrostatic balance and thermal equilibrium,
-\begin{gather}
-\frac{\partial}{\partial z}\angles{\varpi} - \angles{T_1}\hat{z} = \angles{\bm{u}\times\bm{\omega}},
-	\label{eqn:bouss_BVP_momentum}
-\\
-\frac{\partial}{\partial z}\angles{wT_1} - \mathcal{P}\frac{\partial^2}{\partial z^2} \angles{T_1} = 0,
-	\label{eqn:bouss_BVP_energy}
-\end{gather}
-where $\angles{A}$ represents a time- and horizontally averaged profile of the quantity $A$.  
-These
-equations arise from assuming that the atmosphere is in a steady state ($\partial_t \rightarrow 0$),
-then taking time and horizontal averages of Eqns (\ref{eqn:bouss_momentum}\&\ref{eqn:bouss_energy}) and
-neglecting terms that vanish due to the symmetry of the problem.
-Convective flows
-are perturbations around a thermal profile defined by these equations in the proper evolved, statistically stationary state.
-
-Under eqns (\ref{eqn:bouss_BVP_momentum}\&\ref{eqn:bouss_BVP_energy}), 
-the thermal structure ($\angles{T_1}$, $\angles{\varpi}$) of the atmosphere is fully determined by the specification
-of two profiles: the convective flux, $F_{conv} = \angles{w T_1}$, and the nonlinear advection, $\angles{\bm{u}\times\bm{\omega}}$.  
-If these profiles are known, then 
-solving for $\angles{T_1}$ and
-$\angles{\varpi}$ depends only upon the choice of boundary conditions.
-
-By definition, the profile of $F_{\text{conv}}$ is not in a time stationary state early in the IVP.  
-In fact, as the atmosphere approaches the
-isotherm specified by the upper (fixed $T$) boundary condition, the motions display an asymmetric flux as energy
-leaks through the upper boundary condition (Fig. \ref{fig:time_trace}c) in order to reach a lower temperature state.
-In order to construct the evolved convective flux from the current fluxes in the atmosphere,
-we assume that the atmospheric dynamics have properly developed the thickness of the boundary layers.
-In other words, if we know the quantities $F_{\text{conv}}$, $F_{\text{cond}} = \angles{-P \partial_z T}$,
-and $F_{\text{tot}} = F_{\text{conv}} + F_{\text{cond}}$, we assume that the profiles
+The horizontally averaged profiles of the vertical conductive flux, 
+F$_{\text{cond}} = \angles{-\kappa\grad(T_0 + T_1)}_{x,y}$, and the vertical convective flux,
+F$_{\text{conv}} = \angles{w(T_0 + T_1)}_{x,y}$, are the basis of the AE method. We measure
+both of these quantities early in a simulation, as in Fig. \ref{fig:time_trace}c.
+At these early stages in the simulation, these flux profiles are highly asymmetric,
+with much more flux leaving through the upper boundary than entering through the
+lowe boundary as the atmosphere approaches the proper isotherm selected by the
+fixed temperature upper boundary.
+However, by calculating the total flux,
+F$_{\text{tot}} = $F$_{\text{conv}} +$ F$_{\text{cond}}$, and then calculating the profiles
 \begin{equation}
 f_{\text{conv}}(z) = \frac{F_{\text{conv}}}{F_{\text{tot}}},\qquad
-f_{\text{cond}}(z) = \frac{F_{\text{cond}}}{F_{\text{tot}}}
+f_{\text{cond}}(z) = \frac{F_{\text{cond}}}{F_{\text{tot}}},
 \label{eqn:bvp_ratios}
 \end{equation}
-early in the evolution are the same as they will be in the final steady state solution. By definition, the
-evolved total flux through the atmosphere must be the same as the flux entering the atmosphere at the
-bottom boundary, $F_{\text{tot, steady}} = F_{\text{bot}}$.  The proper convective flux profile to use in
-Eqn. (\ref{eqn:bouss_BVP_energy}) is then 
-$\angles{w T_1}_{\text{steady}} = F_{\text{tot, steady}} \cdot f_{\text{conv}}$.  
+We presume that the early convection occupies roughly the same volume as the evolved
+convection, and thus that the early thermal boundary layers are roughly the proper
+width.  Where $f_{\text{conv}} = 1$, convection dominates all transport, and where
+$F_{\text{cond}} = 1$, conduction dominates all transport (in the boundary
+layers). Under this assumption, the proper evolved atmospheric flux profiles
+are F$_{\text{conv, ev}} = \text{F}_{\text{bot}}\cdot f_{\text{conv}}$
+and F$_{\text{cond, ev}} = \text{F}_{\text{bot}}\cdot f_{\text{cond}}$,
+where F$_{\text{bot}} = \mathcal{P}$ is the amount of flux entering the
+bottom of the atmosphere.
 
-In order to carry the converged amount of flux appropriately, 
-the velocity field and temperature fluctuations in the system must be scaled by a quantity
-$\xi(z) = \angles{w T_1}_{\text{steady}}/\angles{w T_1}$.  Thus, we multiply the velocities
+In the evolved, time-stationary state, the horizontal- and time-average of
+Eqns. (\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}), neglecting terms that
+vanish due to symmetry, are
+\begin{gather}
+\frac{\partial}{\partial z}\angles{\varpi}_{x,y} - \angles{T_1}_{x,y}\hat{z} = \angles{\bm{u}\times\bm{\omega}}_{x,y},
+	\label{eqn:bouss_BVP_momentum}
+\\
+\frac{\partial}{\partial z}\text{F}_{\text{conv, ev}} - \mathcal{P}\frac{\partial^2}{\partial z^2} \angles{T_1}_{x,y} = 0.
+	\label{eqn:bouss_BVP_energy}
+\end{gather}
+Convective flows
+are perturbations around a thermal profile defined by these equations in the proper evolved, 
+statistically stationary state. Furthermore, under the specification of
+F$_{\text{conv, ev}}$ and $\angles{\bm{u}\times\bm{\omega}}_{x,y}$,
+\emph{the mean thermodynamic structure of the system} ($\angles{\varpi}_{x,y},\,\angles{T_1}_{x,y}$)
+\emph{is fully specified}.
+
+The AE method is thus simple: we construct F$_{\text{conv, ev}}$ as described above.
+Then we calculate a profile, 
+$\xi(z) = \text{F}_{\text{conv, ev}}/\text{F}_{\text{conv}}$, which is the amount that the
+flux in the system needs to be reduced by, as a function of height.
+We multiply the velocities
 and the thermal fluctuations, $T - \angles{T}$, by $\sqrt{\xi}$, such that the product of all fluctuations
-(which carry the convective flux) are diminished by a factor of $\xi$.  This also means that
-$\angles{\bm{u}\times\bm{\omega}}_{\text{steady}} = \xi \angles{\bm{u}\times\bm{\omega}}$. Once these profiles
-are appropriately adjusted, they can be used in the BVP solve to find $\angles{T}$ and $\angles{\varpi}$.
-
+(which carry the convective flux) are diminished by a factor of $\xi$.  We solve
+Eqns. (\ref{eqn:bouss_BVP_momentum}-\ref{eqn:bouss_BVP_energy}) with F$_{\text{conv, ev}}$
+and $\xi\cdot\angles{\bm{u}\times\bm{\omega}}_{x,y}$ for the mean thermodynamic state,
+and then continue evolving in time.  This adjustment of the mean profile and the
+diminishing of velocities and fluctuations is the AE method, and it can generally
+be applied tens of buoyancy times after the peak of convective transient.
 
 \section{Results}
 \label{sec:results}
