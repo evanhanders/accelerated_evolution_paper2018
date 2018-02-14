@@ -145,17 +145,16 @@ here to stratified, compressible systems.
 
 \section{Experiment}
 \label{sec:experiment}
-We adopt the Oberbeck-Boussinesq approximation.  Under this choice, the
-fluid has constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
-of thermal expansion ($\alpha$). The variables of the fluid that are evolved are the velocity,
-$\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$, the temperature $T = T_0 + T_1$, and the pressure, $P$.
-The density of the fluid is a constant, $\rho_0$, except on the
+We study incompressible \RB convection under the Oberbeck-Boussinesq approximation,
+such that our fluid
+has a constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
+of thermal expansion ($\alpha$). The density of the fluid is a constant, $\rho_0$, except on the
 term where the constant gravitational acceleration, $\bm{g} = - g\hat{z}$, acts in the vertical momentum equation, 
 where $\rho = \rho_0(1  - \alpha T_1)$.  
-Under these choices, the equations of motion are \cite{spiegel&veronis1960}
+Under these constraints, the equations of motion are \cite{spiegel&veronis1960}
 \begin{gather}
 \DivU = 0, 
-	\label{eqn:dim_incompressible}
+	\label{eqn:incompressible}
 \\
 \frac{\partial \bm{u}}{\partial t} + \bm{u}\cdot\grad\bm{u} =
 -\frac{1}{\rho_0}\grad P - g( 1 - \alpha T_1)\hat{z} + \nu\grad^2\bm{u}, 
@@ -164,71 +163,94 @@ Under these choices, the equations of motion are \cite{spiegel&veronis1960}
 \frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \kappa\grad^2 T_1,
 	\label{eqn:dim_bouss_energy}
 \end{gather}
-We non-dimensionalize these equations on the layer height ($L_z$),
-the initial temperature jump across the layer ($\Delta T_0 = L_z \grad T_0$), 
-and the freefall velocity ($v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$).
+where $\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$ is the velocity, 
+$T = T_0 + T_1$ are the initial and fluctuating components of temperature, 
+and $P$ is the pressure.
+We non-dimensionalize these equations such that the dimensionless unit of
+length is the layer height ($L_z$),
+temperature is in units of the initial temperature jump across the layer ($\Delta T_0 = L_z \grad T_0$), 
+and velocity is in units of the freefall velocity ($v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$).
 by these choices, one time unit is a freefall time ($L_z/v_{ff}$).
-We further re-arrange the momentum equation by introducing a reduced kinematic pressure,
+We introduce a reduced kinematic pressure,
 $\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where the gravitational
-potential, $\phi$, is defined such that $\bm{g} = -\grad \phi$.
-The nature of $P$ in \RB convection, as a
-Lagrange multiplier,
-allows the treatment of $\varpi$ as a linear variable.
-We time evolve the equations in the form,
+potential, $\phi$, is defined such that $\bm{g} = -\grad \phi$. As $P$ is a
+Langrange multiplier under the Oberbeck-Boussinesq approximation, $\varpi$
+can be treated straightforwardly as a linear variable. 
+In non-dimensional form, Eqns. \ref{eqn:dim_bouss_momentum} \& \ref{eqn:dim_bouss_energy}
+are
 \begin{gather}
-\DivU = 0, 
-	\label{eqn:incompressible}
-\\
 \frac{\partial \bm{u}}{\partial t} + \grad \varpi - T_1\hat{z} + \mathcal{R}\grad\times\bm{\omega} = \bm{u}\times\bm{\omega}
 	\label{eqn:bouss_momentum}
 \\
-\frac{\partial T_1}{\partial t} - \mathcal{P}\grad^2 T_1 + w \frac{\partial T_0}{\partial z} = - \bm{u}\cdot\grad T_1,
+\frac{\partial T_1}{\partial t} - \mathcal{P}\grad^2 T_1 + w \frac{\partial T_0}{\partial z} = - \bm{u}\cdot\grad T_1.
 	\label{eqn:bouss_energy}
 \end{gather}
-where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity, and the temperature
-has been decomposed as $T \equiv T_0 + T_1$ where $T_0$ is the initial temperature
-profile. We find Eq. (\ref{eqn:bouss_momentum}) to
-be slightly faster numerically than the standard form in Eq. (\ref{eqn:dim_bouss_momentum}).
-The dimensionless control parameters are set by the Rayleigh and Prandtl numbers,
+where $\bm{\omega} = \grad \times \bm{u}$ is the vorticity.
+The dimensionless control parameters $\mathcal{P}$ and $\mathcal{R}$ 
+are set by the Rayleigh and Prandtl numbers,
 \begin{equation}
 \mathcal{R} \equiv \sqrt{\frac{\text{Pr}}{\text{Ra}}}, \qquad \mathcal{P} \equiv \frac{1}{\sqrt{\text{Pr}\,\text{Ra}}}, \qquad
-\text{Ra} = \frac{g \alpha L_z^4 \grad T_0}{\nu\chi} = \frac{(L_z\,v_{\text{ff}})^2}{\nu\chi}, \qquad \text{Pr} = \frac{\nu}{\chi}.
+\text{Ra} = \frac{g \alpha L_z^4 \grad T_0}{\nu\kappa} = \frac{(L_z\,v_{\text{ff}})^2}{\nu\kappa}, \qquad \text{Pr} = \frac{\nu}{\kappa}.
 \end{equation}
-The dimensionless vertical extent of the domain is $z = [-1/2, 1/2]$, and at the top and bottom boundaries
-we impose no-slip, impenetrable boundary conditions such that $u = v = w = 0$ at $z = \pm 1/2$.
-At the lower boundary, we employ a fixed flux condition such that $\partial T_1 / \partial z = 0$
-at $z = -1/2$, and we impose a fixed temperature condition of $T_1 = 0$ at $z = 1/2$. Both
-horizontal directions are periodic, extending over a range $x, y = [0, \Gamma]$, where
-the aspect ratio is $\Gamma = 2$. In our 2D cases, we only examine the $x$ and $z$ dimensions
-and we set $v = \partial_y = 0$.
 
-The chosen thermal boundary conditions at the upper and lower plates
-determine key quantities of the evolved state.
-Studies of incompressible, Boussinesq, \RB convection often
-employ fixed temperature (Dirichlet) or fixed heat flux
-(Neumann) boundary conditions at both plates.  
-Dirichlet conditions represent plates of infinite conductivity,
-whereas Neumann conditions model plates of finite conductivity.  
-Both types of conditions
-transport heat in the same manner \cite{johnston&doering2009},
-at least when the upper and lower conditions are symmetric.
+We study 2D and 3D convection in which the domain is a cartesian box, 
+whose dimensionless vertical extent is $z \in [-1/2, 1/2]$, 
+and which is horizontally period with an extent of $x, y \in [0, \Gamma]$ where $\Gamma = 2$ is the aspect
+ratio. 
+In the 2D cases, we set $v = \partial_y = 0$.
+We specify no-slip, impenetrable boundary conditions at both the top and
+bottom boundary and we use mixed thermal boundary conditions, such that
+\begin{equation}
+u = v = w \, \, \text{at}\,\,z = \pm 1/2, \qquad T_1 = 0 \,\,\text{at}\,\, z=+1/2, \qquad
+\frac{\partial T_1}{\partial z} = 0\,\,\text{at}\,\,z=-1/2.
+\label{eqn:bcs}
+\end{equation}
+For this choice of boundary conditions, the critical value of Ra at which
+the onset of convection occurs is Ra$_{\text{crit}} = 1295.78$, and the
+supercriticality of a run is defined as $S \equiv \text{Ra}/\text{Ra}_{\text{crit}}$.
 Studies of convection which aim to model
-astrophysical systems such as stars often employ a mixture of these
-two types of boundary conditions \cite{hurlburt&all1984, cattaneo&all1991, korre&all2017}.  
-The flux at the lower boundary is fixed, modeling
-the constant energy generation of the stellar core, 
-while the outer boundary condition is held at a fixed temperature,
-modeling the stellar surface which must output the energy generated internally.
-This setup is a useful model for understanding natural
-systems, but simulations which employ these boundary conditions suffer from a long 
-thermal relaxation as the atmosphere loses energy and approaches the adiabat chosen by the
-Dirichlet condition.  We choose these mixed conditions in part to better understand them, and in
-part because these conditions minimize the number of assumptions that must be made in
-setting up the boundary value problem.  For this choice of boundary conditions, the
-critical Ra is Ra$_{\text{crit}} = 1295.78$, and we will often speak in terms of the
-supercriticality, $S = \text{Ra}/\text{Ra}_{\text{crit}}$.
+astrophysical systems such as stars often employ mixed thermal
+boundary conditions \cite{hurlburt&all1984, cattaneo&all1991, korre&all2017},
+as we do here; however, our choice of thermal boundary conditions here
+reflects the fact that the conditions in Eqn. \ref{eqn:bcs} are the simplest
+to implement in the process of accelerated evolution (see section \ref{subsection:ae})
+we study here.
 
-\subsection{The Boundary Value Problem}
+We utilize the 
+Dedalus\footnote{\url{http://dedalus-project.org/}} 
+pseudospectral framework \cite{burns&all2016} to evolve  
+Eqns. (\ref{eqn:incompressible}), (\ref{eqn:bouss_momentum}), \& (\ref{eqn:bouss_energy}) 
+forward in time
+using an implicit-explicit (IMEX), third-order, four-step 
+Runge-Kutta timestepping scheme RK443 \cite{ascher&all1997}.  
+The linear terms (on the LHS of the equations) are solved implicitly,
+while the nonlinear terms (RHS) are explicitly solved.
+Variables are time-evolved on a dealiased Chebyshev (vertical)
+and Fourier (horizontal, periodic) domain in which the
+physical grid dimensions are 3/2 the size of the coefficient grid.  
+
+As initial conditions, we fill $T_1$ with
+random white noise whose magnitude is $10^{-6}\mathcal{P}$.
+This ensures that the initial perturbations are much smaller than the
+evolved convective temperature perturbations, even at large Ra.
+We filter this noise spectrum in coefficient space, 
+such that only the lower 25\% of the coefficients
+have power.
+
+\subsection{The method of accelerated evolution}
+\label{subsection:ae}
+Here we describe a method of Accelerated Evolution (AE), and compare it to Standard Evolution
+(SE).
+It is reasonable to assume that convection will evolve the mean temperature profile that
+drives it over the course of a thermal diffusion time, $t_\chi = \mathcal{P}^{-1}$. Thus, as Ra
+increases, the timescale for achieving a thermally converged mean temperature profile becomes intractable.
+This prohibitively long thermal timescale in an Initial Value Problem (IVP)
+can be skipped by coupling the IVP with a simple Boundary Value Problem
+(BVP) solve. By using information about the convecting dynamical state of an unconverged solution,
+a BVP can be used to solve for the evolved system state.
+A comparison of a simulation running for the thermal timescale, and another where a BVP is used
+to fast-forward atmospheric evolution, are shown in Fig \ref{fig:time_trace}a\&b.
+
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/time_trace.png}
 \caption{Traces of system energies vs. time for a long thermal rundown (a) and BVP convergence
@@ -250,15 +272,7 @@ are much closer to the converged state than the initial fluxes, as in (c).
 \label{fig:time_trace} }
 \end{figure}
 
-It is reasonable to assume that convection will evolve the mean temperature profile that
-drives it over the course of a thermal diffusion time, $t_\chi = \mathcal{P}^{-1}$. Thus, as Ra
-increases, the timescale for achieving a thermally converged mean temperature profile becomes intractable.
-This prohibitively long thermal timescale in an Initial Value Problem (IVP)
-can be skipped by coupling the IVP with a simple Boundary Value Problem
-(BVP) solve. By using information about the convecting dynamical state of an unconverged solution,
-a BVP can be used to solve for the evolved system state.
-A comparison of a simulation running for the thermal timescale, and another where a BVP is used
-to fast-forward atmospheric evolution, are shown in Fig \ref{fig:time_trace}a\&b.
+
 
 The Boussinesq BVP in essence contains equations of hydrostatic balance and thermal equilibrium,
 \begin{gather}
@@ -310,48 +324,6 @@ and the thermal fluctuations, $T - \angles{T}$, by $\sqrt{\xi}$, such that the p
 $\angles{\bm{u}\times\bm{\omega}}_{\text{steady}} = \xi \angles{\bm{u}\times\bm{\omega}}$. Once these profiles
 are appropriately adjusted, they can be used in the BVP solve to find $\angles{T}$ and $\angles{\varpi}$.
 
-In general, the BVP solve is completed in the following steps:
-\begin{enumerate}
-\item Run the convective IVP. Once the convection achieves a volume-averaged Re of $\sqrt{\text{Ra}/\text{Ra}_{\text{crit}}}$,
-wait for 50 freefall time units.  
-\item Start taking the averages of $F_{\text{conv}}$, $F_{\text{tot}}$, and $\angles{\bm{u} \times \bm{\omega}}$, waiting either
-30 freefall time units or until the average profiles change by no more than 1 part in 1000 on a
-given timestep, whichever is a more difficult criterion. This ensures that
-the profiles being used in the BVP are steady and smooth, and that they sample the full behavior of the convection.
-\item Construct $\angles{w T_1}_{\text{steady}}$, $\xi$, and $\angles{\bm{u}\times\bm{\omega}}_{\text{steady}}$
-from the flux profiles.
-\item Solve for $\angles{T_1}$ and \angles{\varpi} of the
-evolved state.  Adjust the mean profiles in the IVP.
-\item Multiply the velocity field and the fluctuations in $T_1$ about its horizontal average by $\sqrt{\xi}$ in the IVP. 
-\item Continue running the IVP for freefall 50 time units to allow for the velocities to equilibrate to their new background state.
-\item Repeat steps 2-6 to complete a second BVP and get closer to the right solution now that we
-are far from the very unstable transient period.
-\item Take averages for the amount of time specified for the given run in Appendix \ref{section:appendix_table}.
-\end{enumerate}
-
-\subsection{Numerics}
-We utilize the 
-Dedalus\footnote{\url{http://dedalus-project.org/}} 
-pseudospectral framework \cite{burns&all2016} to time-evolve  
-(\ref{eqn:incompressible})-(\ref{eqn:bouss_energy}) 
-using an implicit-explicit (IMEX), third-order, four-step 
-Runge-Kutta timestepping scheme RK443 \cite{ascher&all1997}.  
-The linear terms (on the LHS of the equations) are solved implicitly,
-while the nonlinear terms (RHS) are explicitly solved.
-The temperature field is decomposed as $T = T_0(z) + T_1(x, y, z, t)$
-and the velocity is $\bm{u} = w\bm{\hat{z}} + u\bm{\hat{x}} + v\bm{\hat{y}}$.
-In our 2D runs, $v = 0$.
-Variables are time-evolved on a dealiased Chebyshev (vertical)
-and Fourier (horizontal, periodic) domain in which the
-physical grid dimensions are 3/2 the size of the coefficient grid.  
-
-As initial conditions, we fill $T_1$ with
-random white noise whose magnitude is $10^{-6}(\text{Ra Pr})^{-1/2}$.
-This ensures that the initial perturbations are much smaller than the
-evolved convective temperature perturbations, even at large Ra.
-We filter this noise spectrum in coefficient space, 
-such that only the lower 25\% of the coefficients
-have power.
 
 \section{Results}
 \label{sec:results}
@@ -546,7 +518,7 @@ with allocations GID s1647 and GID g26133.
 
 \appendix
 \section{Table of Runs}
-\label{section:appendix_table}
+\label{appendix:run_table}
 \begin{center}
 \begin{tabularx}{\textwidth}{ X X X X X X X X X}
 \hline															
@@ -573,6 +545,30 @@ $10^6$	&	$1.30 \cdot 10^9$	&	1024	&	4096	&	$3.60 \cdot 10^4$	&	500	&	--	&	--	\\
 \hline															
 \end{tabularx}
 \end{center}
+
+
+
+\section{Accelerated Evolution Recipe}
+\label{appendix:recipe}
+In general, the BVP solve is completed in the following steps:
+\begin{enumerate}
+\item Run the convective IVP. Once the convection achieves a volume-averaged Re of $\sqrt{\text{Ra}/\text{Ra}_{\text{crit}}}$,
+wait for 50 freefall time units.  
+\item Start taking the averages of $F_{\text{conv}}$, $F_{\text{tot}}$, and $\angles{\bm{u} \times \bm{\omega}}$, waiting either
+30 freefall time units or until the average profiles change by no more than 1 part in 1000 on a
+given timestep, whichever is a more difficult criterion. This ensures that
+the profiles being used in the BVP are steady and smooth, and that they sample the full behavior of the convection.
+\item Construct $\angles{w T_1}_{\text{steady}}$, $\xi$, and $\angles{\bm{u}\times\bm{\omega}}_{\text{steady}}$
+from the flux profiles.
+\item Solve for $\angles{T_1}$ and \angles{\varpi} of the
+evolved state.  Adjust the mean profiles in the IVP.
+\item Multiply the velocity field and the fluctuations in $T_1$ about its horizontal average by $\sqrt{\xi}$ in the IVP. 
+\item Continue running the IVP for freefall 50 time units to allow for the velocities to equilibrate to their new background state.
+\item Repeat steps 2-6 to complete a second BVP and get closer to the right solution now that we
+are far from the very unstable transient period.
+\item Take averages for the amount of time specified for the given run in Appendix \ref{section:appendix_table}.
+\end{enumerate}
+
 
 
 

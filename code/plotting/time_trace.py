@@ -101,27 +101,11 @@ for i in range(4):
         axes.append(plt.subplot(gs.new_subplotspec(*gs_info[i])))
         axes_share.append(axes[-1].twinx())
 #Overlaying bold areas on time traces
-this_label = '{}_0'.format(ra_runs, i)
-t = info[this_label]['sim_time']
-ke = info[this_label]['KE_scalar']
-ie = info[this_label]['IE_scalar'] + 0.5
-axes[0].plot(t[(t > 50)*(t <=100)], ke[(t > 50)*(t <=100)], c='orange', lw=4)
-axes_share[0].plot(t[(t > 50)*(t <=100)], ie[(t > 50)*(t <=100)], c='orange', lw=4)
+axes[0].fill_between(np.linspace(-10, 70, 10), 1e-5, 1e15, color='orange', alpha=1)
+axes[1].fill_between(np.linspace(-10, 70, 10), 1e-5, 1e15, color='orange', alpha=1)
 
-this_label = '{}_2'.format(ra_runs, i)
-t = info[this_label]['sim_time']
-ke = info[this_label]['KE_scalar']
-ie = info[this_label]['IE_scalar'] + 0.5
-axes[0].plot(t, ke, c='green', lw=4)
-axes_share[0].plot(t, ie, c='green', lw=4)
-
-this_label = '{}_3'.format(ra_runs, i)
-t = info[this_label]['sim_time']
-ke = info[this_label]['KE_scalar']
-ie = info[this_label]['IE_scalar'] + 0.5
-axes[1].plot(t, ke, c='green', lw=4)
-axes_share[1].plot(t, ie, c='green', lw=4)
-
+axes[0].fill_between(np.linspace(1.14e4, 1e5, 10), 1e-5, 1e15, color='green', alpha=0.4)
+axes[1].fill_between(np.linspace(410, 915, 10), 1e-5, 1e15, color='green', alpha=0.4)
 # Time traces
 for i in range(4):
     this_label = '{}_{}'.format(ra_runs, i)
@@ -132,6 +116,7 @@ for i in range(4):
         t_bvp_ind = np.argmax(df) + 1
         df[t_bvp_ind-1] = 0
         t_bvp_ind2 = np.argmax(df) + 1
+       
         axes[0].axvline(info['{}_1'.format(ra_runs)]['sim_time'][-1], ls='--', c='k')
         axes[i % 2].plot(info[this_label]['sim_time'][:t_bvp_ind], info[this_label]['KE_scalar'][:t_bvp_ind], c='k')
         axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:t_bvp_ind2], info[this_label]['KE_scalar'][t_bvp_ind:t_bvp_ind2], c='k')
@@ -167,7 +152,7 @@ for i in range(4):
 axes[0].set_xlim(info['{}_0'.format(ra_runs)]['sim_time'][0], info['{}_2'.format(ra_runs)]['sim_time'][-1])
 axes[1].set_xlim(info['{}_1'.format(ra_runs)]['sim_time'][0], info['{}_3'.format(ra_runs)]['sim_time'][-1])
 #x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1], 2000, 4000, 6000, 8000, 10000]
-x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1], 2000, 4000, 6000, 7500]
+x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1], 2000, 4000, 6000, 8000, 10000]
 axes[0].set_xticks(x_ticks)
 x_ticks = [0, info['{}_3'.format(ra_runs)]['sim_time'][-1]]
 axes[1].set_xticks(x_ticks)
@@ -176,7 +161,7 @@ axes[0].set_xlabel('Simulation Time (freefall units)', labelpad=0)
 x, y = axes[0].xaxis.get_label().get_position()
 print(x, y)
 axes[0].xaxis.get_label().set_position((x/time_ratio, y))
-axes_share[1].set_ylabel(r'$T_1 - T_{\mathrm{top}}$', rotation=270, color='red', labelpad=15)
+axes_share[1].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='red', labelpad=15)
 for tick in axes[1].get_yticklabels():
     tick.set_size(0)
 axes[1].yaxis.set_ticks_position('none')
@@ -191,8 +176,8 @@ spines = ['bottom', 'top', 'right', 'left']
 axis_names   = ['x', 'y']
 
 
-axes[0].annotate(r'$\mathrm{(a)}$', (200, 7e-2), fontsize=10)
-axes[1].annotate(r'$\mathrm{(b)}$', (400, 7e-2), fontsize=10)
+axes[0].annotate(r'$\mathrm{(a)}$', (450, 7e-2), fontsize=10)
+axes[1].annotate(r'$\mathrm{(b)}$', (450, 7e-2), fontsize=10)
 
 ##################################
 # Bottom three plots
@@ -222,20 +207,22 @@ z = pre_flux_file['z'].value
 
 axes[-1].axhline(1, c='k', ls='-.')
 axes[-1].axhline(0, c='orange', ls='--')
-axes[-1].plot(z, enth,  c=f_conv_color)
-axes[-1].plot(z, kappa, c=f_cond_color)
+axes[-1].plot(z, enth,  c=f_conv_color, label=r'$\mathrm{F}_{\mathrm{conv}}$')
+axes[-1].plot(z, kappa, c=f_cond_color, label=r'$\mathrm{F}_{\mathrm{cond}}$')
 axes[-1].plot(z, sum_f, c=f_sum_color)
 y_ticks = np.array([0, 1, np.ceil(np.max(sum_f))])
 axes[-1].set_yticks(y_ticks)
-axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
+axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\mathcal{P}^{-1}$')
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('z')
-[axes[-1].spines[s].set_color('orange') for s in spines]
-[axes[-1].tick_params(axis=axis, colors='orange') for axis in axis_names]
+#[axes[-1].spines[s].set_color('orange') for s in spines]
+#[axes[-1].tick_params(axis=axis, colors='orange') for axis in axis_names]
 [t.set_color('k') for t in axes[-1].get_xticklabels()]
 [t.set_color('k') for t in axes[-1].get_yticklabels()]
-axes[-1].annotate(r'$\mathrm{(c)}$', (0.04, 10.8), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (0.03, 17.8), fontsize=10)
+axes[-1].annotate(r'Transient', (0.03, 15), color='orange', fontsize=14)
+axes[-1].legend(loc='lower center', frameon=False, columnspacing=1, fontsize=10, ncol=2)
 
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
@@ -246,17 +233,18 @@ sum_f = (enth + kappa)
 axes[-1].axhline(1, c='k', ls='--')
 axes[-1].axhline(0, c='k')
 axes[-1].plot(info[this_label]['z_profile'], enth,  c=f_conv_color, lw=1)
-axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color, lw=1, label='Rundown')
+axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color, lw=1, label='SE')
 axes[-1].plot(info[this_label]['z_profile'], sum_f, c=f_sum_color, lw=1)
 y_ticks = np.array([0, 0.5, 1])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('z')
-[axes[-1].spines[s].set_color('green') for s in spines]
-[axes[-1].tick_params(axis=axis, colors='green') for axis in axis_names]
+#[axes[-1].spines[s].set_color('green') for s in spines]
+#[axes[-1].tick_params(axis=axis, colors='green') for axis in axis_names]
 [t.set_color('k') for t in axes[-1].get_xticklabels()]
 [t.set_color('k') for t in axes[-1].get_yticklabels()]
+axes[-1].annotate(r'Evolved', (0.3, 0.2), color='green', fontsize=14)
 
 #axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
 this_label = '{}_3'.format(ra_runs)
@@ -267,10 +255,10 @@ sum_f = (enth + kappa)
 axes[-1].axhline(1, c='k', ls='--')
 axes[-1].axhline(0, c='k')
 axes[-1].plot(info[this_label]['z_profile'], enth, c=f_conv_color2, lw=2, dashes= (2, 1))
-axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color2, lw=2, dashes = (2, 1), label='BVP')
+axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color2, lw=2, dashes = (2, 1), label='AE')
 axes[-1].plot(info[this_label]['z_profile'], sum_f, color=f_sum_color2, lw=2, dashes=(2,1))
 y_ticks = np.array([0, 0.5, 1])
-axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
+axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\mathcal{P}^{-1}$')
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
@@ -286,8 +274,8 @@ axes[-1].plot(info[this_label]['z_profile'], ((kappa-base_kappa)), c=f_cond_colo
 axes[-1].plot(info[this_label]['z_profile'], ((sum_f - base_sum_f)), c=f_sum_color)
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
-axes[-1].set_ylabel(r'$\mathrm{(BVP - Rundown)}\cdot\sqrt{\mathrm{Ra \,Pr}}$')
-axes[-1].annotate(r'$\mathrm{(e)}$', (0.04, -0.028), fontsize=10)
+axes[-1].set_ylabel(r'$(\mathrm{Flux}_{\mathrm{AE}} - \mathrm{Flux}_{\mathrm{SE}})\cdot\mathcal{P}^{-1}$')
+axes[-1].annotate(r'$\mathrm{(e)}$', (0.04, 0.012), fontsize=10)
 axes[-1].set_xlabel('z')
 
 
