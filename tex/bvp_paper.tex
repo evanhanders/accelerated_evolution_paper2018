@@ -53,63 +53,95 @@ and its extensions to more complex scenarios are discussed.
 \end{abstract}
 \maketitle
 
+
 \section{Introduction}
 \label{sec:intro}
-Natural convection occurs in the presence of disparate timescales. Granules on the
-solar surface overturn on the order of 10 minutes, whereas deep motions in the Sun at
-low Mach number are constrained by the solar rotation rate of $\sim$1 month.  
-These dynamical timescales are vastly shorter than the Sun's 
-Kelvin-Helmholtz timescale of nearly $3 \times 10^7$ \emph{years} \cite{stix2003}. 
-Modern simulations aim to model natural convection
-by increasing into the high-Rayleigh-Number (Ra) regime, in which energy transportation occurs on
-timescales much larger than dynamical timescales \cite{anders&brown2017}.
-In this regime, simulations must pass through a great number
-of convective timescales to reach a thermally converged state.
-Furthermore, as Ra increases and diffusivities correspondingly decrease, 
-motions become more turbulent. To properly resolve these turbulent motions, fine grid meshes
-and short timesteps are required; these requirements increase the computational
-cost of evolving through a single convective overturn time.
-In short, achieving thermally converged, high-Ra, astrophysically interesting
-simulations is an intractably expensive problem using modern numerical tools.
+Natural convection occurs in the presence of disparate timescales which
+prohibit numericists from studying realistic models of natural systems.  For example,
+flows in the Sun's convection zone range from a Mach number (Ma) of order unity
+near the solar surface to order $10^{-5}$ deep in the solar interior.
+Explicit methods which are bound by the Courant-Friedrich-Lewy
+(CFL) timestep limit must resolve the fastest motions (sound
+waves and surface convection), resulting in timesteps which are prohibitively
+small for studies of the deep, low-Ma motions. These systems are numerically
+stiff. Even in the absence of the fast surface motions, the disparity between
+the sound crossing time and the deep flows have made studies of low-Ma stellar
+convection difficult. Traditionally, approximations such as
+the anelastic approximation, in which sound waves are explicitly filtered out,
+have been used to study low-Ma flows \cite{brown&all2010, featherstone&hindman2016}.
+More recently, advanced numerical techniques which use implicit or mixed
+implicit-explicit timestepping mechanisms have made it feasible to study
+convection at low Mach numbers \cite{viallet&all2011, viallet&all2013, viallet&all2016, lecoanet&all2014,
+anders&brown2017, bordwell&all2018}, and careful studies of deep convection which
+would have been impossible a decade ago are now widely accessible.
+
+While solutions to problem of disparate dynamical timescales have proven useful,
+the difference between convective timescales and system relaxation timescales remains
+a significant problem facing studies of convection. 
+As modern simulations aim to model natural convection
+by increasing into the high-Rayleigh-number (Ra) regime,
+the thermal diffusion timescale on which the system relaxes grows with respect
+to the dynamical timescale, which stays roughly constant across all Ra
+\cite{anders&brown2017}.
+Solar convection is, once again, a prime example of this phenomenon.
+Dynamical timescales in the Solar convective zone are relatively short 
+(10 min overturn at solar surface, one month solar
+rotation rate) compared to the Kelvin-Helmholtz timescale of
+$3 \cdot 10^7$ years \cite{stix2003}.  
+Furthermore, as dynamical and diffusive timescales separate, 
+simulations become more turbulent. More turbulent motions 
+require finer grid meshes and smaller timesteps
+to capture advective dynamics. Thus, the progression of simulations into the high-Ra
+regime of natural convection is slowed by two simultaneous effects: timestepping
+through a single convective overturn time becomes more computationally expensive
+while the number of overturn times required for systems to reach thermal equilibration
+grows.
 
 The vast difference between convective and diffusive timescales has long plagued
-numericists studying convection, and a vast number of approaches has been used to
-study thermally converged solutions. ``Bootstrapping'' is the process of using
-a converged solution at lower Ra as initial conditions for a simulation at a higher
+numericists studying convection, and a plethora of approaches has been employed to
+study thermally converged solutions. One popular method for accelerating the convergence
+of high-Ra solutions is by ``Bootstrapping,'' or the process of using the flow
+fields in a converged solution at lower Ra as initial conditions for a simulation at a higher
 Ra.  This method has been used with great success \cite{johnston&doering2009, verzicco&camussi1997},
-but it is not without its faults.  This method is likely to run into hystersis
+but it is not without its faults.  Bootstrapped solutions are succeptible to hysteresis
 effects, in which large-scale convective structures present in the
 low Ra solution imprint onto the dynamics of the new, high Ra solution. 
-For moderate-Ra solutions, a commonly-used tactic is to use initial conditions from
-a simpler model of the full convective state.  For example, using the results of
-a linear solve \cite{hurlburt&all1984} or using an axisymmetric solution for a full
-3D cylinder of convection \cite{verzicco&camussi1997}. In certain systems, 
-the physics of the evolved solution can be approximately known based on the initial
-conditions, and there a better set of initial conditions can be solved for analytically
+In moderate-Ra simulations, a commonly-used tactic is to use 
+a simple model of the full convective state as initial conditions.  
+For example, past studies have used a linear eigenvalue solve to set the initial
+convective state \cite{hurlburt&all1984} or used an axisymmetric solution 
+as initial conditions for convection in a 3D cylinder \cite{verzicco&camussi1997}. 
+In certain systems, 
+the approximate state of the evolved solution can be estimated, and there an
+appropriate set of initial conditions can either be solved for analytically
 \cite{couston&all2017} or by using knowledge of Mixing Length Theory or other convective
-theories to adjust the initial profile towards the proper adiabat \cite{brandenburg&all2005}.
+theories to adjust the initial profile towards the proper adiabatic state \cite{brandenburg&all2005}.
 
-Regardless, the most straightforward way of achieving a thermally converged solution
-is by simply allowing a simulation to run for a thermal timescale, which some
-studies do \cite{featherstone&hindman2016}.  Unfortunately, such a procedure is
-\emph{expensive}, and state-of-the-art simulations can often only be reasonably run
+Despite the plethora of methods that have been used,
+the most straightforward way to achieve a thermally converged solution
+is to evolve a convective simulation through a thermal timescale. Some modern
+studies do just that \cite{featherstone&hindman2016}, but it is becoming
+increasingly difficult. Such evolution is
+\emph{expensive}, and state-of-the-art simulations at the highest values of Ra
+can only be reasonably run
 for tens to hundreds of buoyancy times \cite{stevens&all2011}, much less the
-thousands-to-millions of buoyancy timescales required to reach a thermal time
-at high Ra.
+thousands of buoyancy timescales required for thermal convergence.
 
-One further method of adjusting the atmospheric profile is by using information about
-the convective dynamics, as well as knowledge about energy balances and fluxes in
-the evolved solution, to carefully adjust the mean thermodynamic profile towards
-its proper solution.  Such methods have some history, \cite{hurlburt&all1986}, but
-a clear presentation of such a method and a comparison of such a method to solutions
-which were achieved through a long thermal rundown are lacking.
-Here we present a simple 1D model that uses information about evolving flow fields
-to accelerate the evolution of the thermal profile in convective simulations.
-We run two sets of experiments: one in which we allow convective simulations to evolve for a
-full thermal timescale before taking measurements, and another in which we employ a fast,
-BVP technique which occurs on dynamical timescales. We compare these two sets of simulations to
-show the validity of the BVP technique.  We use the BVP technique to run simulations
-at high Ra, in the regime where running for thermal timescales becomes computationally intractable.
+In this work, we study a method of achieving accelerated evolution of a
+convective simulation through adjusting the thermodynamic state using information 
+from resolved, convective dynamics. We couple measurements of the (non-converged)
+convective solution with knowledge about energy balances in the eventual solution
+to self-consistently adjust the mean thermodynamic profile towards. 
+While such a method has been used previously \cite{hurlburt&all1986}, 
+we find no explanation in the current literature of the steps involved in employing
+this method, nor any study into the accuracy of such a method.
+In section \ref{sec:experiment}, we describe our convective simulations, our
+numerical methods, and our method for achieving accelerated evolution. In
+section \ref{sec:results}, we compare solutions reached through the accelerated evolution
+method to those that have been evolved through a full diffusive timescale, and we
+examine select simulations at very high Ra which have achieved accelerated evolution. Finally,
+in section \ref{sec:discussion}, we discuss extensions of the methods presented
+here to stratified, compressible systems.
 
 \section{Experiment}
 \label{sec:experiment}
@@ -322,6 +354,7 @@ such that only the lower 25\% of the coefficients
 have power.
 
 \section{Results}
+\label{sec:results}
 While Fig. \ref{fig:time_trace} shows us that the post-BVP and post-rundown solutions
 exhibit similar system energies and fluxes, it is important to examine other aspects of
 the evolved solution. The BVP mainly serves to adjust the thermodynamic state of the solution;
@@ -450,7 +483,7 @@ carried out due to computational expense.
 
 
 \section{Discussion \& Conclusions}
-\label{sec:results}
+\label{sec:discussion}
 The method presented here is a first step towards taking meaningful measurements
 of highly turbulent convection on manageable, human timescales.  As demonstrated in Figs.
 1-4, this BVP method quickly converges simulations to within a few percent of the true final
