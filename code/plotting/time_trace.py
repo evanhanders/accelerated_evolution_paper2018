@@ -104,7 +104,7 @@ for i in range(4):
 axes[0].fill_between(np.linspace(-10, 70, 10), 1e-5, 1e15, color='orange', alpha=1)
 axes[1].fill_between(np.linspace(-10, 70, 10), 1e-5, 1e15, color='orange', alpha=1)
 
-axes[0].fill_between(np.linspace(1.14e4, 1e5, 10), 1e-5, 1e15, color='green', alpha=0.4)
+axes[0].fill_between(np.linspace(1.135e4, 1e5, 10), 1e-5, 1e15, color='green', alpha=0.4)
 axes[1].fill_between(np.linspace(410, 915, 10), 1e-5, 1e15, color='green', alpha=0.4)
 # Time traces
 for i in range(4):
@@ -116,17 +116,21 @@ for i in range(4):
         t_bvp_ind = np.argmax(df) + 1
         df[t_bvp_ind-1] = 0
         t_bvp_ind2 = np.argmax(df) + 1
+        df[t_bvp_ind2-1] = 0
+        t_bvp_ind3 = np.argmax(df) + 1
        
         axes[0].axvline(info['{}_1'.format(ra_runs)]['sim_time'][-1], ls='--', c='k')
         axes[i % 2].plot(info[this_label]['sim_time'][:t_bvp_ind], info[this_label]['KE_scalar'][:t_bvp_ind], c='k')
         axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:t_bvp_ind2], info[this_label]['KE_scalar'][t_bvp_ind:t_bvp_ind2], c='k')
-        axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind2:], info[this_label]['KE_scalar'][t_bvp_ind2:], c='k')
+        axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind2:t_bvp_ind3], info[this_label]['KE_scalar'][t_bvp_ind2:t_bvp_ind3], c='k')
+        axes[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind3:], info[this_label]['KE_scalar'][t_bvp_ind3:], c='k')
         axes[i % 2].set_yscale('log')
         axes[i % 2].set_ylim(1e-3, 1e-1)
 
         axes_share[i % 2].plot(info[this_label]['sim_time'][:t_bvp_ind], 0.5 + info[this_label]['IE_scalar'][:t_bvp_ind], c='r')
         axes_share[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind:t_bvp_ind2], 0.5 + info[this_label]['IE_scalar'][t_bvp_ind:t_bvp_ind2], c='r')
-        axes_share[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind2:], 0.5 + info[this_label]['IE_scalar'][t_bvp_ind2:], c='r')
+        axes_share[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind2:t_bvp_ind3], 0.5 + info[this_label]['IE_scalar'][t_bvp_ind2:t_bvp_ind3], c='r')
+        axes_share[i % 2].plot(info[this_label]['sim_time'][t_bvp_ind3:], 0.5 + info[this_label]['IE_scalar'][t_bvp_ind3:], c='r')
 #        axes_share[i % 2].set_yscale('log')
         axes_share[i % 2].set_ylim(1e-2, 5e-1)
 
@@ -140,13 +144,17 @@ for i in range(4):
 
         axes[i % 2].plot(info[this_label]['sim_time'], info[this_label]['KE_scalar'], c='k')
         axes[i % 2].set_yscale('log')
-        axes[i % 2].set_ylim(1e-3, 1e-1)
-        if i > 1:
-            axes[i % 2].axvline(info[this_label]['sim_time'][0], ls='-')
+        axes[i % 2].set_ylim(3e-3, 1e-1)
+#        if i > 1:
+#            axes[i % 2].axvline(info[this_label]['sim_time'][0], ls='-')
 
         axes_share[i % 2].plot(info[this_label]['sim_time'], 0.5 + info[this_label]['IE_scalar'], c='red')
-#        axes_share[i % 2].set_yscale('log')
-        axes_share[i % 2].set_ylim(1e-2, 6e-1)
+        axes_share[i % 2].set_yscale('log')
+        axes_share[i % 2].set_ylim(1e-2, 5e-1)
+        axes_share[1].spines['right'].set_color('r')
+        axes_share[1].tick_params(color='r', which='both')
+       # .set_color('r')
+        #[t.set_color('r') for t in axes_share[1].get_yticks()]
 
 #Axes formatting
 axes[0].set_xlim(info['{}_0'.format(ra_runs)]['sim_time'][0], info['{}_2'.format(ra_runs)]['sim_time'][-1])
@@ -161,7 +169,7 @@ axes[0].set_xlabel('Simulation Time (freefall units)', labelpad=0)
 x, y = axes[0].xaxis.get_label().get_position()
 print(x, y)
 axes[0].xaxis.get_label().set_position((x/time_ratio, y))
-axes_share[1].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='red', labelpad=15)
+axes_share[1].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='red', labelpad=5)
 for tick in axes[1].get_yticklabels():
     tick.set_size(0)
 axes[1].yaxis.set_ticks_position('none')
@@ -174,6 +182,13 @@ for tick in axes_share[1].get_yticklabels():
 
 spines = ['bottom', 'top', 'right', 'left']
 axis_names   = ['x', 'y']
+
+y_ticks = np.array([1e-2, 1e-1, 5e-1])
+plt.yticks(y_ticks, (r'$10^{-2}$', r'$10^{-1}$', r'$5\cdot 10^{-1}$'))
+
+plt.axes(axes[0])
+y_ticks = np.array([3e-3, 1e-2, 1e-1])
+plt.yticks(y_ticks, (r'$3\cdot 10^{-3}$', r'$10^{-2}$', r'$10^{-1}$'))
 
 
 axes[0].annotate(r'$\mathrm{(a)}$', (450, 7e-2), fontsize=10)
@@ -232,9 +247,9 @@ kappa = info[this_label]['kappa_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 sum_f = (enth + kappa)
 axes[-1].axhline(1, c='k', ls='--')
 axes[-1].axhline(0, c='k')
-axes[-1].plot(info[this_label]['z_profile'], enth,  c=f_conv_color, lw=1)
-axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color, lw=1, label='SE')
-axes[-1].plot(info[this_label]['z_profile'], sum_f, c=f_sum_color, lw=1)
+#axes[-1].plot(info[this_label]['z_profile'], enth,  c=f_conv_color, lw=1)
+#axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color, lw=1, label='SE')
+#axes[-1].plot(info[this_label]['z_profile'], sum_f, c=f_sum_color, lw=1)
 y_ticks = np.array([0, 0.5, 1])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
@@ -252,18 +267,21 @@ base_enth, base_kappa, base_sum_f = enth, kappa, sum_f
 enth = info[this_label]['enth_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 kappa = info[this_label]['kappa_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 sum_f = (enth + kappa)
-axes[-1].axhline(1, c='k', ls='--')
-axes[-1].axhline(0, c='k')
-axes[-1].plot(info[this_label]['z_profile'], enth, c=f_conv_color2, lw=2, dashes= (2, 1))
-axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color2, lw=2, dashes = (2, 1), label='AE')
-axes[-1].plot(info[this_label]['z_profile'], sum_f, color=f_sum_color2, lw=2, dashes=(2,1))
-y_ticks = np.array([0, 0.5, 1])
-axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\mathcal{P}^{-1}$')
-axes[-1].set_yticks(y_ticks)
-x_ticks = np.array([0, 0.5, 1])
-axes[-1].set_xticks(x_ticks)
-axes[-1].set_xlabel('z')
-plt.legend(frameon=False, loc='center', fontsize=10)
+axes[-1].plot(info[this_label]['z_profile'], enth,  c=f_conv_color, lw=1)
+axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color, lw=1, label='SE')
+axes[-1].plot(info[this_label]['z_profile'], sum_f, c=f_sum_color, lw=1)
+#axes[-1].axhline(1, c='k', ls='--')
+#axes[-1].axhline(0, c='k')
+#axes[-1].plot(info[this_label]['z_profile'], enth, c=f_conv_color2, lw=2, dashes= (2, 1))
+#axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color2, lw=2, dashes = (2, 1), label='AE')
+#axes[-1].plot(info[this_label]['z_profile'], sum_f, color=f_sum_color2, lw=2, dashes=(2,1))
+#y_ticks = np.array([0, 0.5, 1])
+#axes[-1].set_ylabel(r'$\mathrm{Flux}\cdot\mathcal{P}^{-1}$')
+#axes[-1].set_yticks(y_ticks)
+#x_ticks = np.array([0, 0.5, 1])
+#axes[-1].set_xticks(x_ticks)
+#axes[-1].set_xlabel('z')
+##plt.legend(frameon=False, loc='center', fontsize=10)
 axes[-1].annotate(r'$\mathrm{(d)}$', (0.45, 0.06), fontsize=10)
 
 #Plot 3

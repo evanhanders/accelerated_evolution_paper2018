@@ -76,7 +76,8 @@ base_dirs_post = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
             ]
 ra_runs = '1.30e8'
-ra_runs = '6.01e7'
+#ra_runs = '6.01e7'
+
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_post):
@@ -95,7 +96,7 @@ for a, base_dir in enumerate(base_dirs_post):
         except:
             print('cannot find profile file in {:s}'.format(d))
         try:
-            with h5py.File('{:s}/new_pdfs/slice_pdf_data.h5'.format(d), 'r') as f:
+            with h5py.File('{:s}/slice_pdfs/slice_pdf_data.h5'.format(d), 'r') as f:
             #with h5py.File('{:s}/slice_pdfs/slice_pdf_data.h5'.format(d), 'r') as f:
                 for k in f.keys():
                     info[ra][k+'_pdf'] = f[k].value
@@ -103,7 +104,7 @@ for a, base_dir in enumerate(base_dirs_post):
             print('cannot find pdf file in {:s}'.format(d))
 
 
-
+print(info.keys())
 print(info['{}_0'.format(ra_runs)].keys())
 plt.figure(figsize=(8, 1.5))
 gs     = gridspec.GridSpec(*(1000,1000))
@@ -127,7 +128,7 @@ axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w
 axes[-1].set_xlabel('Vertical Velocity', labelpad=-1)
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(a)}$', (-0.17, 2e1), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(a)}$', (-0.145, 2e1), fontsize=10)
 axes[-1].set_ylim(1e-3, 1e2)
 
 
@@ -171,11 +172,11 @@ axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'], c='red'
 axes[-1].set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
 axes[-1].set_xlabel('Horizontal Velocity', labelpad=-0.5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(b)}$', (-0.175, 2e1), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(b)}$', (-0.17, 2e1), fontsize=10)
 axes[-1].set_ylim(1e-3, 1e2)
 
 u_cdf_x_bvp, u_cdf_y_bvp = calculate_CDF(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
-u_cdf_x_base, u_cdf_y_base = calculate_CDF(info[base_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
+u_cdf_x_base, u_cdf_y_base = calculate_CDF(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf'])
 
 share = axes[-1].twinx()
 share.plot(u_cdf_x_bvp, u_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
@@ -193,17 +194,17 @@ for tick in axes[-1].get_xticklabels():
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
 axes[-1].fill_between(info[base_label]['w*T_xs_pdf'], 0, info[base_label]['w*T_pdf_pdf'], color='blue', alpha=0.4)
-axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'], c='blue', label='Rundown')
+axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'], c='blue', label='SE')
 axes[-1].fill_between(info[bvp_label]['w*T_xs_pdf'], 0, info[bvp_label]['w*T_pdf_pdf'], color='red', alpha=0.4)
-axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'], c='red', label='BVP')
+axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'], c='red', label='AE')
 axes[-1].set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label]['w*T_xs_pdf']))
-plt.legend(frameon=False, fontsize=8, loc='upper right')
-axes[-1].set_xlabel(r'$w(T - \bar{T}\,)$', labelpad=-5)
+plt.legend(frameon=False, fontsize=10, loc='upper right')
+axes[-1].set_xlabel(r'$w(T - \langle T\,\rangle_{x,y})$', labelpad=-5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(c)}$', (-1.2e-3, 1e3), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (-1e-3, 1e3), fontsize=10)
 
 wT_cdf_x_bvp, wT_cdf_y_bvp = calculate_CDF(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'])
-wT_cdf_x_base, wT_cdf_y_base = calculate_CDF(info[base_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'])
+wT_cdf_x_base, wT_cdf_y_base = calculate_CDF(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'])
 
 share = axes[-1].twinx()
 share.plot(wT_cdf_x_bvp, wT_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)

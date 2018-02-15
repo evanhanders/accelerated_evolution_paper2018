@@ -328,109 +328,54 @@ be applied tens of buoyancy times after the peak of convective transient.
 
 \section{Results}
 \label{sec:results}
-While Fig. \ref{fig:time_trace} shows us that the post-BVP and post-rundown solutions
-exhibit similar system energies and fluxes, it is important to examine other aspects of
-the evolved solution. The BVP mainly serves to adjust the thermodynamic state of the solution;
-in \RB convection, this means that the evolved temperature profile is a good measure of whether
-or not the BVP achieves the proper solution.
+We study evolved solutions achieved through the SE method from convective onset
+up to $S = 10^5$ in 2D and $S = 10^4$ in 3D.  These SE runs are compared to
+AE runs spanning from onset up to $S = 10^7$ in 2D and $S = 10^4$ in 3D.
+For a full list of simulations, we refer the reader to appendix \ref{appendix:run_table}.
 
-\begin{figure}[t]
-\includegraphics[width=\textwidth]{./figs/temp_comparison.png}
-\caption{Comparisons of the evolved thermodynamic states of a BVP solution and a long IVP rundown at
-$S = 10^{4 + 2/3}$ are shown.  (a) Evolved temperature profiles, as a function of height.
-(b) The percentage difference between the temperature profiles (as shown in (a)), as a function of height.
-(c) Probability distributions of point-by-point measurements of $T$ throughout the two domains over the
-averaging windows are shown.  The cumulative distribution functions are overplotted and the maximum
-difference between them in 0.0407. This difference arises due to the imperfect alignment of the
-mean domain temperatures, but it is clear that otherwise the statistics are quite similar.
-\label{fig:temp_comparison} }
-\end{figure}
-
-
-The temperature profiles of a 2D run at $S = 10^{4 + 2/3}$ 
-for both the BVP solve and the long rundown are shown in
-Fig. \ref{fig:temp_comparison}a.  While they are not perfectly aligned they are within less than
-0.25\% of each other throughout the depth of the atmosphere, as shown in Fig. \ref{fig:temp_comparison}b.
-While the mean temperature profile is interesting, the point-by-point fluctuations in the
-temperature are what lead to convective transport, and thus examining the spread of temperature
-and the allowed values that it can take are important to characterizing the system.  As seen
-in Fig. \ref{fig:temp_comparison}c, aside from the noticeable difference in the mode of the
-temperatures, the two runs exhibit largely the same spread of temperatures.
-(AUTHOR NOTE: we aren't quite sure how to do a KS test properly here, but we can at least
-list the KS statistic -- currently this is in the caption.)
-
-In addition to examining the thermodynamics of the solutions, we are especially interested in
-determining if the post-BVP solution appropriately captures key features of the nonlinear dynamics.
-We show point-by-point probability distributions of the horizontal velocity, vertical velocity,
-and nonlinear transport in Fig. \ref{fig:pdf_comparison}.  All of these measures have a sharp
-peak at zero due to the no-slip, impenetrable boundary conditions and the denser grid sampling
-near the boundaries of our Chebyshev grid.  Regardless, we see that the velocities of the 
-two solutions are largely consistent.  The nonlinear transport in Fig. \ref{fig:pdf_comparison}c
-shows that the rundown solution experiences a larger number of energetic, extreme events,
-but the BVP displays a larger number of moderately energetic events than the IVP (as
-evidenced by the differences in the cumulative distribution functions).
-
-\begin{figure}[b]
-\includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
-\caption{Probability distribution functions of the vertical velocity (a), horizontal velocity (b), and nonlinear
-vertical transport (c) are shown for a 2D run at $S = 10^{4 + 2/3}$.  We sample flows every 0.1 time units for 500 freefall
-times, and include the flows at all points on the grid at each of these samples in these distributions.  All
-distributions are biased by the no-slip, impenetrable boundary conditions, coupled with the dense spacing of our
-Chebyshev grids near the boundaries, so there is a large peak around zero. 
-The cumulative distribution function is overplotted on each plot, with a maximum difference of
-(a) 0.027, (b) 0.0061, and (c) 0.035. There is an excess of higher-flux carrying
-elements in the BVP solution than in the IVP rundown, despite the rundown's distribution
-having more powerful, rare events.
-\label{fig:pdf_comparison} }
-\end{figure}
-
-
-The goodness of this method has been tested across a broad range of supercriticality.  We have
-examined both Rundown and BVP solutions in the range $S = [10^{1/3}, 10^5]$ in 2D and
-$S = [10^1, 10^4]$ in 3D.  We have also further explored up to $S = 10^6$
-(AUTHOR NOTE: we're going up to $10^8$ in 2D right now, need to mention this is state of
-the art and give refs).
-We show the volume averaged Nusselt number, RMS Reynolds number, and mean temperature in
-the evolved BVP solutions in in Fig. \ref{fig:parameter_space_comparison}a-c.
-The relative error of the BVP measurements of these values is compared to the IVP
-measurements for these values in Fig. \ref{fig:parameter_space_comparison}d-f.
-
-In Fig. \ref{fig:parameter_space_comparison}a, we show the Nusselt number scaling in 2D and
-3D.  We use a classic definition of the Nusselt number
-to measure the heat transport in these systems, where
+We report the time- and volume-averaged values of select measurements of the
+evolved solutions in Fig. \ref{fig:parameter_space_comparison}.  We report
+the scaling of heat transport in the evolved solution, as quantified by the
+Nusselt number, in Fig. \ref{fig:parameter_space_comparison}a.
+The volume averaged Nusselt number is defined as
 \begin{equation}
 \text{Nu} = \frac{\angles{F_{\text{conv}} + F_{\text{cond}}}}{\angles{F_{\text{cond, ref}}}}
- = \frac{\angles{wT - (\text{Ra Pr})^{-1/2}\grad T}}{\angles{- (\text{Ra Pr})^{-1/2} \grad T}}.
+ = \frac{\angles{wT - \mathcal{P}\partial_z T}}{\angles{- \mathcal{P} \partial_z T}}.
 \end{equation}
-At small values of $S$, we achieve a steady state solution with a clear value of Nu.  Near
-$S \sim 10^3$, our simulations begin to achieve a horizontally oscillatory state.  Due to the
-use of no-slip boundaries, these states never give way to full scale shearing states, but they
-do reduce the overall heat transport through the system and cause the systems to oscillate between
-periods of high- and low- heat transport.  The vertical lines represent the standard deviation 
-of Nu associated with these oscillations, while the error bars show the drift of the mean
-value of Nu over the averaging window.  We find that $\text{Nu} \propto \text{Ra}^{1/5}$,
-a weaker scaling law than that seen in traditional \RB convection \cite{johnston&doering2009},
-but similar to that seen in shearing states [cite Goluskin].
-(AUTHOR NOTE: Ben, I think this is entirely because of the oscillatory states.  I wonder what
-would happen if we included viscous fluxes...)
+In 3D and in 2D when $S < 10^{3+2/3}$, the evolved system is defined by a clear
+value of Nu and the convection reaches a statistically stationary state.
+In 2D and at larger values of $S$, the value of Nu oscillates as a function of time
+as the plumes in the solution oscillate horizontally.  Our choice of no-slip
+boundary conditions prevent the fluid from entering a full-fledged shearing state
+\cite{goluskin&all2014}, but the oscillatory motions which do arise cause the
+system to vary between periods of low heat transport and high heat transport.
+The SE simulations which span up to $S = 10^5$ exhibit the same horizontally
+oscillatory motion as the AE solutions for the same initial conditions. The
+scaling of the mean value of Nu is roughly $\text{Nu} \propto \text{Ra}^{1/5}$,
+weaker than that reported in similar systems with fixed-T and fixed-flux boundary
+conditions \cite{johnston&doering2009}.  We attribute this weaker Nu scaling to
+the oscillatory nature of the plumes, which may have been avoided by previous studies
+using bootstrapping techniques as initial conditions.
 
-In Fig. \ref{fig:parameter_space_comparison}b, we measure the rms Reynolds number, where
-$\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  We find that this scales roughly as
-$\text{Re} \propto \text{Ra}^{0.45}$.
+In Fig. \ref{fig:parameter_space_comparison}b, we report the rms Reynolds number
+in the AE solutions, where
+$\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  This measure scales roughly as
+$\text{Re} \propto \text{Ra}^{0.45}$, and shows little variance with time.
 
-In Fig. \ref{fig:parameter_space_comparison}c, we measure the volume averaged 
-temperature of our solution, then subtract out the value at the upper (fixed $T$) boundary.
-If the atmosphere were perfectly isothermal, this value would be exactly zero.  Thus, this is
-a measure of the temperature jump across the boundary layers, and it provides insight both
-into whether or not the temperature profiles of two runs are the same and into whether
-the fluxes through the two systems are the same (it is in some ways an alternate measure of Nu
-[cite King 2009 supp materials]).
-We find that this measure is $\propto \text{Ra}^{-1/5}$, approaching zero, as expected.
+In Fig. \ref{fig:parameter_space_comparison}c, we report the volume averaged 
+temperature of the AE solutions, with the value at the upper (fixed $T$) boundary removed.
+This measurement probes the thickness of the boundary layers of the solutions, and
+should show scaling which is inversely proportional to Nu in converged solutions
+where fixed-flux boundary conditions are used \cite{otero&all2002}.  We find here
+that $(\angles{T} - T_{\text{top}}) \propto \text{Ra}^{-1/5}$, precisely the inverse
+scaling of Nu, giving confidence that these solutions are in a converged state.
 
-For each of these measurements, the BVP achieves the same value as the IVP to
-within about 3\% (Fig. \ref{fig:parameter_space_comparison}d-f).  This is good agreement,
-and the residuals have a scattered distribution of positive and negative values, indicating
-that the method is not biased towards the wrong answer in a clear manner.
+In Fig. \ref{fig:parameter_space_comparison}d-f, we report the fractional difference
+between measurements from the AE solutions and measurements from the SE solutions.
+We find that the mean value of Nu from AE solutions is accurate to the values
+from SE solutions to within $\sim 1$\%, and the same is true for $\angles{T}$ measurements.
+Re measurements show slightly greater error, with AE measurements being on average
+$\leq 2$\% away from the SE measurements. 
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
@@ -453,6 +398,87 @@ mean temperature (f). The grey box indicates the region in which only BVP runs w
 carried out due to computational expense.
 \label{fig:parameter_space_comparison} }
 \end{figure}
+
+The measurements presented in Fig. \ref{fig:parameter_space_comparison} demonstrate
+that the AE method can be powerfully employed in parameter space studies in which
+large numbers of simulations are compared in a volume-averaged sense.  We now turn
+our examination to a more direct comparison of AE and SE for convection at
+$S = 10^5$, as has been introduced in Fig. \ref{fig:time_trace}.
+
+As the AE method primarily serves to adjust the thermodynamic structure of the
+solution, we compare the temperature profile attained by AE and SE in 
+Fig. \ref{fig:temp_comparison}.  We see that the boundary layer length scale is 
+nearly identical in the AE and SE solution (Fig. \ref{fig:temp_comparison}a), but that
+the mean temperature in the interior differs by about 0.5\% on average
+(Fig. \ref{fig:temp_comparison}b). The probability distribution function of point-by-point
+temperature values are compared in Fig. \ref{fig:temp_comparison}c.  We construct
+this PDF by interpolating our temperature field onto a regular grid, determing the
+frequency distribution of all $T$ values, and then properly normalizing such that
+the integral of the PDF is unity.  In addition to the
+difference in mode which can be seen in the mean vertical profile, the SE case
+has a broader spread of temperature values.  This can likely be attributed to the
+slight overstabilization of the temperature profile obtained by the AE method
+(as can be seen in Fig. \ref{fig:time_trace}a\&b).  One means of comparing two
+probability distributions to determine if they are drawn from the same underlying
+sample is through the use of a Kolmogorov-Smirnov (KS) \cite{wall&jenkins2012}.
+In general, a KS test must be conducted on independent, uncorrelated data, which
+poorly describes the point-by-point values of flow in a fluid simulation. Thus,
+we will merely use the KS statistic, the maximum difference
+between the cumulative distribution functions (CDFs) of the two sample distributions,
+as a numerical method of directly comparing the two PDFs.  For the distributions
+shown in Fig. \ref{fig:temp_comparison}c,
+we find a KS statistic of 0.113 near the modes, which is large, and implies that
+these two distributions are different.
+
+
+
+
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{./figs/temp_comparison.png}
+\caption{Comparisons of the evolved thermodynamic states of a BVP solution and a long IVP rundown at
+$S = 10^{5}$ are shown.  (a) Evolved temperature profiles, as a function of height.
+(b) The percentage difference between the temperature profiles (as shown in (a)), as a function of height.
+(c) Probability distributions of point-by-point measurements of $T$ throughout the two domains over the
+averaging windows are shown.  The cumulative distribution functions are overplotted and the maximum
+difference between them in 0.0407. This difference arises due to the imperfect alignment of the
+mean domain temperatures, but it is clear that otherwise the statistics are quite similar.
+\label{fig:temp_comparison} }
+\end{figure}
+
+In addition to comparing the thermodynamic state achieved by the SE and AE methods,
+we examine the velocities found in the evolved states.
+We compute PDFs in the same manner as in Fig. \ref{fig:temp_comparison}c for the
+vertical velocity (Fig. \ref{fig:pdf_comparison}a), horizontal velocity (Fig. \ref{fig:pdf_comparison}b),
+and the nonlinear convective flux (Fig. \ref{fig:pdf_comparison}c). We report KS statistics
+of 0.0577, 0.858, and 0.0347, respectively.  Perhaps unsurpisingly, the nonlinear
+convective transport between the SE and AE methods are very similar, as is captured
+in a volume-averaged sense in the Nu measurements of Fig. \ref{fig:parameter_space_comparison}a\&d).
+In general, the velocity boundary conditions (Eqn. \ref{eqn:bcs}) more strongly dominate the flow
+fields for the SE cases than the AE cases in Fig. \ref{fig:pdf_comparison}a\&c. 
+This suggests that the velocity boundary layers are not yet fully formed in the
+AE solutions. However, aside from this difference, the two solutions show a similar
+distribution of realized velocity values.
+
+\begin{figure}[b]
+\includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
+\caption{Probability distribution functions of (a) the vertical velocity, (b) the horizontal velocity, and (c) nonlinear
+convective transport are shown for a 2D runs achieved through the SE and AE methods
+at $S = 10^{5}$.  Flows are sampled every 0.1 time units for 500 total time units,
+and flows are interpolated onto an evenly spaced grid before sampling.
+The cumulative distribution function is overplotted on each plot. 
+\label{fig:pdf_comparison} }
+\end{figure}
+
+
+Despite differences between the SE and AE solutiosn for the case studied in 
+Figs. \ref{fig:time_trace}, \ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison},
+the AE method is still extremely powerful.  The first application of the AE method
+($t \approx 70$ in Fig. \ref{time_trace}b) immediately increases the 
+average time step of our solver by a factor of 2-3. At higher supercriticality
+($S = 10^7$), the AE solve immediately boosts the timestep by nearly a factor of 4.
+Thus, not only does this method evolve the solution into nearly the correct state, 
+but further time evolution (either to achieve precisely the correct thermodynamic
+state or to take measurements of fluid quantities) happens more efficiently.
 
 
 \section{Discussion \& Conclusions}

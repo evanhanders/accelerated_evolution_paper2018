@@ -41,7 +41,7 @@ def calculate_CDF(x, pdf):
         cdf[i] = np.sum(d_cdf[:i+1])
     return new_x, cdf
 
-def ks_test(x1, y1, N1, x2, y2, N2, n=1000):
+def ks_test(x1, y1, N1, x2, y2, N2, n=10000):
     x_range = [np.min(x1), np.max(x1)]
     if np.min(x2) > x_range[0]:
         x_range[0] = np.min(x2)
@@ -52,13 +52,21 @@ def ks_test(x1, y1, N1, x2, y2, N2, n=1000):
 
     f1 = interp1d(x1, y1, bounds_error=False, assume_sorted=True)#, fill_value='extrapolate')
     f2 = interp1d(x2, y2, bounds_error=False, assume_sorted=True)#, fill_value='extrapolate')
-
+    
     y1_interp = f1(x_points)
     y2_interp = f2(x_points)
+    print(y1 - y2)
     print(y1_interp - y2_interp)
     diff = np.abs(y1_interp - y2_interp)
+
+#    plt.figure()
+#    plt.plot(x_points, diff)
+#    plt.plot(x1, np.abs(y1 - y2))
+#    plt.scatter(x1, np.abs(y1 - y2))
+#    plt.show()
     
     max_diff = np.max(diff)
+    print(max_diff, diff)
     return max_diff, np.sqrt((N1+N2)/(N1*N2))
 
 
@@ -79,7 +87,7 @@ base_dirs_post = [
             '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
             ]
 ra_runs = '1.30e8'
-ra_runs = '6.01e7'
+#ra_runs = '6.01e7'
 
 info = OrderedDict()
 for a, base_dir in enumerate(base_dirs_post):
@@ -120,11 +128,11 @@ gs_info = (((0,0), 1000, 267), ((0, 366), 1000, 267), ((0, 733), 1000, 267))
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[0])))
 base_label = '{}_0'.format(ra_runs)
 bvp_label = '{}_1'.format(ra_runs)
-axes[-1].plot(info[base_label]['z_profile'], info[base_label]['T_profile'][0,:],  c='blue', lw=1, label='Rundown')
-axes[-1].plot(info[bvp_label]['z_profile'], info[bvp_label]['T_profile'][0,:], c='red', lw=1, dashes=(4,1.5), label='BVP')
+axes[-1].plot(info[base_label]['z_profile'], info[base_label]['T_profile'][0,:],  c='blue', lw=1, label='SE')
+axes[-1].plot(info[bvp_label]['z_profile'], info[bvp_label]['T_profile'][0,:], c='red', lw=1, dashes=(4,1.5), label='AE')
 plt.legend(frameon=False, loc='upper right', fontsize=10)
 axes[-1].set_xlabel('z')
-axes[-1].set_ylabel(r'$T$' + ' profile')
+axes[-1].set_ylabel(r'$\langle T\,\rangle_{x,y}$')
 axes[-1].annotate(r'$\mathrm{(a)}$', (0.04, -0.494), fontsize=10)
 
 y_ticks = [-0.5, -0.48, -0.46, -0.44, -0.42]
@@ -134,13 +142,13 @@ axes[-1].set_yticks(y_ticks)
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
 
 axes[-1].plot(info[base_label]['z_profile'], 100*np.abs(info[base_label]['T_profile'][0,:] - info[bvp_label]['T_profile'][0,:])/np.abs(info[base_label]['T_profile'][0,:]))
-y_ticks = np.array([0, 0.1, 0.25])
+y_ticks = np.array([0, 0.2, 0.40, 0.6])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('z')
 axes[-1].set_ylabel('% difference')
-axes[-1].annotate(r'$\mathrm{(b)}$', (0.04, 0.03), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(b)}$', (0.04, 0.05), fontsize=10)
 
 ##Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
@@ -150,7 +158,7 @@ axes[-1].fill_between(info[bvp_label]['T_xs_pdf'], 0, info[bvp_label]['T_pdf_pdf
 axes[-1].plot(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'], c='red')
 x_ticks = np.array([-0.5, -0.45, -0.40])
 axes[-1].set_xticks(x_ticks)
-axes[-1].set_xlabel('T')
+axes[-1].set_xlabel(r'$T$')
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
 axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
@@ -158,6 +166,7 @@ axes[-1].annotate(r'$\mathrm{(c)}$', (-0.495, 1e2), fontsize=10)
 
 T_cdf_x_bvp, T_cdf_y_bvp = calculate_CDF(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'])
 T_cdf_x_base, T_cdf_y_base = calculate_CDF(info[base_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'])
+
 
 share = axes[-1].twinx()
 share.plot(T_cdf_x_bvp, T_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
