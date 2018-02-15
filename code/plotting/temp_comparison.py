@@ -141,7 +141,7 @@ axes[-1].set_yticks(y_ticks)
 #Plot 2
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[1])))
 
-axes[-1].plot(info[base_label]['z_profile'], 100*np.abs(info[base_label]['T_profile'][0,:] - info[bvp_label]['T_profile'][0,:])/np.abs(info[base_label]['T_profile'][0,:]))
+axes[-1].plot(info[base_label]['z_profile'], 100*np.abs(info[base_label]['T_profile'][0,:] - info[bvp_label]['T_profile'][0,:])/np.abs(info[base_label]['T_profile'][0,:]), c='k')
 y_ticks = np.array([0, 0.2, 0.40, 0.6])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
