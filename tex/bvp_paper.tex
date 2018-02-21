@@ -55,19 +55,24 @@ systems are briefly discussed.
 \end{abstract}
 \maketitle
 
+%%%%%%%%%%%%
+%%%%%%%%%%%
+% INTRO
+%%%%%%%%%%%
+%%%%%%%%%%%%
 
 \section{Introduction}
 \label{sec:intro}
 Natural convection occurs in the presence of disparate timescales which
 prohibit numericists from studying realistic models of natural systems.  For example,
-flows in the convection zone of stars like the Sun are often at low Mach number
-(Ma) deep in the interior.
-Explicit methods which are bound by the Courant-Friedrich-Lewy
+flows in the convection zone of stars like the Sun are characteristically low Mach number
+(Ma) in the deep interior.
+Explicit timestepping methods which are bound by the Courant-Friedrich-Lewy
 (CFL) timestep limit must resolve the fastest motions (sound
 waves), resulting in timesteps which are prohibitively
 small for studies of the deep, low-Ma motions. These systems are numerically
-stiff, and the disparity between
-the sound crossing time and the convective flows have made studies of low-Ma stellar
+stiff, and the difference between
+the sound crossing time and the convective overturn time have made studies of low-Ma stellar
 convection difficult. Traditionally, approximations such as
 the anelastic approximation, in which sound waves are explicitly filtered out,
 have been used to study low-Ma flows \cite{brown&all2010, featherstone&hindman2016}.
@@ -77,19 +82,21 @@ convection at low Mach numbers \cite{viallet&all2011, viallet&all2013, viallet&a
 anders&brown2017, bordwell&all2018}, and careful studies of deep convection which
 would have been impossible a decade ago are now widely accessible.
 
-While solutions to problem of disparate \emph{dynamical} timescales have proven useful,
-the difference between convective timescales and system relaxation timescales remains
-a significant problem facing studies of convection. 
+While solutions to the problem of divergent \emph{dynamical} timescales have proven useful,
+the difference between convective timescales and thermal timescales, which
+characterize system relaxation, remain a significant problem facing studies of convection. 
+Solar convection is a prime example of this phenomenon;
+dynamical timescales in the solar convective zone are relatively short 
+(10 min overturn at solar surface, one month solar
+rotation rate) compared to the Kelvin-Helmholtz timescale of
+$3 \cdot 10^7$ years \cite{stix2003}.  
+In such a system, it is impossible to resolve the convective dynamics while also
+evolving the thermal structure of the system in a meaningful fashion.
 As modern simulations aim to model natural convection
 by increasing into the high-Rayleigh-number (Ra) regime,
 the ratio of the thermal diffusion timescale to dynamical timescales
 grows \cite{anders&brown2017}.
-Solar convection is a prime example of this phenomenon.
-Dynamical timescales in the solar convective zone are relatively short 
-(10 min overturn at solar surface, one month solar
-rotation rate) compared to the Kelvin-Helmholtz timescale of
-$3 \cdot 10^7$ years \cite{stix2003}.  
-Furthermore, as dynamical and diffusive timescales separate, 
+Furthermore, as dynamical and thermal timescales separate, 
 simulations become more turbulent. Increasingly turbulent motions 
 require finer grid meshes and smaller timesteps
 to capture advective dynamics. Thus, the progression of simulations into the high-Ra
@@ -98,10 +105,10 @@ through a single convective overturn time becomes more computationally expensive
 while the number of overturn times required for systems to reach thermal equilibration
 grows.
 
-The vast difference between convective and diffusive timescales has long plagued
-numericists studying convection, and a plethora of approaches has been employed to
+The vast difference between convective and thermal timescales has long plagued
+numericists studying convection, and an abundance of approaches has been employed to
 study thermally converged solutions. One popular method for accelerating the convergence
-of high-Ra solutions is by ``Bootstrapping,'' or the process of using the flow
+of high-Ra solutions is by ``bootstrapping'' -- the process of using the flow
 fields in a converged solution at lower Ra as initial conditions for a simulation at a higher
 Ra.  This method has been used with great success \cite{johnston&doering2009, verzicco&camussi1997},
 but it is not without its faults.  Bootstrapped solutions are succeptible to hysteresis
@@ -119,7 +126,7 @@ appropriate set of initial conditions can either be solved for analytically
 \cite{couston&all2017} or by using knowledge of Mixing Length Theory or other convective
 theories to adjust the initial profile towards the proper adiabatic state \cite{brandenburg&all2005}.
 
-Despite the plethora of methods that have been used,
+Despite the numerous methods that have been used,
 the most straightforward way to achieve a thermally converged solution
 is to evolve a convective simulation through a thermal timescale. Some modern
 studies do just that \cite{featherstone&hindman2016}, but it is becoming
@@ -144,6 +151,13 @@ method to those that have been evolved through a full diffusive timescale, and w
 examine select simulations at very high Ra which have achieved accelerated evolution. Finally,
 in section \ref{sec:extensions}, we discuss extensions of the methods presented here,
 and we offer concluding remarks in section \ref{sec:conclusion}.
+
+
+%%%%%%%%%%%%
+%%%%%%%%%%%
+% EXPERIMENT
+%%%%%%%%%%%
+%%%%%%%%%%%%
 
 \section{Experiment}
 \label{sec:experiment}
@@ -239,6 +253,13 @@ evolved convective temperature perturbations, even at large Ra.
 We filter this noise spectrum in coefficient space, 
 such that only the lower 25\% of the coefficients
 have power.
+
+
+%%%%%%%%%%%%
+%%%%%%%%%%%
+% AE METHOD
+%%%%%%%%%%%
+%%%%%%%%%%%%
 
 \subsection{The method of accelerated evolution}
 \label{subsection:ae}
@@ -336,6 +357,13 @@ the reader to appendix \ref{appendix:recipe}.
 The AE method specified here quickly converges the fluxes within the
 system to within a few percent of the fluxes in a system converged through
 SE (Fig. \ref{fig:time_trace}d \& e).
+
+
+%%%%%%%%%%%%
+%%%%%%%%%%%
+% RESULTS
+%%%%%%%%%%%
+%%%%%%%%%%%%
 
 \section{Results}
 \label{sec:results}
@@ -491,41 +519,62 @@ but further time evolution (either to achieve precisely the correct thermodynami
 state or to take measurements of fluid quantities) happens more efficiently.
 
 
-\section{Extensions of the AE method}
-\label{sec:extensions}
-Here we have used \RB convection as a test case for the AE method, but we argue that
-the true power of this method is in its extensions to more complicated studies.
-Such extensions are beyond the scope of this work, but we will briefly describe
-avenues in which extensions to the AE method will be useful.
-For example, in studies of stratified convection where the thermal diffusivity
-is inversely proportional to the density \cite{anders&brown2017}, AE solutions
-will allow for the careful study of a broader range of parameter space. 
-Further, in studies where stable and convecting regions are paired
-\cite{hurlburt&all1986, couston&all2017}, the stable layers cannot rely on convective
-motions to restratify them and instead evolve on the order of the slow thermal
-timescale. In
-fully-convective domains, such as those studied here, the atmosphere evolves
-much more rapidly than the thermal diffusion time (see e.g., Fig. \ref{fig:time_trace}a).
+%%%%%%%%%%%%
+%%%%%%%%%%%
+% CONCLUSION
+%%%%%%%%%%%
+%%%%%%%%%%%%
 
-We note also that a further strength of the AE method is its generality.  One
+
+\section{Extensions \& Conclusion}
+\label{sec:extensions}
+In this work we have used \RB convection as a test case for the AE method, but we argue that
+the true power of this method is in its extensions to more complicated studies.
+Such extensions are beyond the scope of this paper, but we will briefly describe
+areas in which extensions to the AE method should be explored.
+We note that a strength of the AE method is its generality.  One
 need only derive the steady-state, horizontally-averaged equations for a given
-equation set (e.g., Eqns. \ref{eqn:bouss_BVP_momentum} \& \ref{eqn:bouss_BVP_energy})
-and couple that information with knowledge of the current dynamics (Eqn. \ref{eqn:bvp_ratios})
+equation set (e.g., Eqns. (\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy}))
+and couple that information with knowledge of the current dynamics (Eqn. (\ref{eqn:bvp_ratios}))
 and the boundary conditions. Thus this method can be easily applied to more complex
-systems, and merely require that the experimenter understand the energy transport
+systems, so long as the experimenter understand the energy transport
 present in their systems.
+
+In studies of stratified convection where the thermal diffusivity
+is inversely proportional to the density \cite{anders&brown2017}, the
+thermal timescale deep in the atmosphere is much larger than the timescale
+near the surface.  Thus, the AE method can be a very important tool for studying
+highly stratified systems which aim to model realistic astrophysical atmospheres.
+Through carefully examining the flux in excess of the flux conducted along the
+adiabatic temperature gradient, the fractions of Eqn. (\ref{eqn:bvp_ratios})
+can be constructed for such a system.  In addition to solving for the average
+hydrostatic balance and thermal equilibrium, it is essential to simultaneously
+ensure that mass is conserved in truly stratified systems by adding a 
+mass-conservation equation, similar to those used in stellar structure models
+\cite{paxton&all2011}.
+
+It is common for studies to pair stable and convecting regions
+\cite{hurlburt&all1986, brandenburg&all2005, couston&all2017}.
+In such studies, particularly when the interface between the stable region
+and the convecting region is stiff and motions do not penetrate from the convecting
+region into the stable region, the stable region cannot rely on convective
+motions to assist in the restratification of the thermal profile.
+In fully-convective domains, such as those studied here, the atmosphere evolves
+much more rapidly than the thermal diffusion time (see e.g., Fig. \ref{fig:time_trace}a,
+where the SE solution is essentially fully converged after $4\cdot 10^3$ frefall units
+despite the thermal timescale being roughly $10^4$ frefall units).
 
 We have only studied solutions in which we use mixed thermal boundary conditions,
 as in Eqn. \ref{eqn:bcs}. However, this method can be easily applied to fixed-temperature
 boundary conditions, as well.  Rather than knowing the total final flux (F$_{\text{bot}}$)
 through the system a priori, it must be measured using the ratios in
-Eqn. \ref{eqn:bvp_ratios}.  We hesitate to use the AE method for systems in which
+Eqn. \ref{eqn:bvp_ratios}.  The integrated conductive flux is known in these systems exactly thanks 
+to the fixed temperature jump across the domain.  The total flux through the system
+($F_{\text{bot}}$) can is thus $\mathcal{P} / \int f_{\text{cond}} dz$ (double-check).
+We hesitate to use the AE method for systems in which
 both boundaries fix the flux, as such systems have degenerate solutions for the temperature.
 
-
-\section{Conclusion}
-\label{sec:conclusion}
-Here we have described a method for converging convective simulations using
+In conclusion, here we have described a method for converging convective simulations using
 a method of Accelerated Evolution (AE), and compared it to Standard
 Evolution (SE) achieved by running simulations for a thermal timescale.
 We have shown that the AE method produces dynamics that are similar to SE
@@ -617,15 +666,15 @@ $10^4$	&	$1.30 \cdot 10^7$	&	256	&	512	&	$3.60 \cdot 10^3$	&	500	&	8.83	&	8.83	\
 $10^{4 + 1/3}$	&	$2.79 \cdot 10^7$	&	256	&	512	&	$5.28 \cdot 10^3$	&	500	&	10.13	&	10.14	\\
 $10^{4 + 2/3}$	&	$6.01 \cdot 10^7$	&	256	&	512	&	$7.76 \cdot 10^3$	&	500	&	11.65	&	11.69	\\
 $10^5$	&	$1.30 \cdot 10^8$	&	512	&	1024	&	$1.14 \cdot 10^4$	&	500	&	14.02	&	14.18	\\
-$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	$1.67 \cdot 10^4$	&	500	&	N/A	&	16.21	\\
-$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	$2.45 \cdot 10^4$	&	500	&	N/A	&	18.58	\\
-$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	$3.60 \cdot 10^4$	&	500	&	N/A	&	22.132	\\
-$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	200	&	N/A	&	TBD	\\
-\\ \hline \hline								\\							
-$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64,64	&	$114$	&	100	&	2.42	&	2.42	\\
-$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128,128	&	$360$	&	100	&	3.97	&	4	\\
-$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256,256	&	$1.14 \cdot 10^3$	&	500	&	6.27	&	6.27	\\
-$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512,512	&	$3.60 \cdot 10^3$	&	500	&	9.92	&	9.88	\\
+$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	$1.67 \cdot 10^4$	&	500	&	--	&	16.21	\\
+$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	$2.45 \cdot 10^4$	&	500	&	--	&	18.58	\\
+$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	$3.60 \cdot 10^4$	&	500	&	--	&	22.13	\\
+$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	200	&	--	&	40.78	\\
+\\ \hline \hline \\															
+$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64$\times$64	&	$114$	&	100	&	2.42	&	2.42	\\
+$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128$\times$128	&	$360$	&	100	&	3.97	&	4	\\
+$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256$\times$256	&	$1.14 \cdot 10^3$	&	500	&	6.27	&	6.27	\\
+$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512$\times$512	&	$3.60 \cdot 10^3$	&	500	&	9.92	&	9.88	\\
 \hline															
 \end{tabularx}
 \end{center}
