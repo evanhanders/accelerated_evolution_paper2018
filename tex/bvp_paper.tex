@@ -43,13 +43,15 @@
 \title{Accelerated evolution of convective simulations}
 
 \begin{abstract}
-We present a method for coupling boundary value problems (BVPs) with initial value problems (IVPs)
-in order to achieve thermally converged convective solutions on dynamical timescales, rather than the
-long thermal timescale. We study this method in the context of \RB convection. 
-We demonstrate that the solution reached by BVP and the
-solution reached by a long thermal rundown of the IVP are similar, and demonstrate that this method works at a
-large range of supercriticalities.  The BVP method is used to achieve converged solutions at high supercriticality ($10^8$),
-and its extensions to more complex scenarios are discussed.
+We present a method for coupling boundary value problems with initial value problems 
+in order to achieve Accelerated Evolution (AE) of convective solutions on
+dynamical timescales, rather than the long thermal timescale. 
+We study this method in the context of \RB convection. 
+We demonstrate that the solution reached by AE and Standard Evolution (SE) are
+similar, and that this method works at a
+large range of supercriticalities.  The AE method is used to achieve converged 
+solutions at high supercriticality ($10^7$), and its extensions to more complex 
+systems are briefly discussed.
 \end{abstract}
 \maketitle
 
@@ -58,14 +60,14 @@ and its extensions to more complex scenarios are discussed.
 \label{sec:intro}
 Natural convection occurs in the presence of disparate timescales which
 prohibit numericists from studying realistic models of natural systems.  For example,
-flows in the Sun's convection zone range from a Mach number (Ma) of order unity
-near the solar surface to order $10^{-5}$ deep in the solar interior.
+flows in the convection zone of stars like the Sun are often at low Mach number
+(Ma) deep in the interior.
 Explicit methods which are bound by the Courant-Friedrich-Lewy
 (CFL) timestep limit must resolve the fastest motions (sound
-waves and surface convection), resulting in timesteps which are prohibitively
+waves), resulting in timesteps which are prohibitively
 small for studies of the deep, low-Ma motions. These systems are numerically
-stiff. Even in the absence of the fast surface motions, the disparity between
-the sound crossing time and the deep flows have made studies of low-Ma stellar
+stiff, and the disparity between
+the sound crossing time and the convective flows have made studies of low-Ma stellar
 convection difficult. Traditionally, approximations such as
 the anelastic approximation, in which sound waves are explicitly filtered out,
 have been used to study low-Ma flows \cite{brown&all2010, featherstone&hindman2016}.
@@ -75,21 +77,20 @@ convection at low Mach numbers \cite{viallet&all2011, viallet&all2013, viallet&a
 anders&brown2017, bordwell&all2018}, and careful studies of deep convection which
 would have been impossible a decade ago are now widely accessible.
 
-While solutions to problem of disparate dynamical timescales have proven useful,
+While solutions to problem of disparate \emph{dynamical} timescales have proven useful,
 the difference between convective timescales and system relaxation timescales remains
 a significant problem facing studies of convection. 
 As modern simulations aim to model natural convection
 by increasing into the high-Rayleigh-number (Ra) regime,
-the thermal diffusion timescale on which the system relaxes grows with respect
-to the dynamical timescale, which stays roughly constant across all Ra
-\cite{anders&brown2017}.
-Solar convection is, once again, a prime example of this phenomenon.
-Dynamical timescales in the Solar convective zone are relatively short 
+the ratio of the thermal diffusion timescale to dynamical timescales
+grows \cite{anders&brown2017}.
+Solar convection is a prime example of this phenomenon.
+Dynamical timescales in the solar convective zone are relatively short 
 (10 min overturn at solar surface, one month solar
 rotation rate) compared to the Kelvin-Helmholtz timescale of
 $3 \cdot 10^7$ years \cite{stix2003}.  
 Furthermore, as dynamical and diffusive timescales separate, 
-simulations become more turbulent. More turbulent motions 
+simulations become more turbulent. Increasingly turbulent motions 
 require finer grid meshes and smaller timesteps
 to capture advective dynamics. Thus, the progression of simulations into the high-Ra
 regime of natural convection is slowed by two simultaneous effects: timestepping
@@ -106,13 +107,14 @@ Ra.  This method has been used with great success \cite{johnston&doering2009, ve
 but it is not without its faults.  Bootstrapped solutions are succeptible to hysteresis
 effects, in which large-scale convective structures present in the
 low Ra solution imprint onto the dynamics of the new, high Ra solution. 
-In moderate-Ra simulations, a commonly-used tactic is to use 
+Another commonly-used tactic in
+moderate-Ra simulations is to use 
 a simple model of the full convective state as initial conditions.  
 For example, past studies have used a linear eigenvalue solve to set the initial
 convective state \cite{hurlburt&all1984} or used an axisymmetric solution 
 as initial conditions for convection in a 3D cylinder \cite{verzicco&camussi1997}. 
 In certain systems, 
-the approximate state of the evolved solution can be estimated, and there an
+the approximate state of the evolved solution can be estimated. There, an
 appropriate set of initial conditions can either be solved for analytically
 \cite{couston&all2017} or by using knowledge of Mixing Length Theory or other convective
 theories to adjust the initial profile towards the proper adiabatic state \cite{brandenburg&all2005}.
@@ -131,7 +133,7 @@ In this work, we study a method of achieving accelerated evolution of a
 convective simulation through adjusting the thermodynamic state using information 
 from resolved, convective dynamics. We couple measurements of the (non-converged)
 convective solution with knowledge about energy balances in the eventual solution
-to self-consistently adjust the mean thermodynamic profile towards. 
+to self-consistently adjust the mean thermodynamic profile towards its final state. 
 While such a method has been used previously \cite{hurlburt&all1986}, 
 we find no explanation in the current literature of the steps involved in employing
 this method, nor any study into the accuracy of such a method.
@@ -140,8 +142,8 @@ numerical methods, and our method for achieving accelerated evolution. In
 section \ref{sec:results}, we compare solutions reached through the accelerated evolution
 method to those that have been evolved through a full diffusive timescale, and we
 examine select simulations at very high Ra which have achieved accelerated evolution. Finally,
-in section \ref{sec:discussion}, we discuss extensions of the methods presented
-here to stratified, compressible systems.
+in section \ref{sec:extensions}, we discuss extensions of the methods presented here,
+and we offer concluding remarks in section \ref{sec:conclusion}.
 
 \section{Experiment}
 \label{sec:experiment}
@@ -177,9 +179,9 @@ potential, $\phi$, is defined such that $\bm{g} = -\grad \phi$. As $P$ is a
 Langrange multiplier under the Oberbeck-Boussinesq approximation, $\varpi$
 can be treated straightforwardly as a linear variable. 
 In non-dimensional form, Eqns. \ref{eqn:dim_bouss_momentum} \& \ref{eqn:dim_bouss_energy}
-are
+become
 \begin{gather}
-\frac{\partial \bm{u}}{\partial t} + \grad \varpi - T_1\hat{z} + \mathcal{R}\grad\times\bm{\omega} = \bm{u}\times\bm{\omega}
+\frac{\partial \bm{u}}{\partial t} + \grad \varpi - T_1\hat{z} + \mathcal{R}\grad\times\bm{\omega} = \bm{u}\times\bm{\omega},
 	\label{eqn:bouss_momentum}
 \\
 \frac{\partial T_1}{\partial t} - \mathcal{P}\grad^2 T_1 + w \frac{\partial T_0}{\partial z} = - \bm{u}\cdot\grad T_1.
@@ -196,13 +198,13 @@ We hold Pr$ = 1$ constant throughout this work, such that $\mathcal{P} = \mathca
 
 We study 2D and 3D convection in which the domain is a cartesian box, 
 whose dimensionless vertical extent is $z \in [-1/2, 1/2]$, 
-and which is horizontally period with an extent of $x, y \in [0, \Gamma]$ where $\Gamma = 2$ is the aspect
+and which is horizontally periodic with an extent of $x, y \in [0, \Gamma]$ where $\Gamma = 2$ is the aspect
 ratio. 
 In the 2D cases, we set $v = \partial_y = 0$.
 We specify no-slip, impenetrable boundary conditions at both the top and
 bottom boundary and we use mixed thermal boundary conditions, such that
 \begin{equation}
-u = v = w \, \, \text{at}\,\,z = \pm 1/2, \qquad T_1 = 0 \,\,\text{at}\,\, z=+1/2, \qquad
+u = v = w = 0 \, \, \text{at}\,\,z = \pm 1/2, \qquad T_1 = 0 \,\,\text{at}\,\, z=+1/2, \qquad
 \frac{\partial T_1}{\partial z} = 0\,\,\text{at}\,\,z=-1/2.
 \label{eqn:bcs}
 \end{equation}
@@ -252,12 +254,13 @@ in Fig. \ref{fig:time_trace}b.
 
 The horizontally averaged profiles of the vertical conductive flux, 
 F$_{\text{cond}} = \angles{-\kappa\grad(T_0 + T_1)}_{x,y}$, and the vertical convective flux,
-F$_{\text{conv}} = \angles{w(T_0 + T_1)}_{x,y}$, are the basis of the AE method. We measure
+F$_{\text{conv}} = \angles{w(T_0 + T_1)}_{x,y}$, where $\angles{}_{x,y}$ represent
+a horizontal average, are the basis of the AE method. We measure
 both of these quantities early in a simulation, as in Fig. \ref{fig:time_trace}c.
 At these early stages in the simulation, these flux profiles are highly asymmetric,
 with much more flux leaving through the upper boundary than entering through the
-lowe boundary as the atmosphere approaches the proper isotherm selected by the
-fixed temperature upper boundary.
+lower boundary as the atmosphere approaches the proper isotherm selected by the
+fixed temperature upper boundary condition.
 However, by calculating the total flux,
 F$_{\text{tot}} = $F$_{\text{conv}} +$ F$_{\text{cond}}$, and then calculating the profiles
 \begin{equation}
@@ -265,10 +268,12 @@ f_{\text{conv}}(z) = \frac{F_{\text{conv}}}{F_{\text{tot}}},\qquad
 f_{\text{cond}}(z) = \frac{F_{\text{cond}}}{F_{\text{tot}}},
 \label{eqn:bvp_ratios}
 \end{equation}
+we remove the asymmetry and examine which parts of the atmosphere are dominated
+by conduction, and which are not.
 We presume that the early convection occupies roughly the same volume as the evolved
 convection, and thus that the early thermal boundary layers are roughly the proper
 width.  Where $f_{\text{conv}} = 1$, convection dominates all transport, and where
-$F_{\text{cond}} = 1$, conduction dominates all transport (in the boundary
+$f_{\text{cond}} = 1$, conduction dominates all transport (in the boundary
 layers). Under this assumption, the proper evolved atmospheric flux profiles
 are F$_{\text{conv, ev}} = \text{F}_{\text{bot}}\cdot f_{\text{conv}}$
 and F$_{\text{cond, ev}} = \text{F}_{\text{bot}}\cdot f_{\text{cond}}$,
@@ -325,6 +330,8 @@ and $\xi\cdot\angles{\bm{u}\times\bm{\omega}}_{x,y}$ for the mean thermodynamic 
 and then continue evolving in time.  This adjustment of the mean profile and the
 diminishing of velocities and fluctuations is the AE method, and it can generally
 be applied tens of buoyancy times after the peak of convective transient.
+For specifics on the precise implementation of the AE method, we refer
+the reader to appendix \ref{appendix:recipe}.
 
 The AE method specified here quickly converges the fluxes within the
 system to within a few percent of the fluxes in a system converged through
@@ -430,7 +437,7 @@ we will merely use the KS statistic, the maximum difference
 between the cumulative distribution functions (CDFs) of the two sample distributions,
 as a numerical method of directly comparing the two PDFs.  For the distributions
 shown in Fig. \ref{fig:temp_comparison}c,
-we find a KS statistic of 0.113 near the modes, which is large, and implies that
+we find a KS statistic of 0.185 near the modes, which is large, and implies that
 these two distributions are different.
 
 
@@ -453,7 +460,7 @@ we examine the velocities found in the evolved states.
 We compute PDFs in the same manner as in Fig. \ref{fig:temp_comparison}c for the
 vertical velocity (Fig. \ref{fig:pdf_comparison}a), horizontal velocity (Fig. \ref{fig:pdf_comparison}b),
 and the nonlinear convective flux (Fig. \ref{fig:pdf_comparison}c). We report KS statistics
-of 0.0577, 0.858, and 0.0347, respectively.  Perhaps unsurpisingly, the nonlinear
+of 0.00615, 0.0349, and 0.0204, respectively.  Perhaps unsurpisingly, the nonlinear
 convective transport between the SE and AE methods are very similar, as is captured
 in a volume-averaged sense in the Nu measurements of Fig. \ref{fig:parameter_space_comparison}a\&d).
 In general, the velocity boundary conditions (Eqn. \ref{eqn:bcs}) more strongly dominate the flow
@@ -476,7 +483,7 @@ The cumulative distribution function is overplotted on each plot.
 Despite differences between the SE and AE solutions for the case studied in 
 Figs. \ref{fig:time_trace}, \ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison},
 the AE method is still extremely powerful.  The first application of the AE method
-($t \approx 70$ in Fig. \ref{time_trace}b) immediately increases the 
+($t \approx 70$ in Fig. \ref{fig:time_trace}b) immediately increases the 
 average time step of our solver by a factor of 2-3. At higher supercriticality
 ($S = 10^7$), the AE solve immediately boosts the timestep by nearly a factor of 4.
 Thus, not only does this method evolve the solution into nearly the correct state, 
@@ -485,7 +492,7 @@ state or to take measurements of fluid quantities) happens more efficiently.
 
 
 \section{Extensions of the AE method}
-\label{section:extensions}
+\label{sec:extensions}
 Here we have used \RB convection as a test case for the AE method, but we argue that
 the true power of this method is in its extensions to more complicated studies.
 Such extensions are beyond the scope of this work, but we will briefly describe
@@ -517,7 +524,7 @@ both boundaries fix the flux, as such systems have degenerate solutions for the 
 
 
 \section{Conclusion}
-\label{sec:discussion}
+\label{sec:conclusion}
 Here we have described a method for converging convective simulations using
 a method of Accelerated Evolution (AE), and compared it to Standard
 Evolution (SE) achieved by running simulations for a thermal timescale.
@@ -591,34 +598,35 @@ the two solves.
 \section{Table of Runs}
 \label{appendix:run_table}
 \begin{center}
-\begin{tabularx}{\textwidth}{ X X X X X X X X X X }
-\hline																	
-$S$	&	Ra	&	nz	&	nx, ny	&	3D	&	$t_{\text{therm}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{SE}}$	&	Nu$_{\text{AE}}$	\\
-\hline																	
-$10^{1/3}$	&	$2.79 \cdot 10^3$	&	32	&	64	&	FALSE	&	$52.8$	&	100	&	1.46	&	1.46	\\
-$10^{2/3}$	&	$6.01 \cdot 10^3$	&	32	&	64	&	FALSE	&	$77.6$	&	100	&	1.95	&	1.95	\\
-$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64	&	FALSE	&	$114$	&	100	&	2.43	&	2.42	\\
-$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$	&	32	&	64	&	FALSE	&	$167$	&	100	&	2.54	&	2.54	\\
-$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$	&	32	&	64	&	FALSE	&	$245$	&	100	&	3.14	&	3.14	\\
-$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128	&	FALSE	&	$360$	&	100	&	3.8	&	3.8	\\
-$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$	&	64	&	128	&	FALSE	&	$528$	&	100	&	4.71	&	4.71	\\
-$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$	&	64	&	128	&	FALSE	&	$776$	&	100	&	5.5	&	5.5	\\
-$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256	&	FALSE	&	$1.14 \cdot 10^3$	&	200	&	6.4	&	6.33	\\
-$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$	&	128	&	256	&	FALSE	&	$1.67 \cdot 10^3$	&	500	&	6.87	&	6.95	\\
-$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$	&	256	&	512	&	FALSE	&	$2.45 \cdot 10^3$	&	500	&	7.54	&	7.59	\\
-$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512	&	FALSE	&	$3.60 \cdot 10^3$	&	500	&	8.83	&	8.83	\\
-$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$	&	256	&	512	&	FALSE	&	$5.28 \cdot 10^3$	&	500	&	10.13	&	10.14	\\
-$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$	&	256	&	512	&	FALSE	&	$7.76 \cdot 10^3$	&	500	&	11.65	&	11.69	\\
-$10^5$	&	$1.30 \cdot 10^8$	&	512	&	1024	&	FALSE	&	$1.14 \cdot 10^4$	&	500	&	14.02	&	14.18	\\
-$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	FALSE	&	$1.67 \cdot 10^4$	&	500	&	N/A	&	16.21	\\
-$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	FALSE	&	$2.45 \cdot 10^4$	&	500	&	N/A	&	18.58	\\
-$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	FALSE	&	$3.60 \cdot 10^4$	&	500	&	N/A	&	22.132	\\
-$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	FALSE	&	$1.14 \cdot 10^5$	&	200	&	N/A	&	TBD	\\
-$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64,64	&	TRUE	&	$114$	&	100	&	2.42	&	2.42	\\
-$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128,128	&	TRUE	&	$360$	&	100	&	3.97	&	4	\\
-$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256,256	&	TRUE	&	$1.14 \cdot 10^3$	&	500	&	6.27	&	6.27	\\
-$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512,512	&	TRUE	&	$3.60 \cdot 10^3$	&	500	&	9.92	&	9.88	\\
-\hline																	
+\begin{tabularx}{\textwidth}{ X X X X X X X X X }
+\hline															
+$S$	&	Ra	&	nz	&	nx, ny	&	$t_{\text{therm}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{SE}}$	&	Nu$_{\text{AE}}$	\\
+\hline															
+$10^{1/3}$	&	$2.79 \cdot 10^3$	&	32	&	64	&	$52.8$	&	100	&	1.46	&	1.46	\\
+$10^{2/3}$	&	$6.01 \cdot 10^3$	&	32	&	64	&	$77.6$	&	100	&	1.95	&	1.95	\\
+$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64	&	$114$	&	100	&	2.43	&	2.42	\\
+$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$	&	32	&	64	&	$167$	&	100	&	2.54	&	2.54	\\
+$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$	&	32	&	64	&	$245$	&	100	&	3.14	&	3.14	\\
+$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128	&	$360$	&	100	&	3.8	&	3.8	\\
+$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$	&	64	&	128	&	$528$	&	100	&	4.71	&	4.71	\\
+$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$	&	64	&	128	&	$776$	&	100	&	5.5	&	5.5	\\
+$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256	&	$1.14 \cdot 10^3$	&	200	&	6.4	&	6.33	\\
+$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$	&	128	&	256	&	$1.67 \cdot 10^3$	&	500	&	6.87	&	6.95	\\
+$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$	&	256	&	512	&	$2.45 \cdot 10^3$	&	500	&	7.54	&	7.59	\\
+$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512	&	$3.60 \cdot 10^3$	&	500	&	8.83	&	8.83	\\
+$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$	&	256	&	512	&	$5.28 \cdot 10^3$	&	500	&	10.13	&	10.14	\\
+$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$	&	256	&	512	&	$7.76 \cdot 10^3$	&	500	&	11.65	&	11.69	\\
+$10^5$	&	$1.30 \cdot 10^8$	&	512	&	1024	&	$1.14 \cdot 10^4$	&	500	&	14.02	&	14.18	\\
+$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	$1.67 \cdot 10^4$	&	500	&	N/A	&	16.21	\\
+$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	$2.45 \cdot 10^4$	&	500	&	N/A	&	18.58	\\
+$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	$3.60 \cdot 10^4$	&	500	&	N/A	&	22.132	\\
+$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	200	&	N/A	&	TBD	\\
+\\ \hline \hline								\\							
+$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64,64	&	$114$	&	100	&	2.42	&	2.42	\\
+$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128,128	&	$360$	&	100	&	3.97	&	4	\\
+$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256,256	&	$1.14 \cdot 10^3$	&	500	&	6.27	&	6.27	\\
+$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512,512	&	$3.60 \cdot 10^3$	&	500	&	9.92	&	9.88	\\
+\hline															
 \end{tabularx}
 \end{center}
 

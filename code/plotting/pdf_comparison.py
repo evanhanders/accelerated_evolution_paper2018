@@ -128,8 +128,8 @@ axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w
 axes[-1].set_xlabel('Vertical Velocity', labelpad=-1)
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(a)}$', (-0.145, 2e1), fontsize=10)
-axes[-1].set_ylim(1e-3, 1e2)
+axes[-1].annotate(r'$\mathrm{(a)}$', (-0.145, 3e1), fontsize=10)
+axes[-1].set_ylim(1e-1, 1e2)
 
 
 w_cdf_x_bvp, w_cdf_y_bvp = calculate_CDF(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf'])
@@ -138,8 +138,8 @@ w_cdf_x_base, w_cdf_y_base = calculate_CDF(info[base_label]['w_xs_pdf'], info[bv
 share = axes[-1].twinx()
 share.plot(w_cdf_x_bvp, w_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
 share.plot(w_cdf_x_base, w_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
-share.set_ylim(0, 1)
-share.set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w_xs_pdf']))
+share.set_ylim(0, 1.05)
+share.set_xlim(-0.165, 0.165)
 
 for tick in axes[-1].get_xticklabels():
     tick.set_rotation(45)
@@ -172,8 +172,8 @@ axes[-1].plot(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'], c='red'
 axes[-1].set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
 axes[-1].set_xlabel('Horizontal Velocity', labelpad=-0.5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(b)}$', (-0.17, 2e1), fontsize=10)
-axes[-1].set_ylim(1e-3, 1e2)
+axes[-1].annotate(r'$\mathrm{(b)}$', (-0.15, 1.4e1), fontsize=10)
+axes[-1].set_ylim(1e-1, 4e1)
 
 u_cdf_x_bvp, u_cdf_y_bvp = calculate_CDF(info[bvp_label]['u_xs_pdf'], info[bvp_label]['u_pdf_pdf'])
 u_cdf_x_base, u_cdf_y_base = calculate_CDF(info[base_label]['u_xs_pdf'], info[base_label]['u_pdf_pdf'])
@@ -181,8 +181,8 @@ u_cdf_x_base, u_cdf_y_base = calculate_CDF(info[base_label]['u_xs_pdf'], info[ba
 share = axes[-1].twinx()
 share.plot(u_cdf_x_bvp, u_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
 share.plot(u_cdf_x_base, u_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
-share.set_ylim(0, 1)
-share.set_xlim(np.min(info[bvp_label]['u_xs_pdf']), np.max(info[bvp_label]['u_xs_pdf']))
+share.set_ylim(0, 1.05)
+share.set_xlim(-0.165, 0.165)
 
 
 for tick in share.get_yticklabels():
@@ -197,11 +197,11 @@ axes[-1].fill_between(info[base_label]['w*T_xs_pdf'], 0, info[base_label]['w*T_p
 axes[-1].plot(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'], c='blue', label='SE')
 axes[-1].fill_between(info[bvp_label]['w*T_xs_pdf'], 0, info[bvp_label]['w*T_pdf_pdf'], color='red', alpha=0.4)
 axes[-1].plot(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'], c='red', label='AE')
-axes[-1].set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label]['w*T_xs_pdf']))
 plt.legend(frameon=False, fontsize=10, loc='upper right')
 axes[-1].set_xlabel(r'$w(T - \langle T\,\rangle_{x,y})$', labelpad=-5)
 axes[-1].set_yscale('log')
-axes[-1].annotate(r'$\mathrm{(c)}$', (-1e-3, 1e3), fontsize=10)
+axes[-1].annotate(r'$\mathrm{(c)}$', (-1e-3, 1e4), fontsize=10)
+axes[-1].set_ylim(1e-1, 1e5)
 
 wT_cdf_x_bvp, wT_cdf_y_bvp = calculate_CDF(info[bvp_label]['w*T_xs_pdf'], info[bvp_label]['w*T_pdf_pdf'])
 wT_cdf_x_base, wT_cdf_y_base = calculate_CDF(info[base_label]['w*T_xs_pdf'], info[base_label]['w*T_pdf_pdf'])
@@ -209,8 +209,8 @@ wT_cdf_x_base, wT_cdf_y_base = calculate_CDF(info[base_label]['w*T_xs_pdf'], inf
 share = axes[-1].twinx()
 share.plot(wT_cdf_x_bvp, wT_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
 share.plot(wT_cdf_x_base, wT_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
-share.set_ylim(0, 1)
-share.set_xlim(np.min(info[bvp_label]['w*T_xs_pdf']), np.max(info[bvp_label]['w*T_xs_pdf']))
+share.set_ylim(0, 1.05)
+axes[-1].set_xlim(-0.0013, 0.004)
 share.set_ylabel('CDF', rotation=270, labelpad=10)
 
 

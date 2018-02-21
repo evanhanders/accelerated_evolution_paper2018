@@ -73,7 +73,7 @@ for i,k in enumerate(fields):
     bx = ax.twiny()
     ax.axvline(2.79e8, ls='--', c='k')
     ax.fill_between(np.logspace(np.log10(2.79e8), 15, 2), 1e-5, 1e15, color='grey', alpha=0.4)
-    ax.set_xlim(1e3, 1e10)
+    ax.set_xlim(1e3, 2e10)
     for j in range(len(base_dirs)):
         if j == 0 or j == 2:
             continue
@@ -165,7 +165,7 @@ for i,k in enumerate(fields):
             ax.scatter(float(ra), mean, s=s, marker=mrkr, color=color, alpha=0.75)
     bx.set_xlabel('S')
     ax.legend(fontsize=8, loc='upper left', ncol=2, scatterpoints=1, handlelength=1, frameon=True)
-    ax.grid(which='major')
+#    ax.grid(which='major')
 
     if k == 'IE':
         ax.annotate(r'$\mathrm{(c)}$', (1e9, 3.5e-1), fontsize=10)
@@ -187,7 +187,7 @@ for i,k in enumerate(fields):
         label_end = '-{:.3g}'.format(pRe)
         label_end = '$\\langle\\mathrm{Re}\\rangle$'#\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end))
-        ax.set_ylim(1, 1e4)
+        ax.set_ylim(1, 2e4)
 #        ax.set_title(r'$\langle\mathrm{Re}\rangle \mathrm{Ra}^{-1/2}$', fontsize=10)
 #        ax.set_ylim(1e-1, 3e-1)
     else:
@@ -200,15 +200,15 @@ for i,k in enumerate(fields):
     for j,t in enumerate(ax.get_xticklabels()):
         t.set_visible(0)
 
-    for j,t in enumerate(bx.get_xticklabels()):
-        if j % 2 == 1:
-            t.set_visible(0)
-
     ax.set_xscale('log')
     bx.set_xscale('log')
     ax.set_yscale('log')
     bx.set_yscale('log')
 
+
+    bx.set_xlim(1e3/ra_crit, 2e10/ra_crit)
+    plt.axes(bx)
+    plt.xticks(np.array((1e1, 1e3, 1e5, 1e7)))
 
 
 gs_info = (((500,0), 400, 250), ((500, 370), 400, 250), ((500, 750), 400, 250))
@@ -269,7 +269,9 @@ for i,k in enumerate(fields):
     ax.scatter(mean_lists[3][0][:threeD_len], threeD_diff, marker='*', color='red')
 #    ax.set_yscale('log')
     ax.set_xscale('log')
-    ax.set_xlim(1e3, 1e10)
+    ax.set_xlim(1e3, 2e10)
+    plt.axes(ax)
+    plt.xticks(np.array((1e4, 1e6, 1e8, 1e10)))
     ax.set_xlabel('Ra')
     if i == 0:
         ax.set_ylabel ('( AE - SE ) / SE')

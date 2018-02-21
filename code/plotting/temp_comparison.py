@@ -161,8 +161,9 @@ axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel(r'$T$')
 axes[-1].set_ylabel('Probability')
 axes[-1].set_yscale('log')
-axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
-axes[-1].annotate(r'$\mathrm{(c)}$', (-0.495, 1e2), fontsize=10)
+axes[-1].set_xlim(-0.5, -0.385)#np.max(info[base_label]['T_xs_pdf']))
+axes[-1].annotate(r'$\mathrm{(c)}$', (-0.495, 2e2), fontsize=10)
+axes[-1].set_ylim(1e-2, 1e3)
 
 T_cdf_x_bvp, T_cdf_y_bvp = calculate_CDF(info[bvp_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'])
 T_cdf_x_base, T_cdf_y_base = calculate_CDF(info[base_label]['T_xs_pdf'], info[bvp_label]['T_pdf_pdf'])
@@ -171,8 +172,8 @@ T_cdf_x_base, T_cdf_y_base = calculate_CDF(info[base_label]['T_xs_pdf'], info[bv
 share = axes[-1].twinx()
 share.plot(T_cdf_x_bvp, T_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
 share.plot(T_cdf_x_base, T_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
-share.set_ylim(0, 1)
-axes[-1].set_xlim(-0.5, np.max(info[base_label]['T_xs_pdf']))
+axes[-1].set_xlim(-0.5, -0.385)#np.max(info[base_label]['T_xs_pdf']))
+share.set_ylim(0, 1.05)
 share.set_ylabel('CDF', rotation=270, labelpad=10)
 
 
