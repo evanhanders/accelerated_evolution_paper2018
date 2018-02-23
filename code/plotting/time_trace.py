@@ -177,29 +177,27 @@ axes[1].set_xlim(1.183e4-590, 1.183e4)
 axes[2].set_xlim(0, 910.6)
 
 
-x_ticks = [0, 250, 500, 750, 1000]
+x_ticks = [250, 500, 750, 1000]
 axes[0].set_xticks(x_ticks)
 x_ticks = [1.133e4, 1.133e4+250, 1.183e4]
 axes[1].set_xticks(x_ticks)
-x_ticks = [0, 250, 500, 750]
+x_ticks = [250, 500, 750]
 axes[2].set_xticks(x_ticks)
 axes[0].set_ylabel(r'$\mathrm{Kinetic\,\, Energy}$', labelpad=-10)
 axes[2].set_ylabel(r'$\mathrm{Kinetic\,\, Energy}$', labelpad=-1)
-axes[0].set_xlabel('Simulation Time (freefall units)', labelpad=0)
-axes[0].xaxis.set_label_coords(0.70, -0.125)
+axes[0].set_xlabel(r'$t/t_{\mathrm{ff}}$ (freefall time)', labelpad=0)
+axes[0].xaxis.set_label_coords(0.24, -0.125)
 x, y = axes[0].xaxis.get_label().get_position()
 print(x, y)
 axes[0].xaxis.get_label().set_position((x/time_ratio, y))
 axes_share[1].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='blue', labelpad=15)
-axes_share[2].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='blue', labelpad=10)
+axes_share[2].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='blue', labelpad=15)
 #for tick in axes[2].get_yticklabels():
 #    tick.set_size(0)
 #axes[2].yaxis.set_ticks_position('none')
 for tick in axes_share[0].get_yticklabels():
     tick.set_size(0)
 for tick in axes[2].get_yticklabels():
-    tick.set_size(0)
-for tick in axes_share[2].get_yticklabels():
     tick.set_size(0)
 axes_share[0].yaxis.set_ticks_position('none')
 for tick in axes_share[1].get_yticklabels():
@@ -217,7 +215,7 @@ spines = ['bottom', 'top', 'right', 'left']
 axis_names   = ['x', 'y']
 
 y_ticks = np.array([1e-2, 1e-1, 5e-1])
-plt.yticks(y_ticks, (r'$10^{-2}$', r'$10^{-1}$', r'$5\cdot 10^{-1}$'))
+plt.yticks(y_ticks, ('', r'$10^{-1}$', ''))
 plt.axes(axes_share[1])
 y_ticks = np.array([1e-2, 1e-1, 5e-1])
 plt.yticks(y_ticks, ('', r'$10^{-1}$', ''))
@@ -231,23 +229,32 @@ t_therm = np.sqrt(Ra)
 new_axis = axes[0].twiny()
 plt.xlim(0, 1200/t_therm)
 x_ticks = np.array([250, 500, 750, 1000])/t_therm
-plt.xticks(x_ticks, (r'$2.2\cdot 10^{-2}$', r'$4.4\cdot 10^{-2}$', r'$6.6\cdot 10^{-2}$', r'$8.8 \cdot 10^{-2}$'))
-plt.xlabel('Simulation Time (thermal units)')
-new_axis.xaxis.set_label_coords(0.758, 1.18)
+plt.xticks(x_ticks, ('0.022', '0.044', '0.066', '0.088'))
+plt.xlabel(r'$t/t_\kappa$ (thermal time)')
+new_axis.xaxis.set_label_coords(0.258, 1.18)
 new_axis.spines['right'].set_visible(False)
 new_axis = axes[1].twiny()
 axes[1].set_xlim(1.183e4-590, 1.183e4)
 plt.xlim((1.183e4-590)/t_therm, 1.183e4/t_therm)
 x_ticks = np.array([11330, 11580, 11830])/t_therm
-plt.xticks(x_ticks, ('0.99', '1.02', '1.04'))
+plt.xticks(x_ticks, ('0.994', '1.016', '1.038'))
 new_axis.spines['left'].set_visible(False)
 
 new_axis = axes[2].twiny()
 new_axis.set_xlim(0, 910.6/t_therm)
-x_ticks = np.array([0, 250, 500, 750])/t_therm
-plt.xticks(x_ticks, ('0', '0.02', '0.04', '0.06'))
+x_ticks = np.array([250, 500, 750])/t_therm
+plt.xticks(x_ticks, ('0.022', '0.044', '0.066'))
 new_axis.tick_params(axis='x', which='major', pad=0)
 new_axis.spines['left'].set_visible(False)
+plt.xlabel(r'$t/t_\kappa$')
+new_axis.xaxis.set_label_coords(0.1, 1.05)
+
+axes[2].set_xlabel(r'$t/t_{\mathrm{ff}}$')
+axes[2].xaxis.set_label_coords(0.1, -0.03)
+
+trans = axes_share[2].get_xaxis_transform() # x in data untis, y in axes fraction
+axes_share[2].annotate(r'$10^{-2}$', xy=(925, 0.03), xycoords=trans, color='blue')
+axes_share[2].annotate(r'$5\cdot 10^{-1}$', xy=(925, 0.94), xycoords=trans, color='blue')
 
 
 trans = axes[1].get_xaxis_transform() # x in data untis, y in axes fraction
@@ -257,7 +264,6 @@ axes[1].annotate(r'$5\cdot 10^{-1}$', xy=(11840, 0.94), xycoords=trans, color='b
 
 trans = axes[0].get_xaxis_transform() # x in data untis, y in axes fraction
 ann = axes[0].annotate('(a)', xy=(-160, 0.98 ), xycoords=trans)
-#axes[0].annotate(r'$\mathrm{(a)}$', (-50, 7e-2), fontsize=10)
 trans = axes[2].get_xaxis_transform() # x in data untis, y in axes fraction
 axes[2].annotate('(c)', xy=(-75, 0.98), xycoords=trans)
 
@@ -304,7 +310,7 @@ axes[-1].plot(z, kappa, c=f_cond_color, label=r'$\mathrm{F}_{\mathrm{cond}}$', l
 axes[-1].plot(z, sum_f, c=f_sum_color, label=r'$\mathrm{F}_{\mathrm{tot}}$', lw=2)
 y_ticks = np.array([0, 5, 10, 15, np.ceil(np.max(sum_f))])
 axes[-1].set_yticks(y_ticks)
-axes[-1].set_ylabel(r'$\mathrm{Flux}/\mathcal{P}$')
+axes[-1].set_ylabel(r'$\mathrm{F}/\mathcal{P}$')
 x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 axes[-1].set_xlabel('z')
@@ -323,7 +329,7 @@ this_label = '{}_2'.format(ra_runs)
 enth = info[this_label]['enth_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 kappa = info[this_label]['kappa_flux_profile'][0,:]*np.sqrt(float(ra_runs))
 sum_f = (enth + kappa)
-axes[-1].set_ylabel(r'$\mathrm{Flux}/\mathcal{P}$')
+axes[-1].set_ylabel(r'$\mathrm{F}/\mathcal{P}$')
 y_ticks = np.array([0, 0.25, 0.5, 0.75, 1])
 axes[-1].set_yticks(y_ticks)
 x_ticks = np.array([0, 0.5, 1])
@@ -358,7 +364,7 @@ x_ticks = np.array([0, 0.5, 1])
 axes[-1].set_xticks(x_ticks)
 y_ticks = np.array([-0.06, -0.04, -0.02, 0, 0.02])
 axes[-1].set_yticks(y_ticks)
-axes[-1].set_ylabel(r'$(\mathrm{Flux}_{\mathrm{AE}} - \mathrm{Flux}_{\mathrm{SE}})/\mathcal{P}$')
+axes[-1].set_ylabel(r'$(\mathrm{F}_{\mathrm{AE}} - \mathrm{F}_{\mathrm{SE}})/\mathcal{P}$')
 axes[-1].set_xlabel('z')
 trans = axes[-1].get_xaxis_transform() # x in data untis, y in axes fraction
 axes[-1].annotate('(e)', xy=(-0.225, 1), xycoords=trans)
