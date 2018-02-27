@@ -189,7 +189,7 @@ temperature is in units of the initial temperature jump across the layer ($\Delt
 and velocity is in units of the freefall velocity ($v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$).
 by these choices, one time unit is a freefall time ($L_z/v_{\text{ff}}$).
 We introduce a reduced kinematic pressure,
-$\varpi \equiv P / \rho_0 + \phi + |\bm{u}|^2 / 2$, where the gravitational
+$\varpi \equiv (P / \rho_0 + \phi + |\bm{u}|^2 / 2) / v_{\text{ff}}^2$, where the gravitational
 potential, $\phi$, is defined such that $\bm{g} = -\grad \phi$. As $P$ is a
 Langrange multiplier under the Oberbeck-Boussinesq approximation, $\varpi$
 can be treated straightforwardly as a linear variable. 
@@ -521,7 +521,7 @@ we examine the velocities found in the evolved states.
 We compute PDFs in the same manner as in Fig. \ref{fig:temp_comparison}b for the
 vertical velocity (Fig. \ref{fig:pdf_comparison}a), horizontal velocity (Fig. \ref{fig:pdf_comparison}b),
 and the nonlinear convective flux (Fig. \ref{fig:pdf_comparison}c). We report KS statistics
-of 0.00615, 0.0349, and 0.0204, respectively.  Perhaps unsurpisingly, the nonlinear
+of 0.00615, 0.0349, and 0.0263, respectively.  Perhaps unsurpisingly, the nonlinear
 convective transport between the SE and AE methods are very similar, as is captured
 in a volume-averaged sense in the Nu measurements of Fig. \ref{fig:parameter_space_comparison}a\&d.
 Each distribution shows a strong peak near zero due to the velocity boundary conditions
@@ -570,6 +570,25 @@ converged solution. While in-depth studies of AE extensions are beyond the
 scope of this paper, we will briefly describe
 areas in which the AE method should be explored.
 
+In conclusion, here we have described a procedure for converging convective simulations using
+a method of Accelerated Evolution (AE), and compared it to Standard
+Evolution (SE) achieved by running simulations for a thermal timescale.
+We have shown that the AE method produces evolved solutions on short timescales
+whose dynamics are similar to SE solutions, and we have discussed differences that arise
+between the two methods.
+
+We have shown that the AE method is valid at low values of $S$, in which solutions
+converge quickly and the thermal timescale is short, but that it is also applicable
+at high values of $S$, where SE solutions can take an
+intractable amount of time. This shows that the AE method not only progresses
+solutions towards the correct evolved state (at high $S$), but that it also does not
+remove the simulation from the correct evolved state once such a state is achieved (at low $S$). 
+We have studied
+the AE method in both 2D and 3D, but have restricted most of our study to 2D flows.
+Because the AE technique depends only on horizontally integrated information, 
+we examine a select small group
+of 3D simulations only to demonstrate the method's efficacy there.
+
 One area in which the AE approach can be applied is to simple studies of
 internally heated convection \cite{goluskin2016}.  The least complex of these studies 
 examine the incompressible Boussinesq equations, as presented in this work,
@@ -611,54 +630,8 @@ the help of convective motions.  For example, in Fig. \ref{fig:time_trace}a,
 the SE solution is fully converged after $4\cdot 10^3$ frefall time units,
 despite the thermal timescale being roughly $10^4$ freefall units.
 
-A final area in which we encourage extensions of this method is in the study of systems
-operating in the presence of different thermal boundary conditions.
-We have studied solutions in which we employ mixed thermal boundary conditions,
-as in Eqn. (\ref{eqn:bcs}). However, the AE method can be easily applied to fixed-temperature
-boundary conditions, as well.  The total evolved flux (F$_{\text{bot}}$)
-through the system is not known a priori, but it can be measured using the ratios in
-Eqn. (\ref{eqn:bvp_ratios}).  The integrated conductive flux is a constant which
-does not change with time due to the fixed temperature jump across the domain.  
-Thus, the total flux through the system can be calculated as 
-$F_{\text{bot}} = \mathcal{P} / \int f_{\text{cond}} dz$. While easily extensible
-to fixed-temperature boundary conditions, we hesitate to use the AE method for 
-fixed-flux boundary conditions.  In those systems, there are infinitely many degenerate
-solutions to the final temperature profile, and the AE method could advance the
-solution into an unrealistic state as a result of an arbitrary user choice on the
-temperature profile's offset.
-
-In conclusion, here we have described a procedure for converging convective simulations using
-a method of Accelerated Evolution (AE), and compared it to Standard
-Evolution (SE) achieved by running simulations for a thermal timescale.
-We have shown that the AE method produces evolved solutions on short timescales
-whose dynamics are similar to SE solutions, and we have discussed differences that arise
-between the two methods.
-
-We have shown that the AE method is valid at low values of $S$, in which solutions
-converge quickly and the thermal timescale is short, but that it is also applicable
-at high values of $S$, where SE solutions can take an
-intractable amount of time. This shows that the AE method not only progresses
-solutions towards the correct evolved state (at high $S$), but that it also does not
-remove the simulation from the correct evolved state once such a state is achieved (at low $S$). 
-We have studied
-the AE method in both 2D and 3D, but have restricted most of our study to 2D flows.
-Because the AE technique depends only on horizontally integrated information, 
-we examine a select small group
-of 3D simulations only to demonstrate the method's efficacy there.
-
-This work serves as a first step towards creating robust methods for
-achieving evolved convective solutions at high Ra on short timescales.
-In order to study how astrophysical systems change over meaningful
-evolutionary timescales, most studies utilize one-dimensional
-systems which parameterize dynamics. However, 
-modern experimentalists aim to simultaneously study system evolution
-in the presence of realistic convective dynamics. We now know that it is
-impossible to avoid the constraints that advective dynamics place on
-timestep size \cite{viallet&all2011, viallet&all2013, viallet&all2016}
-in both implicit and explicit methods. As a result, new, alternativie techniques
-for evolving systems forward on thermal timescales, such as the one explored
-here, must be examined in depth.
-
+Stellar structure + 3-2-1 D \cite{arnett&all2015, cristini&all2016}. The
+latter paper focuses on mixing on the boundaries of convective regions.
 
 \begin{acknowledgments}
 EHA acknowledges the support of the University of Colorado's George 
