@@ -559,67 +559,48 @@ state or to take measurements of fluid quantities) happens more efficiently.
 
 \section{Extensions \& Conclusion}
 \label{sec:extensions}
-In this work we have used \RB convection as a test case for the AE method, but we argue that
-the true power of this technique is in its extensions to more complicated studies.
-One need only derive the steady-state, horizontally-averaged equations for a given
-equation set (e.g., Eqns. (\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy}))
-and couple that information with knowledge of the boundary conditions
-and current dynamics (as described in
-section \ref{subsection:ae} and appendix \ref{appendix:recipe}) to achieve a quickly
-converged solution. While in-depth studies of AE extensions are beyond the 
-scope of this paper, we will briefly describe
-areas in which the AE method should be explored.
-
-In conclusion, here we have described a procedure for converging convective simulations using
-a method of Accelerated Evolution (AE), and compared it to Standard
-Evolution (SE) achieved by running simulations for a thermal timescale.
-We have shown that the AE method produces evolved solutions on short timescales
-whose dynamics are similar to SE solutions, and we have discussed differences that arise
-between the two methods.
-
-We have shown that the AE method is valid at low values of $S$, in which solutions
-converge quickly and the thermal timescale is short, but that it is also applicable
-at high values of $S$, where SE solutions can take an
-intractable amount of time. This shows that the AE method not only progresses
-solutions towards the correct evolved state (at high $S$), but that it also does not
-remove the simulation from the correct evolved state once such a state is achieved (at low $S$). 
+In this work, we have studied a method of Accelerated Evolution (AE) which can
+be employed to achieve rapid thermal convergence of convective simulations.  We compared
+this technique to the Standard Evolution (SE) of convection through a thermal diffusion timescale and
+showed that AE rapidly obtains solutions whose dynamics are similar to SE solutions.
+The AE method is not only valid at low values of $S$, where SE solutions
+converge quickly due to the short thermal timescale, but AE is also applicable
+at high values of $S$, where SE solutions are intractable.
 We have studied
-the AE method in both 2D and 3D, but have restricted most of our study to 2D flows.
-Because the AE technique depends only on horizontally integrated information, 
-we examine a select small group
-of 3D simulations only to demonstrate the method's efficacy there.
+the AE method in both 2D and 3D, but restricted most of our study to 2D flows;
+AE depends only on the 1D horizontal average of quantities, and our inclusion of 3D
+simulations was merely to demonstrate the broadly useful nature of AE.
 
-One area in which the AE approach can be applied is to simple studies of
-internally heated convection \cite{goluskin2016}.  The least complex of these studies 
-examine the incompressible Boussinesq equations, as presented in this work,
-but include a constant source term in the energy equation. The evolved convective
-state in such internally heated systems includes a flux profile whose value linearly
-increases with height, as the volumetric heating requires the convection to carry
-more flux towards the top of the domain.  These systems can be straightforwardly
-studied using the methods that we examined here, while scaling the profiles derived
-in Eqn. (\ref{eqn:bvp_ratios}) by the proper, height-dependent flux.
+Here we studied \RB convection as a test case for the AE method, but we argue that
+the true power of this technique is in its extensions to more complicated studies.
+To achieve AE in more complicated systems, one need only derive 
+the steady-state, horizontally-averaged equations governing
+the convective dynamics
+(e.g., Eqns. (\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy}))
+and couple those equations with knowledge of the boundary conditions
+and current dynamics as described in
+section \ref{subsection:ae} and appendix \ref{appendix:recipe}.
+While in-depth studies of AE extensions are beyond the 
+scope of this paper, we will briefly discuss
+avenues in which the AE method should be explored and tested.
 
-Studies of stratified convection are likely to gain the most through
-developing and employing the AE method.
-In many studies of stratified convection, the thermal diffusivity
-is inversely proportional to the density \cite{anders&brown2017}. Thus, the
-thermal timescale is much larger deep in the atmosphere, where density is high and diffusivity
-is very low, than it is near the surface.  As such, runs at similar supercriticalities
-but with different degrees of stratification can have thermal timescales which
-differ by orders of magnitude.  Fortunately, the AE method is easily adapted to
-the simplest stratified, compressible systems.  Rather than studying the total
-flux through the domain, it is essential to study only the flux in excess of 
-what is conducted along the adiabatic temperature gradient while constructing
-the profiles in Eqn. (\ref{eqn:bvp_ratios}).  
-Furthermore, in addition to solving for
-hydrostatic balance and thermal equilibrium, as in Eqns. (\ref{eqn:bouss_BVP_momentum})
-\& (\ref{eqn:bouss_BVP_energy}), it is essential to simultaneously
-ensure that mass is conserved.  Thus, additional equations and boundary conditions
-must be used to ensure that mass is not created or destroyed,
-in a manner similar to how mass is treated in stellar structure codes
-\cite{paxton&all2011}.
+Convection in natural systems is often driven by internal heating processes
+rather than imposed, fixed boundary condditions. The AE procedure can be straightforwardly
+applied to Boussinesq studies of internally heated convection \cite{goluskin2016},
+where a constant source term in the energy equation causes 
+the vertical flux through the system to increase with height.
+These systems can be straightforwardly
+studied using exactly the methods that we examined here, but 
+scaling the flux profiles derived
+in Eqn. (\ref{eqn:bvp_ratios}) by the proper, height-dependent flux. Studies of
+convection in natural system often employ height-dependent conductivities
+\cite{brandenburg2016}, leading
+to natural flux divergences that act as internal heating terms, and the study
+of this method in the simple internal heating context will be an important step
+towards achieving AE in simulations with astrophysically realistic conductivities.
 
-Studies of convection frequently examine paired stable and convecting regions
+In order to understand the influences of overshooting convection, some
+studies examine adjacent stable and convecting regions
 \cite{hurlburt&all1986, brandenburg&all2005, couston&all2017}.
 When the interface between the stable region
 and the convecting region is stiff and motions do not cross that interface,
@@ -628,10 +609,49 @@ In fully-convective domains, such as those studied in this work, the thermodynam
 at a more rapid rate than the thermal diffusion time across the domain due to
 the help of convective motions.  For example, in Fig. \ref{fig:time_trace}a,
 the SE solution is fully converged after $4\cdot 10^3$ frefall time units,
-despite the thermal timescale being roughly $10^4$ freefall units.
+despite the thermal timescale being roughly $10^4$ freefall units. However, in 
+studies where there is a stable region which is not mixed by convection, the experimentalist
+must either wait through a thermal diffusion time for the region to restratify
+or employ methods such as the AE method to study evolved atmospheres.
 
-Stellar structure + 3-2-1 D \cite{arnett&all2015, cristini&all2016}. The
-latter paper focuses on mixing on the boundaries of convective regions.
+Studies of stratified, compressible convection have much to gain through
+developing and employing AE.
+In many studies of stratified convection, the thermal diffusivity
+is inversely proportional to the density \cite{anders&brown2017}. Thus, the
+thermal timescale grows with depth in the atmosphere, and
+the difficulty of achieving thermal convergence grows as simulators study more highly
+stratified domains.
+In order to extend AE into this regime, two additional pieces of information must be considered.
+First, rather than constructing the profiles in Eqn. (\ref{eqn:bvp_ratios})
+with the total flux through the domain, only the superadiabatic portion of
+the flux should be considered.
+Second, in addition to solving for
+hydrostatic balance and thermal equilibrium, as in Eqns. (\ref{eqn:bouss_BVP_momentum})
+\& (\ref{eqn:bouss_BVP_energy}), it is essential to simultaneously evolve the density
+profile in a manner which conserves mass.  In a 1D boundary value problem, such as
+is solved to achieve AE here, this implies the inclusion of an equation which tracks
+the vertically integrated mass, and sets boundary conditions on that mass to ensure
+that no mass enters or leaves the domain.  
+
+A long-term goal would be to extend AE in a robust way such that it can be
+incorporated into stellar structure codes. Current state of the art stellar structure
+models are 1D solves that parameterize convection through widely accepted models
+like Mixing Length Theory \cite{paxton&all2011}. Recently, researches have begun
+efforts to couple evolution of stellar structure on significant thermal timescales
+while resolving convective dynamics.  A first attempt to do this was through the
+use of fully nonlinear implicit timestepping methods 
+\cite{viallet&all2011, viallet&all2013, viallet&all2016},
+but the emergence of unrealistic dynamics when timesteps are so large that they
+don't properly resolve advective motions has made this an unlikely means of
+evolving systems for long times. Other recent work, 
+such as 3-2-1D \cite{arnett&all2015} convection, which uses information in
+evolved 3D dynamical solutions to evolve the 1D underlying thermodynamic profile,
+and which is similar to the method we presented here, shows promise.  Some other
+work pairing 1D solves with fully nonlinear 3D solutions has been conducted
+\cite{cristini&all2016}, but often in more complicated systems than those we examine here. 
+Through small improvements and extensions, the AE method here can be improved
+and verified until it is capable of handling the full physics present in nonlinear
+stellar evolution.
 
 \begin{acknowledgments}
 EHA acknowledges the support of the University of Colorado's George 
