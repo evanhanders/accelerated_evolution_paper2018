@@ -304,25 +304,22 @@ and F$_{\text{cond, ev}} = \text{F}_{\text{bot}}\cdot f_{\text{cond}}$,
 where F$_{\text{bot}} = \mathcal{P}$ is the amount of flux entering the
 bottom of the atmosphere.
 
-\begin{figure}[t]
+\begin{figure*}[t!]
 \includegraphics[width=\textwidth]{./figs/time_trace.png}
-\caption{A time trace is shown of kinetic energy (black) and mean temperature (blue)  vs. time 
-for an SE run at $S = 10^5$ (a). The mean evolved values of kinetic energy and mean temperature
-are denoted by the horizontal dashed black and blue lines. 
-By taking an average of the fluxes early in the
-simulation (b), and appropriately using the AE method described here, the evolution
-of these atmospheres can be greatly accelerated. The time trace of such an accelerated
-atmosphere, which uses these methods, is shown in (c).  The y-axes and x-axes are
-scaled identically as in (a).  Here, the AE method is used three times, marked by
-the numbered arrows. The fluxes averaged over the green region which begins at
-the vertical dashed line shortly after AE 3 are shown in (c) are shown
-in (d), and they are nearly in the fully evolved state, sampled over a similarly
-long region that occurs much later in the simulation in (a).  The difference between
-the fluxes in the AE and SE ssolutions is shown in (e), and it is small. The dashed
-vertical line in (a) denotes the simulation time at which evolved flux measurements
-begin to be taken in (c).
+\caption{(a) Kinetic energy (black) and mean temperature (blue)  vs. time are shown
+for a SE run at $S = 10^5$. The mean evolved values of kinetic energy and mean temperature,
+averaged over the time shaded in green,
+are denoted by the horizontal dashed lines. (b) The time- and horizontally-averaged
+flux profiles are shown for the times highlighted in orange in (a).
+(c) The same quantities as in (a) are shown, but for AE at the same parameters.
+The axes are scaled identically in (a) and (c), and the AE method is used three times, marked by
+the numbered arrows in (c). The fluxes averaged over the green shaded region of (c)
+are shown in (d). The difference between
+the fluxes in the AE and SE solutions is shown in (e). The dashed
+vertical line in (a) and (c) denotes the simulation time at which evolved measurements
+are started for the AE case.
 \label{fig:time_trace} }
-\end{figure}
+\end{figure*}
 
 In a time-stationary state, the horizontal- and time-average of
 Eqns. (\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}), neglecting terms which
@@ -357,7 +354,7 @@ at a reference value for the AE solve.
 For specifics on the precise implementation of the AE method, we refer
 the reader to appendix \ref{appendix:recipe}.
 
-The AE method converges atmospheeres from extreme flux disequilibrium states 
+The AE method converges atmospheres from extreme flux disequilibrium states 
 (Fig. \ref{fig:time_trace}b) on short dynamical timescales (Fig. \ref{fig:time_trace}c)
 to a converged state (Fig. \ref{fig:time_trace}d) whose flux balance is very
 close to the balance present in the corresponding SE solution (Fig. \ref{fig:time_trace}e).
@@ -406,24 +403,24 @@ conditions \cite{johnston&doering2009}.  We attribute this weaker Nu scaling to
 the oscillatory nature of the plumes, which may have been avoided by previous studies
 using bootstrapping techniques as initial conditions.
 
-\begin{figure}[t]
+\begin{figure}[b]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
-\caption{Volume- and time-averaged measurements of the Nusselt number, the
-RMS Reynolds number, and the mean temperature for AE runs are shown in (a)-(c).
+\caption{Volume- and time-averaged measurements of the Nusselt number (Nu), the
+RMS Reynolds number (Re), and the mean temperature ($\angles{T}$) for AE runs are shown in (a)-(c).
 Symbols are located at the mean value of
-each measurement, vertical lines represent the standard deviation of the measurement,
-which shows natural variation over the
-averaging window, and error bars represent the change in the mean value over the averaging window,
+each measurement.  Vertical lines represent the standard deviation of the measurement,
+and quantify natural variation over the
+averaging window. Error bars represent the change in the mean value over the averaging window,
 such that very large error bars represent solutions which are not fully converged when averaging
 begins.
-(a) The Nusselt number scales as Ra$^{1/5}$, and above S$\geq 10^{3+2/3}$,
-simulations exhibit oscillating plume structures whose heat transport varies over time.  
-(b) The RMS Reynolds number, which measures the level of turbulence in the evolved solution, scales as
-Ra$^{0.45}$. (c) Temperature, with its value at the upper boundary removed, is shown,
-and scales as Ra$^{-1/5}$.
-Relative error for (d) Nu, (e) Re, and (f) $T$ are shown between measurements 
-taken in AE solutions and SE solutions.
-The greyed area of the plot indicates the region in which only AE runs were
+(a) Nu scales as Ra$^{1/5}$; above S$\geq 10^{3+2/3}$,
+simulations exhibit oscillating plume structures whose heat transport fluctuates over time.  
+(b) Re, which measures the level of turbulence in the evolved solution, scales as
+Ra$^{0.45}$. (c) The difference between $\angles{T}$ and the value of $T$ at $z = +1/2$
+is shown, and this quantity scales as Ra$^{-1/5}$, the inverse of Nu.
+Relative error for measurements of (d) Nu, (e) Re, and (f) $T$ between 
+AE solutions and SE solutions are shown.
+The greyed area of the plots indicates the region in which only AE runs were
 carried out due to computational expense. The run at $S = 10^5$ marked as a
 black square is examined in more details in Figs. \ref{fig:time_trace},
 \ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison}.
@@ -465,6 +462,30 @@ nearly identical between the two solutions (Fig. \ref{fig:temp_comparison}a), bu
 the mean temperature in the interior differs by about 0.5\% on average
 (Fig. \ref{fig:temp_comparison}c). 
 
+\begin{figure}[t]
+\includegraphics[width=\textwidth]{./figs/temp_comparison.png}
+\caption{Comparisons of the evolved thermodynamic states of an AE and SE run
+at $S = 10^{5}$ are shown.  (a) Evolved horizontally- and time-averaged 
+temperature profiles, as a function of height.
+(b) Probability Distribution Functions (PDFs) and their integrated
+Cumulative Distribution Functions (CDFs)
+of point-by-point measurements of the temperature field.
+$T$ is sampled every 0.1 time units for 500 total time units,
+and was interpolated onto an evenly spaced grid before sampling.
+(c) The percentage difference between the mean temperature profiles as a function of height.
+The difference between the mean profiles is very small, O(0.5\%).
+(d) The value of the Kolmogorov-Smirnov (KS) statistic, or the difference between
+the AE and SE CDFs, as a function of temperature.
+The small
+difference in the interior temperature 
+results in a large difference between the two temperature CDFs near the values
+of the temperature modes.  The spread of temperature around the modes, which includes the 
+fluctuations that drive convection, are nearly identical between the two runs.
+\label{fig:temp_comparison} }
+\end{figure}
+
+
+
 The probability distribution functions 
 of point-by-point temperature measurements are compared for the two runs
 in Fig. \ref{fig:temp_comparison}b.  We construct
@@ -496,26 +517,6 @@ While the temperature distributions near the modes are very different, their spr
 of perturbations is nearly identical.
 
 
-\begin{figure}[t]
-\includegraphics[width=\textwidth]{./figs/temp_comparison.png}
-\caption{Comparisons of the evolved thermodynamic states of an AE and SE run
-at $S = 10^{5}$ are shown.  (a) Evolved horizontally- and time-averaged 
-temperature profiles, as a function of height.
-(b) Probability Distribution Functions (PDFs) and their integrated
-Cumulative Distribution Functions (CDFs)
-of point-by-point measurements of the temperature field.
-(c) The percentage difference between the mean temperature profiles as a function of height.
-(d) The value of the Kolmogorov-Smirnov (KS) statistic, or the difference between
-the AE and SE CDFs, as a function of temperature.
-$T$ is sampled every 0.1 time units for 500 total time units,
-and was interpolated onto an evenly spaced grid before sampling.
-The difference between the mean profiles is very small O(0.5\%), but this small
-difference results in a large difference between the two temperature CDFs near the values
-of the temperature mode.  The spread of temperature around the mode, or the fluctuations that
-drive convection, are nearly identical between the two runs.
-\label{fig:temp_comparison} }
-\end{figure}
-
 In addition to comparing the thermodynamic state achieved by the SE and AE methods,
 we examine the velocities found in the evolved states.
 We compute PDFs in the same manner as in Fig. \ref{fig:temp_comparison}b for the
@@ -530,11 +531,16 @@ is nearly identical in the AE and SE solutions.
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
-\caption{Probability distribution functions of (a) the vertical velocity, (b) the horizontal velocity, and (c) nonlinear
-convective transport are shown for a 2D runs achieved through the SE and AE methods
+\caption{Probability distribution functions (PDFs) of (a) the vertical velocity, (b) the horizontal velocity, and (c) nonlinear
+convective transport are shown for 2D runs achieved through SE (blue) and AE (red)
 at $S = 10^{5}$.  Flows are sampled every 0.1 time units for 500 total time units,
-and flows are interpolated onto an evenly spaced grid before sampling.
-The cumulative distribution function is overplotted on each plot. 
+and are first interpolated onto an evenly spaced grid.
+The cumulative distribution function (CDF) is overplotted for each PDF. 
+(d-f) The KS statistics, or the values of CDF$_{\text{AE}}$ - CDF$_{\text{SE}}$,
+are shown for the related distributions, and solid lines indicated positive values
+while dashed lines are negative values. Unlike the temperature distributions in
+Fig. \ref{fig:temp_comparison}, these distributions, particularly the vertical
+velocity and transport, show very good agreement and small values of the KS statistic.
 \label{fig:pdf_comparison} }
 \end{figure}
 
@@ -633,25 +639,23 @@ is solved to achieve AE here, this implies the inclusion of an equation which tr
 the vertically integrated mass, and sets boundary conditions on that mass to ensure
 that no mass enters or leaves the domain.  
 
-A long-term goal would be to extend AE in a robust way such that it can be
-incorporated into stellar structure codes. Current state of the art stellar structure
-models are 1D solves that parameterize convection through widely accepted models
-like Mixing Length Theory \cite{paxton&all2011}. Recently, researches have begun
-efforts to couple evolution of stellar structure on significant thermal timescales
-while resolving convective dynamics.  A first attempt to do this was through the
-use of fully nonlinear implicit timestepping methods 
-\cite{viallet&all2011, viallet&all2013, viallet&all2016},
-but the emergence of unrealistic dynamics when timesteps are so large that they
-don't properly resolve advective motions has made this an unlikely means of
-evolving systems for long times. Other recent work, 
-such as 3-2-1D \cite{arnett&all2015} convection, which uses information in
-evolved 3D dynamical solutions to evolve the 1D underlying thermodynamic profile,
-and which is similar to the method we presented here, shows promise.  Some other
-work pairing 1D solves with fully nonlinear 3D solutions has been conducted
-\cite{cristini&all2016}, but often in more complicated systems than those we examine here. 
-Through small improvements and extensions, the AE method here can be improved
-and verified until it is capable of handling the full physics present in nonlinear
-stellar evolution.
+An eventual use case of AE is in robustly replacing Mixing Length Theory (MLT)
+in stellar evolution codes. Current state of the art stellar structure
+models are the solutions of 1D simulations which parameterize convection 
+using MLT \cite{paxton&all2011}. Recent work has taken the first steps towards
+understanding how to simultaneously resolve convective motions while evolving
+systems through many thermal timescales, as is required in the evolution of stars.
+We now know that implicit timestepping methods, while not technically bound by
+CFL constraints, must resolve the convective motions for stability
+\cite{viallet&all2011, viallet&all2013, viallet&all2016}, and are thus
+not an ideal solution to achiving long-term system evolution.
+Recently, efforts have begun to improve 1D models of stellar
+convection by projecting the results of 3D simulations into 1D
+to more properly parameterize convection \cite{arnett&all2015, cristini&all2016}.
+This is precisely an extension of the AE that we present here,  and through the
+careful addition and testing of new physics, AE shows great potential for 
+improving our understanding of convection in general, and stellar evolution models
+in particular.
 
 \begin{acknowledgments}
 EHA acknowledges the support of the University of Colorado's George 

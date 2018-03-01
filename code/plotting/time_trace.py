@@ -73,7 +73,7 @@ for a, base_dir in enumerate(base_dirs_pre + base_dirs_post):
             print('cannot find profile file in {:s}'.format(d))
 
 
-plt.figure(figsize=(8, 7.5))
+plt.figure(figsize=(8, 9))
 gs     = gridspec.GridSpec(*(1000,1000))
 
 #####################################
