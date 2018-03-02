@@ -43,15 +43,14 @@
 \title{Accelerated evolution of convective simulations}
 
 \begin{abstract}
-We present a method for coupling boundary value problems with initial value problems 
-in order to achieve Accelerated Evolution (AE) of convective solutions on
-dynamical timescales, rather than the long thermal timescale. 
+We present a method for achieving Accelerated Evolution (AE) of convective simulations.
+By probing the dynamics of convection early in simulations and adjusting the
+thermal profile of the simulation appropriately, we advance simulations to
+evolved states on timescales much shorter than the thermal diffusion timescale.
 We study this method in the context of \RB convection. 
-We demonstrate that the solution reached by AE and Standard Evolution (SE) are
-similar, and that this method works at a
-large range of supercriticalities.  The AE method is used to achieve converged 
-solutions at high supercriticality ($10^7$), and its extensions to more complex 
-systems are briefly discussed.
+The solutions reached by AE similar to those reached by a slow thermal evolution, 
+and AE is effective in 2D, 3D, and at low and high supercriticality.  
+Extensions to more complex systems are briefly discussed.
 \end{abstract}
 \maketitle
 
@@ -64,7 +63,7 @@ systems are briefly discussed.
 \section{Introduction}
 \label{sec:intro}
 Natural convection occurs in the presence of disparate timescales which
-prohibit numericists from studying realistic models of natural systems.  For example,
+prohibit numericists from studying realistic models of systems in nature.  For example,
 flows in the convection zones of stars like the Sun are characteristically low Mach number
 (Ma) in the deep interior.
 Explicit timestepping methods which are bound by the Courant-Friedrich-Lewy
@@ -82,26 +81,27 @@ convection at low Mach numbers \cite{viallet&all2011, viallet&all2013, viallet&a
 anders&brown2017, bordwell&all2018}, and careful studies of deep convection which
 would have been impossible a decade ago are now widely accessible.
 
-Convective systems with divergent dynamical timescales can now be studied; however,
-thermal timescales, which characterize system relaxation, are often much larger than
-dynamical timescales, and resolving dynamics in atmospheres which are sufficiently
+Unfortunately, convective systems generally evolve over the course of thermal
+timescales, which are often much larger than
+dynamical timescales. Therefore resolving dynamics in atmospheres which are sufficiently
 thermally relaxed remains a challenging problem.
-Solar convection is a prime example of this phenomenon.
-Dynamical timescales in the solar convective zone are relatively short 
-(10 min overturn at solar surface, one month solar
-rotation rate) compared to the Sun's Kelvin-Helmholtz timescale of
+Solar convection is a prime example of this phenomenon, as
+dynamical timescales in the solar convective zone are relatively short 
+(convection overturns every $\sim 10$ minutes at the solar surface, 
+the Sun rotates roughly once every month)
+compared to the Sun's Kelvin-Helmholtz timescale of
 $3 \cdot 10^7$ years \cite{stix2003}.  
 In such a system, it is impossible to resolve the convective dynamics while also
-evolving the thermal structure of the system in a meaningful fashion using
+meaningfully evolving the thermal structure of the system using
 traditional timestepping techniques alone.
 As modern simulations aim to model natural convection
 by increasing into the high-Rayleigh-number (Ra) regime,
 the thermal diffusion timescale becomes intractably large
 compared to dynamical timescales \cite{anders&brown2017}.
 Furthermore, as dynamical and thermal timescales separate, 
-simulations become more turbulent. Increasingly turbulent motions 
-require finer grid meshes and smaller timesteps
-to capture advective dynamics. Thus, the progression of simulations into the high-Ra
+simulations become more turbulent. Capturing appropriately resolved
+turbulent motions requires finer grid meshes and smaller timesteps.
+Thus, the progression of simulations into the high-Ra
 regime of natural convection is slowed by two simultaneous effects: timestepping
 through a single convective overturn time becomes more computationally expensive
 and the number of overturn times required for systems to reach thermal equilibration
@@ -124,7 +124,7 @@ convective state \cite{hurlburt&all1984} or used an axisymmetric solution
 as initial conditions for convection in a 3D cylinder \cite{verzicco&camussi1997}. 
 In other systems, 
 the approximate state of the evolved solution can be estimated. There, a
-set of initial conditions which is close to the evolved state be 
+set of initial conditions which is close to the evolved state can be 
 derived analytically \cite{couston&all2017, brandenburg&all2005}.
 
 Despite the numerous methods that have been used,
@@ -134,8 +134,8 @@ studies do just that \cite{featherstone&hindman2016}.
 However, such evolution is
 \emph{expensive}, and state-of-the-art simulations at the highest values of Ra
 can only reasonably be run
-for tens to hundreds of buoyancy times \cite{stevens&all2011}, much less the
-thousands of buoyancy timescales required for thermal convergence.
+for tens to hundreds of freefall timescales \cite{stevens&all2011}, much less the
+thousands of freefall times required for thermal convergence.
 
 In this work, we study a method of achieving accelerated evolution of
 convective simulations. We couple measurements of the dynamics of non-converged
@@ -146,11 +146,10 @@ we find no explanation in the current literature of the steps involved in employ
 this method, nor any study into the accuracy of such a method.
 In section \ref{sec:experiment}, we describe our convective simulations, our
 numerical methods, and our method for achieving accelerated evolution. In
-section \ref{sec:results}, we compare solutions reached through the accelerated evolution
-method to those that have been evolved through a full diffusive timescale, and we
-examine select simulations at high Ra which have achieved accelerated evolution. Finally,
-in section \ref{sec:extensions}, we discuss extensions of the methods presented here,
-and we offer concluding remarks.
+section \ref{sec:results}, we compare accelerated evolution solutions
+to solutions obtained from evolution through a full thermal diffusion timescale. Finally,
+in section \ref{sec:extensions}, we offer concluding remarks and
+discuss extensions of the methods presented here.
 
 
 %%%%%%%%%%%%
@@ -162,7 +161,7 @@ and we offer concluding remarks.
 \section{Experiment}
 \label{sec:experiment}
 We study incompressible \RB convection under the Oberbeck-Boussinesq approximation,
-such that our fluid
+such that the fluid
 has a constant kinematic viscosity ($\nu$), thermal diffusivity ($\kappa$), and coefficient
 of thermal expansion ($\alpha$). The density of the fluid is a constant, $\rho_0$,
 except where it is $\rho = \rho_0(1  - \alpha T_1)$ on the term where
@@ -183,11 +182,11 @@ The equations of motion are \cite{spiegel&veronis1960}
 where $\bm{u} = u\hat{x} + v\hat{y} + w\hat{z}$ is the velocity, 
 $T = T_0 + T_1$ are the initial and fluctuating components of temperature, 
 and $P$ is the pressure.
-We non-dimensionalize these equations such that the
+We non-dimensionalize these equations such that
 length is in units of the layer height ($L_z$),
 temperature is in units of the initial temperature jump across the layer ($\Delta T_0 = L_z \grad T_0$), 
 and velocity is in units of the freefall velocity ($v_{\text{ff}} = \sqrt{\alpha g L_z^2 \grad T_0}$).
-by these choices, one time unit is a freefall time ($L_z/v_{\text{ff}}$).
+By these choices, one time unit is a freefall time ($t_{\text{ff}} = L_z/v_{\text{ff}}$).
 We introduce a reduced kinematic pressure,
 $\varpi \equiv (P / \rho_0 + \phi + |\bm{u}|^2 / 2) / v_{\text{ff}}^2$, where the gravitational
 potential, $\phi$, is defined such that $\bm{g} = -\grad \phi$. As $P$ is a
@@ -277,9 +276,9 @@ in Fig. \ref{fig:time_trace}c.
 
 The horizontally averaged profiles of the vertical conductive flux, 
 F$_{\text{cond}} = \angles{-\kappa\grad(T_0 + T_1)}_{x,y}$, and the vertical convective flux,
-F$_{\text{conv}} = \angles{w(T_0 + T_1)}_{x,y}$, where $\angles{}_{x,y}$ represent
-a horizontal average, are the basis of the AE method. We measure
-both of these quantities early in a simulation, retrieving profiles similar to
+F$_{\text{conv}} = \angles{w(T_0 + T_1)}_{x,y}$, are the basis of the AE method.
+Here we use $\angles{}_{x,y}$ to represent a horizontal average. We measure
+both of these fluxes early in a simulation, retrieving profiles such as
 those shown in Fig. \ref{fig:time_trace}b.
 At early stages in the simulation, these flux profiles are highly asymmetric,
 with more flux exiting the atmosphere at the upper boundary than 
@@ -345,11 +344,12 @@ an initial state (Fig. \ref{fig:time_trace}b) to an evolved state (Fig. \ref{fig
 We multiply the velocities
 and the thermal fluctuations, $T - \angles{T}_{x,y}$, by $\sqrt{\xi}$, such 
 that the advected, flux-carrying perturbations in the temperature are appropriately
-diminished.  We then solve a boundary value problem including
+diminished.  We then solve a 1D boundary value problem including
 Eqns. (\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy}) using F$_{\text{conv, ev}}$
-and $\cdot\angles{\bm{u}\times\bm{\omega}}_{x,y}$, after diminishing it by a factor
-of $\xi$. We use mixed thermal boundary conditions, as in Eqn. (\ref{eqn:bcs}),
-because $F_{\text{bot}}$ is exactly specified, and the temperature profile is pegged
+and $\angles{\bm{u}\times\bm{\omega}}_{x,y}$, after diminishing it by a factor
+of $\xi$. We use mixed thermal boundary conditions in this study, 
+as in Eqn. (\ref{eqn:bcs}),
+because $F_{\text{bot}}$ is exactly specified, and the temperature profile is fixed 
 at a reference value for the AE solve.
 For specifics on the precise implementation of the AE method, we refer
 the reader to appendix \ref{appendix:recipe}.
@@ -368,40 +368,46 @@ solutions quickly.
 % RESULTS
 %%%%%%%%%%%
 %%%%%%%%%%%%
-
+\vspace{-0.5cm}
 \section{Results}
 \label{sec:results}
-We study evolved solutions achieved through the standard evolution (SE) method 
-from convective onset
-up to $S = 10^5$ in 2D and $S = 10^4$ in 3D.  These SE runs are compared to
-accelerated evolution (AE) runs spanning from onset up to $S = 10^7$ in 2D and $S = 10^4$ in 3D.
-For a full list of simulations, we refer the reader to appendix \ref{appendix:run_table}.
+We study evolved SE solutions in $S \in (1, 10^5]$ in 2D and $S \in (1, 10^4]$ in
+3D. We compare their properties to
+accelerated evolution (AE) runs in $S \in (1, 10^7]$ in 2D and
+$S \in (1, 10^4]$ in 3D.
+We refer the reader to appendix \ref{appendix:run_table} for a full list of
+simulations.
 
-We report the time- and volume-averaged values of select measurements of the
-evolved solutions in Fig. \ref{fig:parameter_space_comparison}.
-The scaling of heat transport in the evolved solution, as quantified by the
-Nusselt number, is shown in Fig. \ref{fig:parameter_space_comparison}a.
-The volume averaged Nusselt number is defined as
+\vspace{5cm}
+$\,$\newline
+The time- and volume-averaged values of the Nusselt number (Nu), the RMS
+Reynolds number (Re), and the mean temperature in AE solutions 
+are shown in Fig. \ref{fig:parameter_space_comparison}a-c.
+Nu, which quantifies the heat transport in evolved solutions,
+is shown as a function of Ra and $S$ in Fig. \ref{fig:parameter_space_comparison}a.
+Nu is defined as
 \begin{equation}
 \text{Nu} = \frac{\angles{F_{\text{conv}} + F_{\text{cond}}}}{\angles{F_{\text{cond, ref}}}}
  = \frac{\angles{wT - \mathcal{P}\partial_z T}}{\angles{- \mathcal{P} \partial_z T}},
 \end{equation}
-where $\angles{}$ represent a volume average.
-In 2D when $S < 10^{3+2/3}$ and in 3D, the evolved system is defined by a clear
-value of Nu and the convective heat transport reaches a temporally stationary state.
-In 2D and at larger values of $S$, the value of Nu oscillates as a function of time
-due to large horizontal oscillations in the convective plume structures.
-Our choice of no-slip
-boundary conditions prevent the fluid from entering a shearing state
-\cite{goluskin&all2014}, but the oscillatory motions which do arise cause the
-system to vary between periods of low heat transport and high heat transport.
-The SE simulations which span up to $S = 10^5$ exhibit the same horizontally
-oscillatory motion as the AE solutions for the same initial conditions. The
-scaling of the mean value of Nu is roughly $\text{Nu} \propto \text{Ra}^{1/5}$,
-weaker than that reported in similar systems with fixed-T and fixed-flux boundary
-conditions \cite{johnston&doering2009}.  We attribute this weaker Nu scaling to
-the oscillatory nature of the plumes, which may have been avoided by previous studies
-using bootstrapping techniques as initial conditions.
+where the volume average of a quantity, $g$, is shown as $\angles{g}$.
+When $S < 10^{3+2/3}$ in 2D and for all runs in 3D, 
+the evolved system is characterized by a specific
+value of Nu, as the convective heat transport reaches a temporally stationary state.
+At larger values of $S$ in 2D, the convective plumes consistently oscillate
+horizontally, leading to variations in Nu over time as the heat transport is alternately
+assisted and diminished by these oscillations.
+As a result of our choice of no-slip
+boundary conditions, the fluid never enters a full domain shearing state 
+\cite{goluskin&all2014}, and the
+oscillatory nature of the plumes is stable.
+The 2D SE simulations exhibit the same horizontally
+oscillatory behavior as the AE solutions for the same initial conditions. The
+dynamic nature of the plume structures diminishes the
+scaling of the heat transport to $\text{Nu} \propto \text{Ra}^{1/5}$,
+which is weaker than classic scaling laws \cite{johnston&doering2009, ahlers&all2009}.
+Previous studies in 2D convection may have avoided oscillatory plumes by using
+bootstrapping techniques as initial conditions for high $S$ runs.
 
 \begin{figure}[b]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
@@ -429,40 +435,46 @@ black square is examined in more details in Figs. \ref{fig:time_trace},
 
 
 
-In Fig. \ref{fig:parameter_space_comparison}b, we report the volume-averaged
-RMS Reynolds number in the AE solutions, where
-$\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  This measure scales roughly as
-$\text{Re} \propto \text{Ra}^{0.45}$, and shows little variance with time.
+In Fig. \ref{fig:parameter_space_comparison}b, we report 
+$\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  This measures the degree of
+turbulence in the solution, and scales roughly as
+$\text{Re} \propto \text{Ra}^{0.45}$. Each simulation shows little variance in
+the value of Re over time.
 
-In Fig. \ref{fig:parameter_space_comparison}c, we report the volume averaged 
-temperature of the AE solutions, with the value at the upper (fixed $T$) boundary removed.
-This measurement probes the thickness of the boundary layers of the solutions, and
-should show scaling which is inversely proportional to Nu in converged solutions
+Fig. \ref{fig:parameter_space_comparison}c shows the scaling of $\angles{T} - T_{\text{top}}$.
+The average temperature, $\angles{T}$, is dominated by its value in the isothermal interior,
+so this measurements serves as a probe of the temperature jump across the boundary
+layers. As a result, we expect this measure to
+scaling inversely with Nu in converged solutions
 where fixed-flux boundary conditions are used \cite{otero&all2002}.  We find here
 that $(\angles{T} - T_{\text{top}}) \propto \text{Ra}^{-1/5}$, precisely the inverse
-scaling of Nu, giving confidence that these solutions are in a converged state.
+scaling of Nu.
 
 In Fig. \ref{fig:parameter_space_comparison}d-f, we report the fractional difference
-between measurements from the AE solutions and measurements from the SE solutions.
-We find that the mean value of Nu from AE solutions is accurate to the values
-from SE solutions to within $\sim 1$\%, and the same is true for $\angles{T}$ measurements.
-Re measurements show slightly greater error, with AE measurements being on average
-$\leq 2$\% away from the SE measurements. 
+between measurements in the AE and SE solutions.
+The mean values of Nu and $\angles{T} - T_{\text{top}}$ 
+measured in AE are accurate to SE values to within $\sim 1$\%.
+Re measurements show marginally greater error, with AE measurements being 
+$\leq 2$\% different from SE measurements.
 
 The measurements presented in Fig. \ref{fig:parameter_space_comparison} demonstrate
-that the AE method can be powerfully employed in parameter space studies in which
+that AE can be powerfully employed in parameter space studies in which
 large numbers of simulations are compared in a volume-averaged sense.  We now turn
 our examination to a more direct comparison of AE and SE for convection at
-$S = 10^5$, as has been introduced in Fig. \ref{fig:time_trace}.
+$S = 10^5$, the time and flux evolution of which was shown in Fig. \ref{fig:time_trace}.
+All comparisons that follow for these two runs occur over the times shaded in
+green in Fig. \ref{fig:time_trace}a\&c. Measurements are sampled every
+0.1 freefall time units for 500 total time units.
 
-As the AE method primarily serves to adjust the thermodynamic structure of the
-solution, we compare the temperature profile attained by AE and SE in 
-Fig. \ref{fig:temp_comparison}.  We see that the boundary layer length scale is 
-nearly identical between the two solutions (Fig. \ref{fig:temp_comparison}a), but that
-the mean temperature in the interior differs by about 0.5\% on average
+As AE is fundamentally a 1D adjustment to the thermodynamic structure of the
+solution, we compare the horizontally- and time-averaged temperature profiles 
+attained by AE and SE in Fig. \ref{fig:temp_comparison}a.  
+The boundary layer width and structure are  
+nearly identical between the two solutions, but the
+the mean temperature in the isothermal interior differs by roughly 0.5\%
 (Fig. \ref{fig:temp_comparison}c). 
 
-\begin{figure}[t]
+\begin{figure}[b]
 \includegraphics[width=\textwidth]{./figs/temp_comparison.png}
 \caption{Comparisons of the evolved thermodynamic states of an AE and SE run
 at $S = 10^{5}$ are shown.  (a) Evolved horizontally- and time-averaged 
@@ -484,50 +496,59 @@ fluctuations that drive convection, are nearly identical between the two runs.
 \label{fig:temp_comparison} }
 \end{figure}
 
-
-
-The probability distribution functions 
+The probability distribution functions (PDFs)
 of point-by-point temperature measurements are compared for the two runs
-in Fig. \ref{fig:temp_comparison}b.  We construct
-this PDF from snapshots of the temperature profile every 0.1 freefall time
-units over a duration of 500 total freefall time units, as shown by the green
-areas if Fig. \ref{fig:time_trace}a\&c.  We interpolate the temperature field
+in Fig. \ref{fig:temp_comparison}b. To construct these PDFs, 
+we interpolate the temperature field
 of each of these snapshots onto an evenly spaced grid, determine the
 frequency distribution of all measured $T$ values, and then normalize the
-distribution such that its integral is unity.  The primary difference between
-the two PDFs is their modes, which is expected from Fig. \ref{fig:temp_comparison}a. 
-The fact that the the AE temperature
-profile is roughly 0.5\% off of the SE temperature profile (\ref{fig:temp_comparison}c), 
-the AE temperature
-field is still marginally evolving towards the SE temperature field, and this
-evolution appears as asymmetry of the AE PDF's peak.
+distribution such that its integral is unity.  The two PDFs have noticeably
+different modes, as is expected from Fig. \ref{fig:temp_comparison}a. 
+Over long timescales, the 0.5\% difference between the two profiles would
+disappear, as the AE solution evolves to be exactly the SE solution -- this
+is evident in the asymmetry of the AE PDF in Fig. \ref{fig:temp_comparison}b and also
+the trend of the mean temperature over time in Fig. \ref{fig:temp_comparison}c.
 
 One means of comparing two
-probability distributions to determine if they are drawn from the same underlying
-sample is through the use of a Kolmogorov-Smirnov (KS) \cite{wall&jenkins2012}.
+PDFs to determine if they are drawn from the same underlying
+sample distribution is through the use of a Kolmogorov-Smirnov (KS) \cite{wall&jenkins2012}.
 In general, a KS test must be conducted on independent, uncorrelated data, which
-poorly describes the point-by-point values of flow in a fluid simulation. Thus,
-we will merely use the KS statistic, the maximum difference
-between the cumulative distribution functions (CDFs) of the two sample distributions,
-as a numerical method of directly comparing the two PDFs.  For the distributions
-shown in Fig. \ref{fig:temp_comparison}b, the difference between the CDFs is shown
-in Fig. \ref{fig:temp_comparison}d.  The maximum difiference, or the KS statistic,
-is 0.495 near the modes.  This difference is very large, but is not unexpected.
-While the temperature distributions near the modes are very different, their spread
-of perturbations is nearly identical.
-
+poorly describes the point-by-point values of flows in a fluid simulation. Thus,
+we cannot directly use a KS test to determine if the two fluid samples are the same,
+but we can draw insight from the profile
+$\text{KS} = \text{CDF}_{\text{AE}} - \text{CDF}_{\text{SE}},$
+where CDF stands for cumulative distribution function, the integral of the PDF.
+A traditional Kolmogorov-Smirnov statistic is the maximum of the absolute value of
+the KS profile.  We show the KS profile in Fig. \ref{fig:temp_comparison}d, and the
+CDFs used to construct it overlay the PDFs in Fig. \ref{fig:temp_comparison}b.
+Near the modes of the temperature PDFs, the KS profile has a maximum value of
+0.495, which is very large and implies that roughly half of all temperature
+measurements in the SE case are greater than those in the AE case.
+This difference is significant, and shows that the two PDFs are distinctly different,
+but aside from this large value near the modes the KS profile has very small values,
+indicating that the temperature fluctuations away from the modes in the two cases are nearly identical.
 
 In addition to comparing the thermodynamic state achieved by the SE and AE methods,
 we examine the velocities found in the evolved states.
-We compute PDFs in the same manner as in Fig. \ref{fig:temp_comparison}b for the
+Shown are the PDFs of 
 vertical velocity (Fig. \ref{fig:pdf_comparison}a), horizontal velocity (Fig. \ref{fig:pdf_comparison}b),
-and the nonlinear convective flux (Fig. \ref{fig:pdf_comparison}c). We report KS statistics
-of 0.00615, 0.0349, and 0.0263, respectively.  Perhaps unsurpisingly, the nonlinear
-convective transport between the SE and AE methods are very similar, as is captured
-in a volume-averaged sense in the Nu measurements of Fig. \ref{fig:parameter_space_comparison}a\&d.
-Each distribution shows a strong peak near zero due to the velocity boundary conditions
-(Eqn. (\ref{eqn:bcs})), but the distribution of flux transport elements and velocities
-is nearly identical in the AE and SE solutions.
+and the nonlinear vertical convective flux (Fig. \ref{fig:pdf_comparison}c). 
+The CDFs of each profile are overplotted, and corresponding KS profiles are
+shown in Fig. \ref{fig:pdf_comparison}d-f.  The maximum absolute values of the
+KS profiles of vertical velocity, horizontal velocity, and nonlinear vertical convective flux
+are 0.00615, 0.0349, and 0.0263, respectively.  
+Each PDF here shows a strong peak near zero due to the no-slip, impenetrable
+velocity boundary conditions (Eqn. (\ref{eqn:bcs})).
+The difference in vertical velocity
+and heat transport is negligible, which is unsurprising in light of
+the Nu measurements of Fig. \ref{fig:parameter_space_comparison}a\&d.
+The horizontal velocity shows some small deviation between the two simulations, and this
+likely relates to the nature of the strength of the horizontally oscillatory motions
+as we previously described in the context of suppressed Nu scaling. Thus, while
+the temperature profiles are distinctly drawn from different distributions in
+Fig. \ref{fig:temp_comparison}b, the profiles are similar enough that they drive
+nearly identical nonlinear dynamics.
+
 
 \begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
@@ -547,13 +568,19 @@ velocity and transport, show very good agreement and small values of the KS stat
 
 The small differences between the SE and AE solutions for the case studied in 
 Figs. \ref{fig:time_trace}, \ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison},
-show that the AE method is extremely powerful.  The first application of the AE method
-($t \approx 70$ in Fig. \ref{fig:time_trace}b) immediately increases the 
-average time step of our solver by a factor of 2-3. At higher supercriticality
-($S = 10^7$), the AE solve immediately boosts the timestep by nearly a factor of 4.
-Thus, not only does this method evolve the solution into nearly the correct state, 
-but further time evolution (either to achieve precisely the correct thermodynamic
-state or to take measurements of fluid quantities) happens more efficiently.
+show the extreme power of AE.  In addition to the fact that AE runs require much
+less total simulation time (see e.g., Fig. \ref{fig:time_trace}a\&c and the time
+values in the green highlighted regions), the first application of AE in a given
+simulation (Fig. \ref{fig:time_trace}c, at the arrow labeled ``1'') drastically
+increases the average timestep by immediately progressing the simulation into
+a more converged state. For the $S = 10^5$ case we examined in detail, the
+average time step size grew by a factor of 2-3 due to the decreased convective
+velocities from the transient state to the evolved state. 
+At $S = 10^7$, the AE solve immediately improved the timestep size 
+by nearly a factor of 4.
+Thus, AE achieves converged solutions in few simulation time units,
+while also taking less real world time per simulation time unit, when compared
+to the slowly converging SE state at the same simulation time.
 
 
 %%%%%%%%%%%%
@@ -565,7 +592,7 @@ state or to take measurements of fluid quantities) happens more efficiently.
 
 \section{Extensions \& Conclusion}
 \label{sec:extensions}
-In this work, we have studied a method of Accelerated Evolution (AE) which can
+In this work we have studied a method of Accelerated Evolution (AE) which can
 be employed to achieve rapid thermal convergence of convective simulations.  We compared
 this technique to the Standard Evolution (SE) of convection through a thermal diffusion timescale and
 showed that AE rapidly obtains solutions whose dynamics are similar to SE solutions.
@@ -574,7 +601,7 @@ converge quickly due to the short thermal timescale, but AE is also applicable
 at high values of $S$, where SE solutions are intractable.
 We have studied
 the AE method in both 2D and 3D, but restricted most of our study to 2D flows;
-AE depends only on the 1D horizontal average of quantities, and our inclusion of 3D
+AE depends only on 1D, horizontally averaged profiles of dynamics, and our inclusion of 3D
 simulations was merely to demonstrate the broadly useful nature of AE.
 
 Here we studied \RB convection as a test case for the AE method, but we argue that
@@ -591,21 +618,22 @@ scope of this paper, we will briefly discuss
 avenues in which the AE method should be explored and tested.
 
 Convection in natural systems is often driven by internal heating processes
-rather than imposed, fixed boundary condditions. The AE procedure can be straightforwardly
+rather than imposed, fixed boundary conditions. The AE procedure can be straightforwardly
 applied to Boussinesq studies of internally heated convection \cite{goluskin2016},
 where a constant source term in the energy equation causes 
 the vertical flux through the system to increase with height.
-These systems can be straightforwardly
+These systems can be
 studied using exactly the methods that we examined here, but 
-scaling the flux profiles derived
+multiplying the flux profiles derived
 in Eqn. (\ref{eqn:bvp_ratios}) by the proper, height-dependent flux. Studies of
 convection in natural system often employ height-dependent conductivities
-\cite{brandenburg2016}, leading
-to natural flux divergences that act as internal heating terms, and the study
-of this method in the simple internal heating context will be an important step
+\cite{brandenburg2016, kapyla&all2017}, leading
+to natural flux divergences that act as internal heating terms.
+The study
+of AE method in the context of simple internal heating simulations will be an important step
 towards achieving AE in simulations with astrophysically realistic conductivities.
 
-In order to understand the influences of overshooting convection, some
+A further area which could benefit from AE is overshooting convection, in which
 studies examine adjacent stable and convecting regions
 \cite{hurlburt&all1986, brandenburg&all2005, couston&all2017}.
 When the interface between the stable region
@@ -618,7 +646,8 @@ the SE solution is fully converged after $4\cdot 10^3$ frefall time units,
 despite the thermal timescale being roughly $10^4$ freefall units. However, in 
 studies where there is a stable region which is not mixed by convection, the experimentalist
 must either wait through a thermal diffusion time for the region to restratify
-or employ methods such as the AE method to study evolved atmospheres.
+or employ other methods \cite{couston&all2017} to study evolved atmospheres.
+
 
 Studies of stratified, compressible convection have much to gain through
 developing and employing AE.
@@ -639,23 +668,24 @@ is solved to achieve AE here, this implies the inclusion of an equation which tr
 the vertically integrated mass, and sets boundary conditions on that mass to ensure
 that no mass enters or leaves the domain.  
 
-An eventual use case of AE is in robustly replacing Mixing Length Theory (MLT)
+An eventual use case of AE is in robustly describing convection
 in stellar evolution codes. Current state of the art stellar structure
 models are the solutions of 1D simulations which parameterize convection 
-using MLT \cite{paxton&all2011}. Recent work has taken the first steps towards
+using Mixing Length Theory \cite{paxton&all2011}. Recent work has taken first steps towards
 understanding how to simultaneously resolve convective motions while evolving
-systems through many thermal timescales, as is required in the evolution of stars.
+systems through many thermal timescales, as is required when modeling the evolution of stars
+over the course of stellar lifetimes.
 We now know that implicit timestepping methods, while not technically bound by
 CFL constraints, must resolve the convective motions for stability
 \cite{viallet&all2011, viallet&all2013, viallet&all2016}, and are thus
 not an ideal solution to achiving long-term system evolution.
-Recently, efforts have begun to improve 1D models of stellar
-convection by projecting the results of 3D simulations into 1D
-to more properly parameterize convection \cite{arnett&all2015, cristini&all2016}.
-This is precisely an extension of the AE that we present here,  and through the
-careful addition and testing of new physics, AE shows great potential for 
-improving our understanding of convection in general, and stellar evolution models
-in particular.
+Recently, efforts have begun to project the results of 3D simulations into 1D
+models to more properly parameterize convection for stellar evolution
+\cite{arnett&all2015, cristini&all2016}.
+Through the
+careful addition and testing of new physics, AE can be generally applied to
+very large complex problems such as stellar evolution, and
+shows great potential for improving our understanding of convection.
 
 \begin{acknowledgments}
 EHA acknowledges the support of the University of Colorado's George 
@@ -672,22 +702,20 @@ with allocations GID s1647 and GID g26133.
 \section{Accelerated Evolution Recipe}
 \label{appendix:recipe}
 In order to achieve Accelerated Evolution (AE), we pause the Direct Numerical Simulation (DNS)
-which is evolving the dynamics of the convection and solve a 1D Boundary Value Problem (BVP)
+which is evolving the dynamics of convection and solve a 1D Boundary Value Problem (BVP)
 consisting of Eqns. (\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy}).
-After solving this BVP, we adjust the fields being evolved in the DNS appropriately
+After solving this BVP, we appropriately adjust the fields being evolved in the DNS
 towards their evolved state, and then we continue running the now-evolved DNS.
-There specific steps taken in completing the AE method are as follows:
+The specific steps taken in completing the AE method are as follows:
 \begin{enumerate}
-\item After the start of the DNS, we wait some time, $t_{\text{transient}}$ after
-the convective transient in which the dynamics vigorously break away from the hydrostatic
-state.
-\item Then, during the DNS, we calculate time averages of the 1D profiles of
+\item Wait some time, $t_{\text{transient}}$, before beginning the AE process.
+\item During the DNS, calculate time averages of the 1D profiles of
 $F_{\text{conv}}$, $F_{\text{tot}}$, 
 and $\angles{\bm{u} \times \bm{\omega}}_{x,y}$, updating them every timestep.  
 To calculate these
 averages, we use a trapezoidal-rule integration in time, and then divide by the
 total time elapsed over which the average is taken. 
-\item We pause the DNS once the averages are sufficiently converged. 
+\item Pause the DNS once the averages are sufficiently converged. 
 To ensure that an average is converged, at
 least some time $t_{\text{min}}$ must have passed since the average was started to
 ensure that the full range of convective dynamics are probed, and
@@ -708,8 +736,7 @@ one that is closer to the evolved state, we find that repeating this method
 multiple times is the best way to
 ensure that the AE solution is truly converged. For all runs in 2D at $S < 10^5$, we
 set $t_{\text{transient}} = 50$, completed an AE BVP solve
-with $t_{\text{min}} = 30$ and $P = 0.1$, and then repeated the procedure,
-including another wait of $t_{\text{transient}} = 50$ before beginning averages.
+with $t_{\text{min}} = 30$ and $P = 0.1$, and then repeated the procedure.
 For all 3D runs and 2D runs with $S \in [10^5, 10^6]$,
 we did a first AE BVP solve with $t_{\text{transient}} = 20$,
 $t_{\text{min}} = 20$, and $P = 1$ in order to quickly reach a near-
@@ -721,8 +748,8 @@ At very high $S = 10^7$, we ran two AE BVP solves with $t_{\text{min}} = 20$ and
 $P = 1$. For the first solve, we set $t_{\text{transient}} = 20$, and for the
 second we set $t_{\text{transient}} = 30$. We used fewer solves at this high
 value of $S$ in part to reduce the computational expense of the run, and in
-part because of how a third BVP generally did not modify the solution hugely
-(as in Fig. \ref{fig:time_trace}c).
+part because a third BVP generally did not greatly alter the solution
+(as in Fig. \ref{fig:time_trace}c, arrow 3).
 
 
 
@@ -731,9 +758,10 @@ part because of how a third BVP generally did not modify the solution hugely
 \label{appendix:run_table}
 In Table \ref{table:run_parameters} we list key properties of all simulations
 conducted in this work.  The supercriticality, Rayleigh number, and resolution
-are reported.  We report the simulation run time of the SE solutions and AE
-solutions, as well as the amount of time over which average measurements
-were taken, in freefall time units.  The volume-averaged Nusselt number of the
+are reported.  We report the simulation run time required to reach a converged
+state for the SE solutions (one thermal time)
+and AE solutions, as well as the amount of time over which average measurements
+were taken once the simulations were converged, in freefall time units.  The volume-averaged Nusselt number of the
 AE and SE solutions are shown.
 In the upper part of the table, information pertaining to 2D runs is reported,
 and below the double horizontal bars we report properties of all
@@ -743,35 +771,35 @@ and below the double horizontal bars we report properties of all
 \caption{Simulation parameters}
 \label{table:run_parameters}
 \begin{center}
-\begin{tabularx}{\textwidth}{ X X X X X X X X X }
-\hline															
-$S$	&	Ra	&	nz	&	nx, ny	&	$t_{\text{therm}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{SE}}$	&	Nu$_{\text{AE}}$	\\
-\hline															
-$10^{1/3}$	&	$2.79 \cdot 10^3$	&	32	&	64	&	$52.8$	&	100	&	1.46	&	1.46	\\
-$10^{2/3}$	&	$6.01 \cdot 10^3$	&	32	&	64	&	$77.6$	&	100	&	1.95	&	1.95	\\
-$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64	&	$114$	&	100	&	2.43	&	2.42	\\
-$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$	&	32	&	64	&	$167$	&	100	&	2.54	&	2.54	\\
-$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$	&	32	&	64	&	$245$	&	100	&	3.14	&	3.14	\\
-$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128	&	$360$	&	100	&	3.8	&	3.8	\\
-$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$	&	64	&	128	&	$528$	&	100	&	4.71	&	4.71	\\
-$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$	&	64	&	128	&	$776$	&	100	&	5.5	&	5.5	\\
-$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256	&	$1.14 \cdot 10^3$	&	200	&	6.4	&	6.33	\\
-$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$	&	128	&	256	&	$1.67 \cdot 10^3$	&	500	&	6.87	&	6.95	\\
-$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$	&	256	&	512	&	$2.45 \cdot 10^3$	&	500	&	7.54	&	7.59	\\
-$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512	&	$3.60 \cdot 10^3$	&	500	&	8.83	&	8.83	\\
-$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$	&	256	&	512	&	$5.28 \cdot 10^3$	&	500	&	10.13	&	10.14	\\
-$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$	&	256	&	512	&	$7.76 \cdot 10^3$	&	500	&	11.65	&	11.69	\\
-$10^5$	&	$1.30 \cdot 10^8$	&	512	&	1024	&	$1.14 \cdot 10^4$	&	500	&	14.02	&	14.18	\\
-$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	$1.67 \cdot 10^4$	&	500	&	--	&	16.21	\\
-$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	$2.45 \cdot 10^4$	&	500	&	--	&	18.58	\\
-$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	$3.60 \cdot 10^4$	&	500	&	--	&	22.13	\\
-$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	200	&	--	&	40.78	\\
-\\ \hline \hline \\															
-$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64$\times$64	&	$114$	&	100	&	2.42	&	2.42	\\
-$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128$\times$128	&	$360$	&	100	&	3.97	&	4	\\
-$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256$\times$256	&	$1.14 \cdot 10^3$	&	500	&	6.27	&	6.27	\\
-$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512$\times$512	&	$3.60 \cdot 10^3$	&	500	&	9.92	&	9.88	\\
-\hline															
+\begin{tabularx}{\textwidth}{ X X X X | X X X | X X }
+\hline																	
+$S$	&	Ra	&	nz	&	nx, ny	&	$t_{\text{therm}}$	&	$t_{\text{AE}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{SE}}$	&	Nu$_{\text{AE}}$	\\
+\hline																	
+$10^{1/3}$	&	$2.79 \cdot 10^3$	&	32	&	64	&	$52.8$	&	---	&	100	&	1.46	&	1.46	\\
+$10^{2/3}$	&	$6.01 \cdot 10^3$	&	32	&	64	&	$77.6$	&	---	&	100	&	1.95	&	1.95	\\
+$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64	&	$114$	&	---	&	100	&	2.43	&	2.42	\\
+$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$	&	32	&	64	&	$167$	&	---	&	100	&	2.54	&	2.54	\\
+$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$	&	32	&	64	&	$245$	&	---	&	100	&	3.14	&	3.14	\\
+$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128	&	$360$	&	$326$	&	100	&	3.8	&	3.8	\\
+$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$	&	64	&	128	&	$528$	&	$248$	&	100	&	4.71	&	4.71	\\
+$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$	&	64	&	128	&	$776$	&	$251$	&	100	&	5.5	&	5.5	\\
+$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256	&	$1.14 \cdot 10^3$	&	$268$	&	200	&	6.4	&	6.33	\\
+$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$	&	128	&	256	&	$1.67 \cdot 10^3$	&	$247$	&	500	&	6.87	&	6.95	\\
+$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$	&	256	&	512	&	$2.45 \cdot 10^3$	&	$275$	&	500	&	7.54	&	7.59	\\
+$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512	&	$3.60 \cdot 10^3$	&	$301$	&	500	&	8.83	&	8.83	\\
+$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$	&	256	&	512	&	$5.28 \cdot 10^3$	&	$317$	&	500	&	10.13	&	10.14	\\
+$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$	&	256	&	512	&	$7.76 \cdot 10^3$	&	$326$	&	500	&	11.65	&	11.69	\\
+$10^5$	&	$1.30 \cdot 10^8$	&	512	&	1024	&	$1.14 \cdot 10^4$	&	$411$	&	500	&	14.02	&	14.18	\\
+$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	$1.67 \cdot 10^4$	&	$391$	&	500	&	---	&	16.21	\\
+$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	$2.45 \cdot 10^4$	&	$453$	&	500	&	---	&	18.58	\\
+$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	$3.60 \cdot 10^4$	&	$436$	&	500	&	---	&	22.13	\\
+$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	$183$	&	200	&	---	&	40.78	\\
+\\ \hline \hline \\																	
+$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64$\times$64	&	$114$	&	$261$	&	100	&	2.42	&	2.42	\\
+$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128$\times$128	&	$360$	&	$249$	&	100	&	3.97	&	4	\\
+$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256$\times$256	&	$1.14 \cdot 10^3$	&	$243$	&	500	&	6.27	&	6.27	\\
+$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512$\times$512	&	$3.60 \cdot 10^3$	&	$244$	&	500	&	9.92	&	9.88	\\
+\hline																	
 \end{tabularx}
 \end{center}
 \end{table}
