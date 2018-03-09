@@ -305,8 +305,8 @@ z = pre_flux_file['z'].value
 
 axes[-1].axhline(1, c='k', ls=':')
 axes[-1].axhline(0, c='k')
-axes[-1].plot(z, enth,  c=f_conv_color, label=r'$\mathrm{F}_{\mathrm{conv}}$', lw=2)
-axes[-1].plot(z, kappa, c=f_cond_color, label=r'$\mathrm{F}_{\mathrm{cond}}$', lw=2)
+axes[-1].plot(z, enth,  c=f_conv_color, label=r'$\mathrm{F}_{\mathrm{E}}$', lw=2)
+axes[-1].plot(z, kappa, c=f_cond_color, label=r'$\mathrm{F}_{\kappa}$', lw=2)
 axes[-1].plot(z, sum_f, c=f_sum_color, label=r'$\mathrm{F}_{\mathrm{tot}}$', lw=2)
 y_ticks = np.array([0, 5, 10, 15, np.ceil(np.max(sum_f))])
 axes[-1].set_yticks(y_ticks)

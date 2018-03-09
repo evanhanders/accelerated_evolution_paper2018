@@ -45,6 +45,9 @@ for a, base_dir in enumerate(base_dirs):
 
     for i, d in enumerate(glob.glob('{:s}/*/'.format(base_dir))):
         ra = d.split('_Ra')[-1].split('_')[0]
+        fancy = False
+        if ra == '1.30e10':
+            fancy = True
         ra += '_{}'.format(a)
 
         info[ra] = OrderedDict()
@@ -55,6 +58,10 @@ for a, base_dir in enumerate(base_dirs):
                     if 'Nu' in k:
                         print(a, 'Nu', ra, np.mean(f[k].value))
                 info[ra]['sim_time'] = f['sim_time'].value
+                if fancy:
+                    where = info[ra]['sim_time'] > 209.8
+                    for k in info[ra].keys():
+                        info[ra][k] = info[ra][k][where]
         except:
             print('cannot find file in {:s}'.format(d))
 
@@ -164,7 +171,7 @@ for i,k in enumerate(fields):
             ax.errorbar(float(ra), mean, yerr=std,  color=color)
             ax.scatter(float(ra), mean, s=s, marker=mrkr, color=color, alpha=0.75)
     bx.set_xlabel('S')
-    ax.legend(fontsize=8, loc='upper left', ncol=2, scatterpoints=1, handlelength=1, frameon=True)
+    ax.legend(fontsize=8, loc='lower right', ncol=2, scatterpoints=1, handlelength=1, frameon=True)
 #    ax.grid(which='major')
 
     if k == 'IE':
@@ -176,14 +183,14 @@ for i,k in enumerate(fields):
 #        ax.set_ylabel(r'$\langle T_1 \rangle - T_{\mathrm{top}}$', fontsize=10, labelpad=4)
 #        ax.set_ylim(1, 2)
     elif k == 'Nu':
-        ax.annotate(r'$\mathrm{(a)}$', (1e9, 1.5e0), fontsize=10)
+        ax.annotate(r'$\mathrm{(a)}$', (2e3, 5e1), fontsize=10)
         label_end = '-{:.2g}'.format(pNu)
         label_end = '$\\langle\\mathrm{Nu}\\rangle$'#\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end))
         ax.set_ylim(1, 1e2)
 #        ax.set_ylim(2e-1, 5e-1)
     elif k == 'Re':
-        ax.annotate(r'$\mathrm{(b)}$', (1e9, 2e0), fontsize=10)
+        ax.annotate(r'$\mathrm{(b)}$', (2e3, 5e3), fontsize=10)
         label_end = '-{:.3g}'.format(pRe)
         label_end = '$\\langle\\mathrm{Re}\\rangle$'#\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end))
@@ -273,8 +280,7 @@ for i,k in enumerate(fields):
     plt.axes(ax)
     plt.xticks(np.array((1e4, 1e6, 1e8, 1e10)))
     ax.set_xlabel('Ra')
-    if i == 0:
-        ax.set_ylabel ('( AE - SE ) / SE')
+    ax.set_ylabel ('( AE - SE ) / SE')
 
     ax.set_ylim(-0.02, 0.02)
 
