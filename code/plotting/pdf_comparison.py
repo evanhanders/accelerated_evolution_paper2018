@@ -10,7 +10,10 @@ Options:
 """
 
 
-import matplotlib   
+import matplotlib.style
+import matplotlib
+matplotlib.use('Agg')
+matplotlib.style.use('classic')
 matplotlib.rcParams.update({'font.size': 11})
 import matplotlib.pyplot as plt
 plt.rc('font',family='Times New Roman')
@@ -174,7 +177,7 @@ axes[-1].plot(diff_x[diff_y < 0], -diff_y[diff_y < 0], c='k', dashes=(3,1), lw=1
 axes[-1].set_xlim(-0.165, 0.165)
 axes[-1].set_yscale('log')
 axes[-1].set_ylim(1e-4, 1e-1)
-axes[-1].set_ylabel('CDF diff.')
+axes[-1].set_ylabel(r'KS$(q)$')
 axes[-1].set_xlabel('Vertical Velocity', labelpad=-2)
 axes[-1].annotate(r'$\mathrm{(d)}$', (-0.15, 1e-2), fontsize=10)
 for tick in axes[-1].get_xticklabels():

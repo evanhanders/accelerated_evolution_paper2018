@@ -10,7 +10,10 @@ Options:
 """
 
 
-import matplotlib   
+import matplotlib.style
+import matplotlib
+matplotlib.use('Agg')
+matplotlib.style.use('classic')
 matplotlib.rcParams.update({'font.size': 11})
 import matplotlib.pyplot as plt
 plt.rc('font',family='Times New Roman')
@@ -169,7 +172,7 @@ x_ticks = np.array([-0.5, -0.45, -0.40])
 axes[-1].set_xticks(x_ticks)
 minor_x_ticks = np.array([-0.475, -0.425])
 axes[-1].set_xticks(minor_x_ticks, minor=True)
-axes[-1].set_ylabel('PDF')
+axes[-1].set_ylabel('PDF', labelpad=2)
 axes[-1].set_yscale('log')
 axes[-1].set_xlim(-0.5, -0.385)#np.max(info[base_label]['T_xs_pdf']))
 axes[-1].annotate(r'$\mathrm{(b)}$', (-0.497, 3e2), fontsize=10)
@@ -210,7 +213,7 @@ axes[-1].set_xticks(x_ticks)
 axes[-1].set_xticks(minor_x_ticks, minor=True)
 #y_ticks = np.array([1e-3, 1e-1])
 #axes[-1].set_yticks(y_ticks)
-axes[-1].set_ylabel('CDF diff.')
+axes[-1].set_ylabel(r'KS$(\,T\,)$', labelpad=2)
 axes[-1].set_xlabel(r'$T$')
 axes[-1].annotate(r'$\mathrm{(d)}$', (-0.497, 1.5e-1), fontsize=10)
 

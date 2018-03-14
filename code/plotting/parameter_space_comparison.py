@@ -10,7 +10,10 @@ Options:
 """
 
 
-import matplotlib   
+import matplotlib.style
+import matplotlib
+matplotlib.use('Agg')
+matplotlib.style.use('classic')
 matplotlib.rcParams.update({'font.size': 11})
 import matplotlib.pyplot as plt
 from matplotlib.colors import ColorConverter
@@ -62,6 +65,9 @@ for a, base_dir in enumerate(base_dirs):
                     where = info[ra]['sim_time'] > 209.8
                     for k in info[ra].keys():
                         info[ra][k] = info[ra][k][where]
+                        if 'Nu' in k:
+                            print(a, 'Nu', ra, np.mean(info[ra][k]))
+
         except:
             print('cannot find file in {:s}'.format(d))
 
@@ -146,7 +152,7 @@ for i,k in enumerate(fields):
             bx.scatter(ra_list/ra_crit, mean_list/ra_list**(p), s=0, alpha=0)
             ax.vlines(ra_list, ymin=min_list/ra_list**p, ymax=max_list/ra_list**(p), color=[color]*len(min_list), zorder=j)
             ax.scatter(ra_list, mean_list/ra_list**(p), s=s,  color=color, marker=mrkr, zorder=j)
-            ax.errorbar(ra_list, mean_list/ra_list**p, yerr=np.array((mean_list-m_min_list, m_max_list-mean_list))/ra_list**p,  ecolor=color, fmt='none', zorder=j)
+#            ax.errorbar(ra_list, mean_list/ra_list**p, yerr=np.array((mean_list-m_min_list, m_max_list-mean_list))/ra_list**p,  ecolor=color, fmt='none', zorder=j)
             ind = ra_list == 1.30e8
             ax.scatter(ra_list[ind], mean_list[ind]/ra_list[ind]**(p), s=s*1.5,  color='black', marker='s', zorder=1e10)
 
@@ -155,7 +161,7 @@ for i,k in enumerate(fields):
             bx.scatter(ra_list/ra_crit, mean_list/ra_list**(p), s=0, alpha=0)
             ax.vlines(ra_list, ymin=min_list/ra_list**p, ymax=max_list/ra_list**(p), color=[color]*len(min_list), zorder=j)
             ax.scatter(ra_list, mean_list/ra_list**(p), s=s,  color=color, marker=mrkr, zorder=j, label=label)
-            ax.errorbar(ra_list, mean_list/ra_list**p, yerr=np.array((mean_list-m_min_list, m_max_list-mean_list))/ra_list**p,  ecolor=color, fmt='none', zorder=j)
+#            ax.errorbar(ra_list, mean_list/ra_list**p, yerr=np.array((mean_list-m_min_list, m_max_list-mean_list))/ra_list**p,  ecolor=color, fmt='none', zorder=j)
             ind = ra_list == 1.30e8
             ax.scatter(ra_list[ind], mean_list[ind]/ra_list[ind]**(p), s=s*1.5,  color='black', marker='s', zorder=1e10)
         elif k == 'Re':
@@ -163,16 +169,16 @@ for i,k in enumerate(fields):
             bx.scatter(ra_list/ra_crit, mean_list/ra_list**(p), s=0, alpha=0)
             ax.vlines(ra_list, ymin=min_list/ra_list**p, ymax=max_list/ra_list**(p), color=[color]*len(min_list), zorder=j)
             ax.scatter(ra_list, mean_list/ra_list**(p), s=s,  color=color, marker=mrkr, zorder=j)
-            ax.errorbar(ra_list, mean_list/ra_list**p, yerr=np.array((mean_list-m_min_list, m_max_list-mean_list))/ra_list**p,  ecolor=color, fmt='none', zorder=j)
+#            ax.errorbar(ra_list, mean_list/ra_list**p, yerr=np.array((mean_list-m_min_list, m_max_list-mean_list))/ra_list**p,  ecolor=color, fmt='none', zorder=j)
             ind = ra_list == 1.30e8
             ax.scatter(ra_list[ind], mean_list[ind]/ra_list[ind]**(p), s=s*1.5,  color='black', marker='s', zorder=1e10)
         else:
             bx.scatter(float(ra)/ra_crit, mean, s=0, alpha=0)
-            ax.errorbar(float(ra), mean, yerr=std,  color=color)
+#            ax.errorbar(float(ra), mean, yerr=std,  color=color)
             ax.scatter(float(ra), mean, s=s, marker=mrkr, color=color, alpha=0.75)
     bx.set_xlabel('S')
-    ax.legend(fontsize=8, loc='lower right', ncol=2, scatterpoints=1, handlelength=1, frameon=True)
-#    ax.grid(which='major')
+    if k == 'Nu':
+        ax.legend(fontsize=8, loc='lower right', ncol=2, scatterpoints=1, handlelength=1, frameon=True)
 
     if k == 'IE':
         ax.annotate(r'$\mathrm{(c)}$', (1e9, 3.5e-1), fontsize=10)
@@ -267,12 +273,14 @@ for i,k in enumerate(fields):
     threeD_len  = np.min([len(mean_lists[3][1]), len(mean_lists[2][1])])
     threeD_diff = (mean_lists[3][1][:threeD_len] - mean_lists[2][1][:threeD_len])/mean_lists[2][1][:threeD_len]
 
+    s = 10
+
     ax.axhline(0, ls='--', c='k')
     ax.axvline(2.79e8, ls='--', c='k')
     ax.fill_between(np.logspace(np.log10(2.79e8), 15, 2), -0.05, 0.05, color='grey', alpha=0.4)
     ind = mean_lists[1][0][:twoD_len] == 1.30e8
     ax.scatter(mean_lists[1][0][:twoD_len], twoD_diff, color='indigo')
-    ax.scatter(mean_lists[1][0][:twoD_len][ind], twoD_diff[ind], s=s,  color='black', marker='s', zorder=1e10)
+    ax.scatter(mean_lists[1][0][:twoD_len][ind], twoD_diff[ind], s=s*2,  color='black', marker='s', zorder=1e10)
     ax.scatter(mean_lists[3][0][:threeD_len], threeD_diff, marker='*', color='red')
 #    ax.set_yscale('log')
     ax.set_xscale('log')

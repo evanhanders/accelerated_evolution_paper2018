@@ -18,6 +18,8 @@
 \newcommand{\Div}[1]{\ensuremath{\nabla\cdot\left( #1\right)}}
 \newcommand{\DivU}{\ensuremath{\nabla\cdot\bm{u}}}
 \newcommand{\angles}[1]{\ensuremath{\left\langle #1 \right\rangle}}
+\newcommand{\KS}[1]{\ensuremath{\text{KS}(#1)}}
+\newcommand{\KSstat}[1]{\ensuremath{\overline{\text{KS}(#1)}}}
 \newcommand{\grad}{\ensuremath{\nabla}}
 \newcommand{\RB}{Rayleigh-B\'{e}nard }
 \newcommand{\stressT}{\ensuremath{\bm{\bar{\bar{\Pi}}}}}
@@ -404,77 +406,101 @@ $S \in (1, 10^4]$ in 3D.
 We refer the reader to appendix \ref{appendix:run_table} for a full list of
 simulations.
 
-\vspace{5cm}
-$\,$\newline
-The time- and volume-averaged values of the Nusselt number (Nu), the RMS
-Reynolds number (Re), and the mean temperature in AE solutions 
-are shown in Fig. \ref{fig:parameter_space_comparison}a-c.
-Nu, which quantifies the heat transport in evolved solutions,
-is shown as a function of Ra and $S$ in Fig. \ref{fig:parameter_space_comparison}a.
-Nu is defined as
+\begin{figure}[t!]
+\includegraphics[width=\textwidth]{./figs/oscillating_plumes.png}
+\caption{. \label{fig:oscillating_plumes} }
+\end{figure}
+
+
+
+The Nusselt number (Nu) quantifies the efficiency of convective heat transport
+and is defined as
 \begin{equation}
 \text{Nu} = \frac{\angles{F_{\text{conv}} + F_{\text{cond}}}}{\angles{F_{\text{cond, ref}}}}
  = \frac{\angles{wT - \mathcal{P}\partial_z T}}{\angles{- \mathcal{P} \partial_z T}},
 \end{equation}
-where the volume average of a quantity, $g$, is shown as $\angles{g}$.
+where the volume average of a quantity, $\eta$, is shown as $\angles{\eta}$.
 When $S < 10^{3+2/3}$ in 2D and for all runs in 3D, 
 the evolved system is characterized by a specific
 value of Nu, as the convective heat transport reaches a temporally stationary state.
-At larger values of $S$ in 2D, the convective plumes consistently oscillate
-horizontally, leading to variations in Nu over time as the heat transport is alternately
-assisted and diminished by these oscillations.
+At larger values of $S$ in 2D, the value of Nu varies significantly over time,
+as shown by the time traces for $S = 10^5$ (top) and $S = 10^7$ (bottom) for two
+AE runs in Fig. \ref{fig:oscillating_plumes}. We find that these systems go between
+states in which temperature fluctuations primarily travel in their natural buoyant
+direction (as in Ia and IIa, where cold elements are falling and hot elements rise),
+and states in which temperature perturbations are entrained in an upflow or downflow
+with oppositely signed fluid (as in Ib and IIb, where warm fluid is pulled down by the downflow
+lane, and cool fluid is pulled up by the upflow lane).  The fluid from the oppositely
+signed plume pushes on the other plume such that the system goes between states in which
+the fluid primarily serves to enhance convective transport (Ia and IIa), states in which
+there is counterclockwise entrainment (IIa and IIb), then back to enhanced transport states
+followed by clockwise entrainment.  This horizontally oscillatory motion that characterizes the
+plumes provides, and the resultant time-dependent entrainment, leads to large variations in Nu over time 
 As a result of our choice of no-slip
 boundary conditions, the fluid never enters a full domain shearing state 
 \cite{goluskin&all2014}, and the
 oscillatory nature of the plumes is stable.
 The 2D SE simulations exhibit the same horizontally
-oscillatory behavior as the AE solutions for the same initial conditions. The
+oscillatory behavior as the AE solutions for the same initial conditions. 
+This time-dependent behavior or Nu is not seen strongly in our 3D solutions,
+likely as a result of the extra degrees of freedom in which rising and falling
+fluid elements can expand, reducing entrainment.
+
+The time- and volume-averaged values of the Nusselt number (Nu), the RMS
+Reynolds number (Re), and the mean temperature in AE solutions 
+are shown in Fig. \ref{fig:parameter_space_comparison}a-c.
+Nu, which quantifies the heat transport in evolved solutions,
+is shown as a function of Ra and $S$ in Fig. \ref{fig:parameter_space_comparison}a.
+The
 dynamic nature of the plume structures diminishes the
 scaling of the heat transport to $\text{Nu} \propto \text{Ra}^{1/5}$,
 which is weaker than classic scaling laws \cite{johnston&doering2009, ahlers&all2009}.
 Previous studies in 2D convection may have avoided oscillatory plumes by using
 bootstrapping techniques as initial conditions for high $S$ runs.
+In Fig. \ref{fig:parameter_space_comparison}b, we report 
+$\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  This measures the degree of
+turbulence in the solution, and scales roughly as
+$\text{Re} \propto \text{Ra}^{0.45}$. Each simulation shows little variance in
+the value of Re over time.
+Fig. \ref{fig:parameter_space_comparison}c shows the scaling of $\angles{T} - T_{\text{top}}$.
+The average temperature, $\angles{T}$, is dominated by its value in the isothermal interior,
+so this measurements serves as a probe of the temperature jump across the boundary
+layers. As a result, we expect this measure to
+scale inversely with Nu in converged solutions
+where fixed-flux boundary conditions are used \cite{otero&all2002}.  We find here
+that $(\angles{T} - T_{\text{top}}) \propto \text{Ra}^{-1/5}$, precisely the inverse
+scaling of Nu.
+
+
+
+
 
 \begin{figure}[b]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
 \caption{Volume- and time-averaged measurements of the Nusselt number (Nu), the
 RMS Reynolds number (Re), and the mean temperature ($\angles{T}$) for AE runs are shown in (a)-(c).
 Symbols are located at the mean value of
-each measurement.  Vertical lines represent the standard deviation of the measurement,
-and quantify natural variation over the
-averaging window. Error bars represent the change in the mean value over the averaging window,
-such that very large error bars represent solutions which are not fully converged when averaging
-begins.
+each measurement and denote 2D (purple circles) and 3D (red stars). 
+The run at $S = 10^5$ marked as a
+black square is examined in more detail in Figs. \ref{fig:time_trace}, \ref{fig:oscillating_plumes},
+\ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison}.
+Vertical lines represent the standard deviation of the measurement,
+and quantify natural variation over the averaging window. 
 (a) Nu scales as Ra$^{1/5}$; above S$\geq 10^{3+2/3}$,
-simulations exhibit oscillating plume structures whose heat transport fluctuates over time.  
+simulations exhibit oscillating plume structures whose heat transport fluctuates over time
+as a result of temporally-varying entrainment of wrongly signed temperature perturbations
+(see Fig. \ref{fig:oscillating_plumes}).  
 (b) Re, which measures the level of turbulence in the evolved solution, scales as
 Ra$^{0.45}$. (c) The difference between $\angles{T}$ and the value of $T$ at $z = +1/2$
 is shown, and this quantity scales as Ra$^{-1/5}$, the inverse of Nu.
 Relative error for measurements of (d) Nu, (e) Re, and (f) $T$ between 
 AE solutions and SE solutions are shown.
 The greyed area of the plots indicates the region in which only AE runs were
-carried out due to computational expense. The run at $S = 10^5$ marked as a
-black square is examined in more detail in Figs. \ref{fig:time_trace},
-\ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison}.
-\label{fig:parameter_space_comparison} }
+carried out due to computational expense. \label{fig:parameter_space_comparison} }
 \end{figure}
 
 
-
-In Fig. \ref{fig:parameter_space_comparison}b, we report 
-$\text{Re} = \angles{|\bm{u}|} / \mathcal{R}$.  This measures the degree of
-turbulence in the solution, and scales roughly as
-$\text{Re} \propto \text{Ra}^{0.45}$. Each simulation shows little variance in
-the value of Re over time.
-
-Fig. \ref{fig:parameter_space_comparison}c shows the scaling of $\angles{T} - T_{\text{top}}$.
-The average temperature, $\angles{T}$, is dominated by its value in the isothermal interior,
-so this measurements serves as a probe of the temperature jump across the boundary
-layers. As a result, we expect this measure to
-scaling inversely with Nu in converged solutions
-where fixed-flux boundary conditions are used \cite{otero&all2002}.  We find here
-that $(\angles{T} - T_{\text{top}}) \propto \text{Ra}^{-1/5}$, precisely the inverse
-scaling of Nu.
+This is a short paragraph which says 2D and 3D are the same, here.
 
 In Fig. \ref{fig:parameter_space_comparison}d-f, we report the fractional difference
 between measurements in the AE and SE solutions.
@@ -508,8 +534,6 @@ temperature profiles, as a function of height.
 (b) Probability Distribution Functions (PDFs) and their integrated
 Cumulative Distribution Functions (CDFs)
 of point-by-point measurements of the temperature field.
-$T$ is sampled every 0.1 time units for 500 total time units,
-and was interpolated onto an evenly spaced grid before sampling.
 (c) The percentage difference between the mean temperature profiles as a function of height.
 The difference between the mean profiles is very small, O(0.5\%).
 (d) The value of the Kolmogorov-Smirnov (KS) statistic, or the difference between
@@ -532,23 +556,27 @@ distribution such that its integral is unity.  The two PDFs have noticeably
 different modes, as is expected from Fig. \ref{fig:temp_comparison}a. 
 Over long timescales, the 0.5\% difference between the two profiles would
 disappear, as the AE solution evolves to be exactly the SE solution -- this
-is evident in the asymmetry of the AE PDF in Fig. \ref{fig:temp_comparison}b and also
-the trend of the mean temperature over time in Fig. \ref{fig:temp_comparison}c.
+is evident in the asymmetry of the AE PDF near the mode
+in Fig. \ref{fig:temp_comparison}b and also
+the trend of the mean temperature over time in Fig. \ref{fig:time_trace}c.
 
 One means of comparing two
 PDFs to determine if they are drawn from the same underlying
-sample distribution is through the use of a Kolmogorov-Smirnov (KS) \cite{wall&jenkins2012}.
-In general, a KS test must be conducted on independent, uncorrelated data, which
-poorly describes the point-by-point values of flows in a fluid simulation. Thus,
-we cannot directly use a KS test to determine if the two fluid samples are the same,
-but we can draw insight from the profile
-$\text{KS} = \text{CDF}_{\text{AE}} - \text{CDF}_{\text{SE}},$
+sample distribution is through the use of a Kolmogorov-Smirnov (KS) test \cite{wall&jenkins2012}.
+We calculate the KS statistic for a PDF of some value, $q$, as
+\begin{equation}
+\KS{q} = \text{CDF}_{\text{AE}}(q) - \text{CDF}_{\text{SE}}(q),
+\label{eqn:ks_profile}
+\end{equation}
 where CDF stands for cumulative distribution function, the integral of the PDF.
-A traditional Kolmogorov-Smirnov statistic is the maximum of the absolute value of
-the KS profile.  We show the KS profile in Fig. \ref{fig:temp_comparison}d, and the
+A traditional Kolmogorov-Smirnov statistic is just a single value,
+$\KSstat{q} = |\KS{q}|_\infty =
+\text{max} |\KS{q}|$, and we use both the profile KS$(q)$ and
+$\KSstat{q}$ to gain insight into the likeness of two PDFs. 
+We show the KS profile in Fig. \ref{fig:temp_comparison}d, and the
 CDFs used to construct it overlay the PDFs in Fig. \ref{fig:temp_comparison}b.
-Near the modes of the temperature PDFs, the KS profile has a maximum value of
-0.495, which is very large and implies that roughly half of all temperature
+Near the modes of the temperature PDFs, the $\KSstat{T} = 0.495$, 
+which is very large and implies that roughly half of all temperature
 measurements in the SE case are greater than those in the AE case.
 This difference is significant, and shows that the two PDFs are distinctly different,
 but aside from this large value near the modes the KS profile has very small values,
@@ -560,13 +588,13 @@ Shown are the PDFs of
 vertical velocity (Fig. \ref{fig:pdf_comparison}a), horizontal velocity (Fig. \ref{fig:pdf_comparison}b),
 and the nonlinear vertical convective flux (Fig. \ref{fig:pdf_comparison}c). 
 The CDFs of each profile are overplotted, and corresponding KS profiles are
-shown in Fig. \ref{fig:pdf_comparison}d-f.  The maximum absolute values of the
-KS profiles of vertical velocity, horizontal velocity, and nonlinear vertical convective flux
-are 0.00615, 0.0349, and 0.0263, respectively.  
+shown in Fig. \ref{fig:pdf_comparison}d-f.  We report
+$\KSstat{w} = 0.00615$ (vertical velocity), $\KSstat{u} = 0.0349$ (horizontal velocity),
+and $\KSstat{w(T - \angles{T}_{x,y})} = 0.0263$.
 Each PDF here shows a strong peak near zero due to the no-slip, impenetrable
 velocity boundary conditions (Eqn. (\ref{eqn:bcs})).
 The difference in vertical velocity
-and heat transport is negligible, which is unsurprising in light of
+and heat transport between AE and SE is negligible, which is unsurprising in light of
 the Nu measurements of Fig. \ref{fig:parameter_space_comparison}a\&d.
 The horizontal velocity shows some small deviation between the two simulations, and this
 likely relates to the nature of the strength of the horizontally oscillatory motions
@@ -580,9 +608,7 @@ nearly identical nonlinear dynamics.
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
 \caption{Probability distribution functions (PDFs) of (a) the vertical velocity, (b) the horizontal velocity, and (c) nonlinear
 convective transport are shown for 2D runs achieved through SE (blue) and AE (red)
-at $S = 10^{5}$.  Flows are sampled every 0.1 time units for 500 total time units,
-and are first interpolated onto an evenly spaced grid.
-The cumulative distribution function (CDF) is overplotted for each PDF. 
+at $S = 10^{5}$.  The cumulative distribution function (CDF) is overplotted for each PDF. 
 (d-f) The KS statistics, or the values of CDF$_{\text{AE}}$ - CDF$_{\text{SE}}$,
 are shown for the related distributions, and solid lines indicated positive values
 while dashed lines are negative values. Unlike the temperature distributions in
@@ -616,7 +642,7 @@ to the slowly converging SE state at the same simulation time.
 %%%%%%%%%%%%
 
 
-\section{Extensions \& Conclusion}
+\section{Extensions \& Conclusions}
 \label{sec:extensions}
 In this work we have studied a method of Accelerated Evolution (AE) which can
 be employed to achieve rapid thermal convergence of convective simulations.  We compared
@@ -625,10 +651,11 @@ showed that AE rapidly obtains solutions whose dynamics are similar to SE soluti
 The AE method is not only valid at low values of $S$, where SE solutions
 converge quickly due to the short thermal timescale, but AE is also applicable
 at high values of $S$, where SE solutions are intractable.
-We have studied
-the AE method in both 2D and 3D, but restricted most of our study to 2D flows;
-AE depends only on 1D, horizontally averaged profiles of dynamics, and our inclusion of 3D
-simulations was merely to demonstrate the broadly useful nature of AE.
+As discussed, 2D and 3D are identical short of the time-varying entrainment states
+(Fig. \ref{fig:oscillating_plumes}), so we have restricted most of our study to 2D.
+However, due to the greater computational expense of 3D runs, they stand to gain more
+time savings from AE. This is a sentence about the magnitude of savings involved for
+AE vs. SE (wall time + cpu hours, 2d: $10^5$, 3d: $10^4$).
 
 Here we studied \RB convection as a test case for the AE method, but we argue that
 the true power of this technique is in its extensions to more complicated studies.
@@ -656,7 +683,7 @@ convection in natural system often employ height-dependent conductivities
 \cite{brandenburg2016, kapyla&all2017}, leading
 to natural flux divergences that act as internal heating terms.
 The study
-of AE method in the context of simple internal heating simulations will be an important step
+of AE in the context of simple internal heating simulations will be an important step
 towards achieving AE in simulations with astrophysically realistic conductivities.
 
 A further area which could benefit from AE is overshooting convection, in which
@@ -667,7 +694,7 @@ and the convecting region is stiff and motions do not cross that interface,
 convective motions cannot accelerate the restratification of the stable region.
 In fully-convective domains, such as those studied in this work, the thermodynamics evolve
 at a more rapid rate than the thermal diffusion time across the domain due to
-the help of convective motions.  For example, in Fig. \ref{fig:time_trace}a,
+convective mixing.  For example, in Fig. \ref{fig:time_trace}a,
 the SE solution is fully converged after $4\cdot 10^3$ frefall time units,
 despite the thermal timescale being roughly $10^4$ freefall units. However, in 
 studies where there is a stable region which is not mixed by convection, the experimentalist
@@ -692,7 +719,7 @@ hydrostatic balance and thermal equilibrium, as in Eqns. (\ref{eqn:bouss_BVP_mom
 profile in a manner which conserves mass.  In a 1D boundary value problem, such as
 is solved to achieve AE here, this implies the inclusion of an equation which tracks
 the vertically integrated mass, and sets boundary conditions on that mass to ensure
-that no mass enters or leaves the domain.  
+that no mass enters or leaves the domain. [GIVE NUMBERS] 
 
 An eventual use case of AE is in robustly describing convection
 in stellar evolution codes. Current state of the art stellar structure
@@ -775,7 +802,8 @@ $P = 1$. For the first solve, we set $t_{\text{transient}} = 20$, and for the
 second we set $t_{\text{transient}} = 30$. We used fewer solves at this high
 value of $S$ in part to reduce the computational expense of the run, and in
 part because a third BVP generally did not greatly alter the solution
-(as in Fig. \ref{fig:time_trace}c, arrow 3).
+(as in Fig. \ref{fig:time_trace}c, arrow 3). We wait 50 freefall times after
+the final AE BVP solve of each run before beginning to take measurements.
 
 
 
@@ -803,7 +831,9 @@ and below the double horizontal bars we report properties of all
 \begin{tabularx}{\textwidth}{ X X X X | X X X | X X }
 \hline																	
 $S$	&	Ra	&	nz	&	nx, ny	&	$t_{\text{therm}}$	&	$t_{\text{AE}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{SE}}$	&	Nu$_{\text{AE}}$	\\
-\hline																	
+\hline \hline \\
+\multicolumn{9}{c}{2D Runs} \\
+\hline
 $10^{1/3}$	&	$2.79 \cdot 10^3$	&	32	&	64	&	$52.8$	&	$340$	&	100	&	1.46	&	1.46	\\
 $10^{2/3}$	&	$6.01 \cdot 10^3$	&	32	&	64	&	$77.6$	&	$282$	&	100	&	1.95	&	1.95	\\
 $10^1$	&	$1.30 \cdot 10^4$	&	32	&	64	&	$114$	&	$265$	&	100	&	2.43	&	2.42	\\
@@ -822,8 +852,10 @@ $10^5$	&	$1.30 \cdot 10^8$	&	512	&	1024	&	$1.14 \cdot 10^4$	&	$411$	&	500	&	14.0
 $10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	$1.67 \cdot 10^4$	&	$391$	&	500	&	---	&	16.21	\\
 $10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	$2.45 \cdot 10^4$	&	$453$	&	500	&	---	&	18.58	\\
 $10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	$3.60 \cdot 10^4$	&	$436$	&	500	&	---	&	22.13	\\
-$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	$183$	&	170	&	---	&	40.78	\\
+$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	$183$	&	170	&	---	&	38.29	\\
 \\ \hline \hline \\																	
+\multicolumn{9}{c}{3D Runs} \\
+\hline
 $10^1$	&	$1.30 \cdot 10^4$	&	32	&	64$\times$64	&	$114$	&	$261$	&	100	&	2.42	&	2.42	\\
 $10^2$	&	$1.30 \cdot 10^5$	&	64	&	128$\times$128	&	$360$	&	$249$	&	100	&	3.97	&	4	\\
 $10^3$	&	$1.30 \cdot 10^6$	&	128	&	256$\times$256	&	$1.14 \cdot 10^3$	&	$243$	&	500	&	6.27	&	6.27	\\
