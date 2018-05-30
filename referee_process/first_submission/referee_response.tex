@@ -1,0 +1,334 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[aps, 11pt, singlecolumn]{revtex4-1} % Set the font size (10pt, 11pt and 12pt) and paper size (letterpaper, a4paper, etc)
+\usepackage{natbib}
+\bibliographystyle{apsrev}
+\usepackage{setspace}
+
+\begin{document}
+%----------------------------------------------------------------------------------------
+%	LETTER CONTENT
+%----------------------------------------------------------------------------------------
+\noindent
+Dear Editor,
+$\,$\newline
+
+\newenvironment{myquotation}{
+\begin{quotation}
+\itshape
+}{ 
+\end{quotation}
+}
+
+\begin{singlespace}
+Short cover letter blah blah.
+
+$\,$\newline
+\noindent
+Sincerely,
+
+Evan H. Anders, Benjamin P. Brown, \& Jeffrey S. Oishi
+
+
+
+%\end{singlespace}
+
+$\,$
+\newline
+$\,$
+\newline
+\noindent
+\Large{\textbf{Response to first referee:}}\newline$\,$\newline\indent
+
+\begin{myquotation}
+This paper describes a technique for accelerating the convergence to
+thermal equilibrium in convective DNS simulations where such
+convergence from an initial conductive state would be long. The
+technique is essentially to evolve a DNS for for a while, collect the
+background state non-equilibrium fluxes, and then solve a mean field
+boundary value problem with scaled version of these fluxes for a new
+background state in thermal equilibrium, then use this to restart the
+DNS. These, or very similar techniques, have been used by many in the
+past, although to my knowledge, as the authors here also claim, they
+have not been explicitly written down in a paper. The authors have
+gone to the trouble of doing this, not only providing a fairly
+detailed prescription of the technique, but also some evidence of its
+usefulness, albeit in a very simple case where it will definitely work
+which is perhaps not totally representative. I guess I think this
+paper is overall worthwhile, since it provides a place for newcomers
+to the business to find some potentially time-saving help, even though
+the ideas are not original. I think the most important issue with this
+paper is that its claims of more universal applicability are somewhat
+naive. I would suggest they temper these assertions substantially.
+\end{myquotation}
+So this is the summary / takeaway paragraph. I think we need to
+in some way \emph{prove} that such a prescription can be useful in
+more complex situations. This is one of the biggest points we need to
+address from this referee report: either temper our claims or prove them.
+
+\begin{myquotation}
+Basic questions:
+
+How confident can one be that the BVP puts you closer to a nonlinear
+saturated state that where you were? For example, in highly nonlinear
+(turbulent) problems, there may be multiple states, maybe even
+multiple stable states, with different background properties. Is it
+possible to guarantee that you are not putting the system into an
+equilibrium but unstable state, from which an equally long evolution
+to a stable state is required? For the simple problems shown here,
+this is perhaps not likely, but for very high degrees of turbulence,
+or situations where unknown instabilities may exist, this process may
+not be so successful perhaps? This is again a factor in my hesitation
+about the total applicability of this technique across many problems
+beyond the one the authors present.
+\end{myquotation}
+Yeah, this is a good question. I don't know the answer to this immediately.
+I think we need to make some sort of clear distinction between ``AE works
+perfectly always'' and ``AE is better than running from initial conditions.''
+
+
+\begin{myquotation}
+Here are some more comments in chronological order, not order of
+importance.
+
+Abstract and Intro:
+
+The authors come from an astrophysical convection background where the
+Peclet number is generally high and where these techniques are useful.
+They need to be careful to be clear that the convection they are
+talking about is high Pe, the parameter that describes the separation
+of overturning and thermal diffusion timescales. These techniques will
+not be useful (or required) for low Pe number situations.
+\end{myquotation}
+
+Yeah, that's fair. Peclet number is actually what matters, not Re, for
+this problem. We should say that, and perhaps we should report Pe if we
+ever report one or the other.
+
+\begin{myquotation}
+Section II.
+
+After (4): The expression for delta T\_0 assumes that the background
+temperature gradient is constant, which has not been introduced yet.
+
+The sentence “ Our choice of the thermal boundary conditions in Eqn.
+(9 ) was motivated by the fact that accelerated evolution is simpler
+when both the thermal profile and the flux through the domain are
+fixed at a boundary” is never revisited or explained, unless I missed
+it?
+\end{myquotation}
+Two small fixes.
+
+\begin{myquotation}
+Section III.
+
+The assumption after equation (10) that the convective region will NOT
+change substantially is a BIG assumption that allows this technique to
+work. In a situation where nonlinearities affect the extent of the
+convective region (e.g. penetrative convection), our anywhere else
+where the active region varies (e.g. an instability), this technique
+will have problems. More on this later.
+
+Equations (12-13): These are essentially steady state, mean field
+equations, with approximated fluxes for the later (solved) state. Is
+the prescription for the approximated fluxes in (11) going to work for
+all problems? It does so for the case examined, but this case has a
+simple background temperature gradient. Would this work for more
+complicated problems, for example, with a non-constant DT\_0/dz? What
+about the cases that are NOT symmetric (i.e. periodic in the
+horizontal where the mean field equations contain some other terms?
+\end{myquotation}
+Yeah, this should work for non-constant DT/Dz. I designed the layout of the
+paper with internally heated systems in mind, where the background temperature
+gradient is linear. This is the reason for the generality of the $\xi$
+and $F_{tot}$ construction. Should say so explicitly, maybe?
+
+\begin{myquotation}
+Last para: the authors say “proper” profile, but this is an
+approximate thermodynamic background profile, essentially the first
+iterate in an iteration scheme. Perhaps proper is not the right word?
+\end{myquotation}
+Proper probably isn't the right word.
+
+\begin{myquotation}
+IV:
+
+I don’t understand ``$10^{3+2/3}$''? Why is written like this?
+\end{myquotation}
+I think that's a typo from a previous draft.
+
+\begin{myquotation}
+I am not convinced that the whole ``2D and 3D scaling laws'' section
+adds anything at all to this paper. It shows that this technique can
+be used but so does the single example that is interrupted by this
+piece. It is somewhat interesting for the scaling laws found
+themselves, but it sounds like this should be in a different paper
+because there is not enough explanation to understand things totally
+here. I feel like the examples before and after this section are
+sufficient to make the point about the AE scheme.
+\end{myquotation}
+Fair. It's sort of off-topic. The purpose of that figure is to show that
+AE works across Ra, not to show that we get correct scaling laws. We
+should address this.
+
+\begin{myquotation}
+When discussing the PDFs, the author refer to the “modes” of the PDF?
+This sounds a bit odd to me. Do they mean the peaks? The phrase
+“temperature fluctuations off of the modes” is particularly baffling!
+\end{myquotation}
+Yeah, I mean mode as in ``the mode of the PDF'', so the max. I can say max
+or peak.
+
+\begin{myquotation}
+The fact that the mean temperature profile is off by a constant factor
+almost everywhere is a bit disturbing, even if the factor is small.
+Does continued iteration of AE not get rid of this? If not, then this
+is significant, because it would take a thermal relaxation time again
+to correct this issue.
+\end{myquotation}
+This is the second biggest point in this referee report. We need to talk about this
+and figure out how to address it.
+
+\begin{myquotation}
+I felt like I wanted a section at the end of this section that
+described how much the AE saved in computational time and wall time
+over SE. There is a bit of it here, and some of it in the discussion,
+and some more details in the appendix, which seems a bit scattered. I
+would be tempted to agglomerate it all here in a separate section.
+\end{myquotation}
+Fair, let's figure out how to consolidate this and present it in a meaningful way.
+
+\begin{myquotation}
+V.
+
+This is the section I have most issues with.
+
+The example performed was the most likely to succeed. The 2D cases
+were essentially rolls. Were the 3D cases still essentially 2D rolls
+too (since the scalings came out the same)? What about larger aspect
+ratio and more turbulence cases where the dynamics would be more
+complex? Keeping things smooth certainly enhances the likelihood of a
+simple scaling of the nonlinear fluxes working.
+
+I think the projections for more complicated problems mentioned are
+naive. If there is any nonlinear adjustment to the convective region,
+e.g. penetrative convection, then the technique is far less likely to
+be simply successful in the current form. The assumption of fully
+convective and thermal boundary layers remaining in place is a big
+one, and this is not really acknowledged. The authors do mention
+penetrative convection and do indeed say that only a stiff case would
+work under these premises, but this is a bit hidden, I think, and
+needs to be emphasized more. For example, the penetrative ice-water
+problem even in Boussinesq would not work well with this technique I
+think, since the penetrative region can deepen dramatically, and
+adjust the radiative flux to match the substantially changed
+convective flux.
+
+Furthermore, the compressible case is much more danger prone than
+envisioned here. I suspect that in the iteration to accelerate, any
+mismatch in the fluctuations and the estimated means in the DNS will
+lead to major transients in the form of sound waves, which can totally
+destroy a compressible evolution by reducing the tilmestep
+substantially, so this technique may have drawbacks if there is not
+filtering of sound waves somehow. The authors have glossed over these
+problems in their eagerness to extol the virtues of their scheme.
+
+I think the claims of this method working in many more situations need
+to be examined more thoroughly before being made so boldly here.
+\end{myquotation}
+We either need to back off on some of these claims, show that AE works
+in a more complex situation, or temper these claims with warnings of
+possible complications.
+
+
+\noindent
+\Large{\textbf{Response to second referee:}}\newline$\,$\newline\indent
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\item The authors should provide clarification on what the following terms mean: ``thermal equilibration'', ``thermally relaxed'', and ``thermal convergence''. Also, are these terms related to statistically steady state?
+\item What is the ``Kelvin-Helmholtz timescale''?
+\end{enumerate}
+\end{myquotation}
+We need to define these
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item The authors note that the bootstrapping method is susceptible to hysteresis effects. They should provide examples of where such effects have been observed.
+\end{enumerate}
+\end{myquotation}
+I know this from my own work. Shearing states are heavily susceptible to hysteresis, especially in stratified domains. I don't know of anywhere this is explicitly said in the literature.
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{3}
+\item It is true that direct numerical simulation of turbulent thermal convection is expensive. However, the highest Ra simulation run by Stevens et al. reaches a stationary state in a few hundreds of free-fall times. Hence, what is the necessity of running simulations for ``thousands or millions of free-fall times''?
+\end{enumerate}
+\end{myquotation}
+Yeah, this is mostly only a problem in stratified cases. Actually, in general, I think this isn't a huge problem for constant temperature BCs, but it is for other types of BCs in RBC.
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{4}
+\item Presumably, the most important step in the “Accelerated convergence method” involves decreasing the heat flux through the top boundary so as to match it with the heat flux at the bottom boundary. This is achieved by introducing a function $\xi(z) \equiv  F_B/F_{tot}$. The following questions arise:
+\begin{enumerate}
+\item What is the functional form of $\xi(z)$? And where does the z-dependence come from?
+\item Here, $F_{tot}$ is not really a constant, but depends on time. Hence, $\xi(z)$ should also be a function of time.
+\item The “evolved” quantities are obtained by multiplying $\langle \bm{u} \times \bm{\omega} \rangle$ and $F_E$ by $\xi(z)$. Can this construction be rigorously justified? I would like the authors to provide more details on how they arrived at this step.
+\end{enumerate}
+\end{enumerate}
+\end{myquotation}
+We need to make all of this clearer, apparently. The fact that it's a function of $t$ is an important change.
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{5}
+\item The assumption that convection at early times occupies roughly the same volume as convection in the stationary state is acceptable. However, there is also the possibility that instead of decreasing the heat flux at the top one could increase it at the bottom? The boundary condition for T1 at the bottom surface is
+$$
+\frac{\partial T_1}{\partial z} = 0
+$$
+So, the imposed heat flux at the bottom is 0.
+\end{enumerate}
+\end{myquotation}
+I think there's a fundamental misunderstanding of what's happening with the boundary conditions here. I need to type up a clear response to the referee, and also make sure that I make this clear in the paper.
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{6}
+\item Could the authors construct plots of Nu vs. t (like in figure 2) for both AE and SE starting from t = 0? I would like to understand how Nu(t) evolves with time in the AE cases.
+\end{enumerate}
+\end{myquotation}
+Sure, we can do send the referee that plot. I don't think we should change the 
+figure as is, though.
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{7}
+\item I diasgree with the authors’ statement that “Previous studies in 2D convection may have avoided these time-varying Nu states by using bootstrapping techniques...” If one were to measure Nu(t) in the interior, then the sign of Nu would fluctuate between positive and negative. However, the time average would be always be positive. (This I know from my own work.)
+\end{enumerate}
+\end{myquotation}
+Hmm. Interesting point. Need to think about how to respond to this carefully.
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{8}
+\item Have the authors studied convection with fixed temperature and no-slip conditions at the top and bottom surfaces? Have they compared the AE and SE results for that case?
+\end{enumerate}
+\end{myquotation}
+We have not. We've used no-slip at both surfaces, but only mixed thermal boundary conditions. We can do fixed T boundary conditions, but that would require a different treatment of the total flux.
+
+
+
+
+
+
+\end{singlespace}
+
+
+
+
+\bibliography{../../biblio.bib}
+\end{document}
