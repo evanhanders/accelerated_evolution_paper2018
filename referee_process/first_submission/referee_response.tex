@@ -68,11 +68,16 @@ in some way \emph{prove} that such a prescription can be useful in
 more complex situations. This is one of the biggest points we need to
 address from this referee report: either temper our claims or prove them.
 
+Don't bring in my special knowledge that other people don't get from
+reading the paper.
+
+Tone it down.
+
 \begin{myquotation}
 Basic questions:
 
 How confident can one be that the BVP puts you closer to a nonlinear
-saturated state that where you were? For example, in highly nonlinear
+saturated state than where you were? For example, in highly nonlinear
 (turbulent) problems, there may be multiple states, maybe even
 multiple stable states, with different background properties. Is it
 possible to guarantee that you are not putting the system into an
@@ -84,6 +89,16 @@ not be so successful perhaps? This is again a factor in my hesitation
 about the total applicability of this technique across many problems
 beyond the one the authors present.
 \end{myquotation}
+Questions: (1) how confident that it puts you closer? (2) are there multiple states?
+(1) Fairly confident. Gets you closer to the nonlinear saturated state that you are
+IN. Puts you closer to ONE. Not necessarily the one you would evolve towards. But
+initial conditions also mess with your final state.
+(2) No, it's not possible to guarantee. We have seen multiple states and
+slow evolution from one to another. When you're on a solution branch, doing AE
+generally keeps you on that same solution branch, but there's no guarantee that it's
+the same solution as you would achieve through a fully thermal evolution. We should
+say this in the discussion section, this will also help temper usefulness claims.
+
 Yeah, this is a good question. I don't know the answer to this immediately.
 I think we need to make some sort of clear distinction between ``AE works
 perfectly always'' and ``AE is better than running from initial conditions.''
@@ -105,7 +120,8 @@ not be useful (or required) for low Pe number situations.
 
 Yeah, that's fair. Peclet number is actually what matters, not Re, for
 this problem. We should say that, and perhaps we should report Pe if we
-ever report one or the other.
+ever report one or the other. Ultimate goal of systems we're aiming for is
+high Pe than we can achieve through SE.
 
 \begin{myquotation}
 Section II.
@@ -113,10 +129,10 @@ Section II.
 After (4): The expression for delta T\_0 assumes that the background
 temperature gradient is constant, which has not been introduced yet.
 
-The sentence “ Our choice of the thermal boundary conditions in Eqn.
+The sentence ``Our choice of the thermal boundary conditions in Eqn.
 (9 ) was motivated by the fact that accelerated evolution is simpler
 when both the thermal profile and the flux through the domain are
-fixed at a boundary” is never revisited or explained, unless I missed
+fixed at a boundary'' is never revisited or explained, unless I missed
 it?
 \end{myquotation}
 Two small fixes.
@@ -140,6 +156,8 @@ complicated problems, for example, with a non-constant DT\_0/dz? What
 about the cases that are NOT symmetric (i.e. periodic in the
 horizontal where the mean field equations contain some other terms?
 \end{myquotation}
+While writing up $\xi$ bit, write a little bit saying that the defintion of
+$\xi$ needs to be modified for non-constant dT/dz.
 Yeah, this should work for non-constant DT/Dz. I designed the layout of the
 paper with internally heated systems in mind, where the background temperature
 gradient is linear. This is the reason for the generality of the $\xi$
@@ -157,7 +175,8 @@ IV:
 
 I don’t understand ``$10^{3+2/3}$''? Why is written like this?
 \end{myquotation}
-I think that's a typo from a previous draft.
+We take 3 equal steps in log space. We have changed it to 3.67 for easier reading.
+
 
 \begin{myquotation}
 I am not convinced that the whole ``2D and 3D scaling laws'' section
@@ -169,6 +188,7 @@ because there is not enough explanation to understand things totally
 here. I feel like the examples before and after this section are
 sufficient to make the point about the AE scheme.
 \end{myquotation}
+The wording around figs 2-3 is hindering both referees' understanding of the paper.
 Fair. It's sort of off-topic. The purpose of that figure is to show that
 AE works across Ra, not to show that we get correct scaling laws. We
 should address this.
@@ -198,7 +218,8 @@ over SE. There is a bit of it here, and some of it in the discussion,
 and some more details in the appendix, which seems a bit scattered. I
 would be tempted to agglomerate it all here in a separate section.
 \end{myquotation}
-Fair, let's figure out how to consolidate this and present it in a meaningful way.
+This is a good idea. We should make a section of this info.
+``Computational benefits of AE.''
 
 \begin{myquotation}
 V.
@@ -252,6 +273,8 @@ $\,$\\\vspace{-1.25cm}
 \item What is the ``Kelvin-Helmholtz timescale''?
 \end{enumerate}
 \end{myquotation}
+We're explaining simple ideas, so we should remove jargon / clarify as much as
+possible. Make it as readable and simple to understand as possible.
 We need to define these
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -259,7 +282,11 @@ $\,$\\\vspace{-1.25cm}
 \setcounter{enumi}{2}
 \item The authors note that the bootstrapping method is susceptible to hysteresis effects. They should provide examples of where such effects have been observed.
 \end{enumerate}
-\end{myquotation}
+\end{myquotation}a
+We've seen this in polytropes, but we haven't seen HYSTERESIS. There are different
+stable states and bootstrapping keeps you in the evolved state from lower Ra.
+But we don't see hysteresis, word this CAREFULLY, and what we say in response to
+referee in private comments is important.
 I know this from my own work. Shearing states are heavily susceptible to hysteresis, especially in stratified domains. I don't know of anywhere this is explicitly said in the literature.
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -268,6 +295,7 @@ $\,$\\\vspace{-1.25cm}
 \item It is true that direct numerical simulation of turbulent thermal convection is expensive. However, the highest Ra simulation run by Stevens et al. reaches a stationary state in a few hundreds of free-fall times. Hence, what is the necessity of running simulations for ``thousands or millions of free-fall times''?
 \end{enumerate}
 \end{myquotation}
+(1) Steady state vs. thermal convergence (and maybe this will be shown with Nu vs. energy time traces). Are we measuring nu or are we measuring temperature profiles.
 Yeah, this is mostly only a problem in stratified cases. Actually, in general, I think this isn't a huge problem for constant temperature BCs, but it is for other types of BCs in RBC.
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -280,7 +308,14 @@ $\,$\\\vspace{-1.25cm}
 \item The “evolved” quantities are obtained by multiplying $\langle \bm{u} \times \bm{\omega} \rangle$ and $F_E$ by $\xi(z)$. Can this construction be rigorously justified? I would like the authors to provide more details on how they arrived at this step.
 \end{enumerate}
 \end{enumerate}
-\end{myquotation}
+\end{myquotation}a
+The question is: why are we rescaling these things by this flux ratio? Answer: ``th
+is what we do in order to do X." We're not going to rigorously derive this. They
+may be concerned that we're sneaking in a nonlinearity or something like that
+because we have this new function that we're sneaking in. Convince them that it's
+not a function. It's simple. It's funkiness is not what gives us our solutions.
+It's useful. Explain why it's useful, because the referee can't see why it's useful. This is a voodoo step of this in some ways.
+*** This is very important.
 We need to make all of this clearer, apparently. The fact that it's a function of $t$ is an important change.
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -310,6 +345,8 @@ $\,$\\\vspace{-1.25cm}
 \item I diasgree with the authors’ statement that “Previous studies in 2D convection may have avoided these time-varying Nu states by using bootstrapping techniques...” If one were to measure Nu(t) in the interior, then the sign of Nu would fluctuate between positive and negative. However, the time average would be always be positive. (This I know from my own work.)
 \end{enumerate}
 \end{myquotation}
+Referee is latching onto positive/negativeness of Nu, rather than high/low transport.
+We went into a speculative state. We need to figure out what we're saying, how the ref got confused by what we said, and remove speculative nonsense.
 Hmm. Interesting point. Need to think about how to respond to this carefully.
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -319,7 +356,8 @@ $\,$\\\vspace{-1.25cm}
 \end{enumerate}
 \end{myquotation}
 We have not. We've used no-slip at both surfaces, but only mixed thermal boundary conditions. We can do fixed T boundary conditions, but that would require a different treatment of the total flux.
-
+We don't forsee major difficulties in this being done, but it was different enough
+from the mainline approach of the paper that we didn't do it.
 
 
 
