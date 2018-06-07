@@ -117,25 +117,27 @@ talking about is high Pe, the parameter that describes the separation
 of overturning and thermal diffusion timescales. These techniques will
 not be useful (or required) for low Pe number situations.
 \end{myquotation}
-
-Yeah, that's fair. Peclet number is actually what matters, not Re, for
-this problem. We should say that, and perhaps we should report Pe if we
-ever report one or the other. Ultimate goal of systems we're aiming for is
-high Pe than we can achieve through SE.
+We have reworked some text in the second paragraph of the introduction section
+in order to clarify that we are discussing high Pe convection.
 
 \begin{myquotation}
 Section II.
 
-After (4): The expression for delta T\_0 assumes that the background
+After (4): The expression for $\Delta T_0$ assumes that the background
 temperature gradient is constant, which has not been introduced yet.
+\end{myquotation}
+We have added a sentence before the description of our nondimensionalization
+stating that the initial temperature profile is linear.
 
+\begin{myquotation}
 The sentence ``Our choice of the thermal boundary conditions in Eqn.
 (9 ) was motivated by the fact that accelerated evolution is simpler
 when both the thermal profile and the flux through the domain are
 fixed at a boundary'' is never revisited or explained, unless I missed
 it?
 \end{myquotation}
-Two small fixes.
+We have clarified this in the second to last pargraph of section III 
+(and added a forward reference to this part of the text). 
 
 \begin{myquotation}
 Section III.
@@ -143,7 +145,7 @@ Section III.
 The assumption after equation (10) that the convective region will NOT
 change substantially is a BIG assumption that allows this technique to
 work. In a situation where nonlinearities affect the extent of the
-convective region (e.g. penetrative convection), our anywhere else
+convective region (e.g. penetrative convection), or anywhere else
 where the active region varies (e.g. an instability), this technique
 will have problems. More on this later.
 
@@ -152,30 +154,39 @@ equations, with approximated fluxes for the later (solved) state. Is
 the prescription for the approximated fluxes in (11) going to work for
 all problems? It does so for the case examined, but this case has a
 simple background temperature gradient. Would this work for more
-complicated problems, for example, with a non-constant DT\_0/dz? What
+complicated problems, for example, with a non-constant $\partial T_0/\partial z$? What
 about the cases that are NOT symmetric (i.e. periodic in the
 horizontal where the mean field equations contain some other terms?
 \end{myquotation}
-While writing up $\xi$ bit, write a little bit saying that the defintion of
-$\xi$ needs to be modified for non-constant dT/dz.
-Yeah, this should work for non-constant DT/Dz. I designed the layout of the
-paper with internally heated systems in mind, where the background temperature
-gradient is linear. This is the reason for the generality of the $\xi$
-and $F_{tot}$ construction. Should say so explicitly, maybe?
+We are fairly confident that this prescription will work for more complex
+initial temperature profiles ($\text{F}_{\text{B}}$ will need to pick up some
+height dependence in the defintion of $\chi$, for simple internally heated
+systems, for example). It would be useful to test AE in such a case, but such
+studies are beyond the scope of this work, and we leave it to future work
+to determine if this method is valid in such cases.   
+
+We are uncertain of 
+how AE will work for non-symmetric, horizontally variant cases. As it fundamentally
+adjusts the mean profile of the whole domain in a uniform manner, it may not be
+ideal for such cases. 
+
+Refer to the revised final section of the paper for some discussion on these
+issues.
 
 \begin{myquotation}
 Last para: the authors say “proper” profile, but this is an
 approximate thermodynamic background profile, essentially the first
 iterate in an iteration scheme. Perhaps proper is not the right word?
 \end{myquotation}
-Proper probably isn't the right word.
+We have replaced ``proper'' with more appropriate descriptors.
 
 \begin{myquotation}
 IV:
 
 I don’t understand ``$10^{3+2/3}$''? Why is written like this?
 \end{myquotation}
-We take 3 equal steps in log space. We have changed it to 3.67 for easier reading.
+To determine the Ra of our simulations, we take even sized steps in log space
+(3 per decade). We have changed 3 + 2/3 to 3.67 for easier reading.
 
 
 \begin{myquotation}
@@ -188,18 +199,19 @@ because there is not enough explanation to understand things totally
 here. I feel like the examples before and after this section are
 sufficient to make the point about the AE scheme.
 \end{myquotation}
-The wording around figs 2-3 is hindering both referees' understanding of the paper.
-Fair. It's sort of off-topic. The purpose of that figure is to show that
-AE works across Ra, not to show that we get correct scaling laws. We
-should address this.
+We feel that it is important to show that AE works across some swath of parameter
+space, in order to demonstrate its robustness for the problem presented here.
+We have trimmed the text of the scaling laws section and reduced speculation in
+order to keep the paper on topic. We have also replaced Re with Pe in this
+section in order to reinforce the point that we are interested in high Pe
+convection (since Pr = 1, Re = Pe numerically, so only labels have changed).
 
 \begin{myquotation}
-When discussing the PDFs, the author refer to the “modes” of the PDF?
+When discussing the PDFs, the author refer to the ``modes" of the PDF?
 This sounds a bit odd to me. Do they mean the peaks? The phrase
-“temperature fluctuations off of the modes” is particularly baffling!
+``temperature fluctuations off of the modes'' is particularly baffling!
 \end{myquotation}
-Yeah, I mean mode as in ``the mode of the PDF'', so the max. I can say max
-or peak.
+We have replaced ``modes'' with ``maxima'' for clarity.
 
 \begin{myquotation}
 The fact that the mean temperature profile is off by a constant factor
@@ -208,8 +220,8 @@ Does continued iteration of AE not get rid of this? If not, then this
 is significant, because it would take a thermal relaxation time again
 to correct this issue.
 \end{myquotation}
-This is the second biggest point in this referee report. We need to talk about this
-and figure out how to address it.
+We have added some discussion of our stopping criterion to appendix describing
+the AE method, and we have discussed this problem in our new conclusion section.
 
 \begin{myquotation}
 I felt like I wanted a section at the end of this section that
@@ -218,8 +230,10 @@ over SE. There is a bit of it here, and some of it in the discussion,
 and some more details in the appendix, which seems a bit scattered. I
 would be tempted to agglomerate it all here in a separate section.
 \end{myquotation}
-This is a good idea. We should make a section of this info.
-``Computational benefits of AE.''
+We have added a new section V., ``Computational Benefits of AE'', to explicitly
+
+state speed increases of AE vs. SE. This section contains a small table which
+explicitly compares computational cost of select AE and SE runs in 2D and 3D.
 
 \begin{myquotation}
 V.
@@ -259,9 +273,11 @@ problems in their eagerness to extol the virtues of their scheme.
 I think the claims of this method working in many more situations need
 to be examined more thoroughly before being made so boldly here.
 \end{myquotation}
-We either need to back off on some of these claims, show that AE works
-in a more complex situation, or temper these claims with warnings of
-possible complications.
+We agree that our intial conclusion section was over-eager. We have removed
+our hopeful speculation and leave future work to
+prove if AE is useful in more complex situations (fully compressible,
+penetrative convection, etc.). The discussion section now includes a discussion
+of difficulties that the AE method faces, and future work.
 
 
 \noindent
@@ -270,24 +286,47 @@ possible complications.
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
 \item The authors should provide clarification on what the following terms mean: ``thermal equilibration'', ``thermally relaxed'', and ``thermal convergence''. Also, are these terms related to statistically steady state?
+\end{enumerate}
+\end{myquotation}
+All three of these phrases are equivalent, and we have replaced all mentions of
+thermal equilibration, relaxation, and thermal convergence with ``thermal
+equilibration'' or ``thermally equilibrated'' throughout the paper. This term
+is explained in pargraph 2 of the introduction.
+\begin{myquotation}
+$\,$\\\vspace{-1.25cm}
+\begin{enumerate}
+\setcounter{enumi}{1}
 \item What is the ``Kelvin-Helmholtz timescale''?
 \end{enumerate}
 \end{myquotation}
-We're explaining simple ideas, so we should remove jargon / clarify as much as
-possible. Make it as readable and simple to understand as possible.
-We need to define these
+The Kelvin-Helmholtz timescale is 
+$$
+t_{\text{KH}} = \frac{E_g}{L},
+$$
+where $E_g$ is the gravitational energy in a system, and $L$ is the luminosity
+(energy output / time). Basically it is a timescale that astronomers and
+astrophysicists use to estimate the timescale thermal evolution of a system 
+(e.g., a star). Since the point we were trying to make is that ``the mean 
+thermodynamic structure of the Sun evolves \emph{really} slowly,''
+we have removed this jargon and said this more clearly in paragraph 2 of the intro.
+
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
 \setcounter{enumi}{2}
 \item The authors note that the bootstrapping method is susceptible to hysteresis effects. They should provide examples of where such effects have been observed.
 \end{enumerate}
-\end{myquotation}a
-We've seen this in polytropes, but we haven't seen HYSTERESIS. There are different
-stable states and bootstrapping keeps you in the evolved state from lower Ra.
-But we don't see hysteresis, word this CAREFULLY, and what we say in response to
-referee in private comments is important.
-I know this from my own work. Shearing states are heavily susceptible to hysteresis, especially in stratified domains. I don't know of anywhere this is explicitly said in the literature.
+\end{myquotation}
+We misspoke. We have not specifically seen hysteresis effects (nor have we seen
+this in the literature).  We meant to say that in simulations where there are
+multiple solution branches (e.g., a convective roll and a shearing solution),
+bootstrapping to different parameters will likely ensure that you stay on the 
+same solution branch, even at the higher parameters. Particularly, in our own
+work in stratified atmospheres, atmospheres trend toward shearing states, and then
+stay stuck in those states as we bootstrap to higher Ra.
+
+We have corrected our error, and made our meaning clearer.
+
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
@@ -295,8 +334,13 @@ $\,$\\\vspace{-1.25cm}
 \item It is true that direct numerical simulation of turbulent thermal convection is expensive. However, the highest Ra simulation run by Stevens et al. reaches a stationary state in a few hundreds of free-fall times. Hence, what is the necessity of running simulations for ``thousands or millions of free-fall times''?
 \end{enumerate}
 \end{myquotation}
-(1) Steady state vs. thermal convergence (and maybe this will be shown with Nu vs. energy time traces). Are we measuring nu or are we measuring temperature profiles.
-Yeah, this is mostly only a problem in stratified cases. Actually, in general, I think this isn't a huge problem for constant temperature BCs, but it is for other types of BCs in RBC.
+The convective flows reach a statistically stationary state quickly, particularly
+in Boussinesq systems, but here we are discussing the thermal equilibration
+of systems which have some sort of thermal stratification. Even if the convective 
+flows reach a state that is relatively statistically stationary quickly, the
+temperature (and/or density) stratification of the convecting atmosphere can take
+much longer to equilibrate, especially in the high Pe regime.
+
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
@@ -305,18 +349,32 @@ $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
 \item What is the functional form of $\xi(z)$? And where does the z-dependence come from?
 \item Here, $F_{tot}$ is not really a constant, but depends on time. Hence, $\xi(z)$ should also be a function of time.
-\item The “evolved” quantities are obtained by multiplying $\langle \bm{u} \times \bm{\omega} \rangle$ and $F_E$ by $\xi(z)$. Can this construction be rigorously justified? I would like the authors to provide more details on how they arrived at this step.
+\item The ``evolved'' quantities are obtained by multiplying $\langle u \times \omega \rangle$ and $F_E$ by $\xi(z)$. Can this construction be rigorously justified? I would like the authors to provide more details on how they arrived at this step.
 \end{enumerate}
 \end{enumerate}
-\end{myquotation}a
-The question is: why are we rescaling these things by this flux ratio? Answer: ``th
-is what we do in order to do X." We're not going to rigorously derive this. They
-may be concerned that we're sneaking in a nonlinearity or something like that
-because we have this new function that we're sneaking in. Convince them that it's
-not a function. It's simple. It's funkiness is not what gives us our solutions.
-It's useful. Explain why it's useful, because the referee can't see why it's useful. This is a voodoo step of this in some ways.
-*** This is very important.
-We need to make all of this clearer, apparently. The fact that it's a function of $t$ is an important change.
+\end{myquotation}
+(a) In the simple case studied in this problem, where $F_B$ is constant in time
+and space, the functional form of $\xi \propto F_{tot}^{-1}$, and depnds only
+on the fluxes of the convective system. Since $F_{tot}$ can
+have a large z-dependence (e.g., Fig. 1b), $\xi$, too, has a z-dependence. 
+$\xi$ is simply a height-dependent scaling that we use to appropriately
+adjust our velocity, temperature, etc.
+
+(b) We have changed $\xi(z) \rightarrow \xi(z, t)$.
+
+(c) Physically, $\xi$ is a scaling factor that tells us how much larger the flux
+is in the interior than it should be. 
+We assume that $F_{tot} \sim F_{conv} \sim w (T - \langle T \rangle )$.
+As such, we assume that $\xi \propto (w^{-1/2}, (T - \langle T \rangle )^{-1/2})$,
+and that scaling both the temperature fields and the temperature fluctuations 
+around the mean profile will reduce the convective flux in the proper way.
+We scale $\langle \bm{u}\times\bm{\omega}\rangle$ by $\xi$, as it is
+nondimensionally of order $u^2 / L$, and so if the velocities must be multiplied
+by $\sqrt{\xi}$, this term must be multiplied by $\xi$.
+
+We cannot rigorously derive $\xi$ from first principles. Its form, and the use of
+it here, are the result of our experience and familiarity with convection. 
+
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
@@ -328,7 +386,13 @@ $$
 So, the imposed heat flux at the bottom is 0.
 \end{enumerate}
 \end{myquotation}
-I think there's a fundamental misunderstanding of what's happening with the boundary conditions here. I need to type up a clear response to the referee, and also make sure that I make this clear in the paper.
+Our boundary condition is that fluctuations in the temperature derivative at the
+bottom of the domain are zero. Which is to say that 
+$\partial T_0 / \partial z = -1 =$ constant. We could increase the heat flux at
+the bottom to match the heat flux at the top, but in that case we would be solving
+a different system with a different set of boundary conditions than the ones
+studied here. 
+
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
@@ -345,9 +409,15 @@ $\,$\\\vspace{-1.25cm}
 \item I diasgree with the authors’ statement that “Previous studies in 2D convection may have avoided these time-varying Nu states by using bootstrapping techniques...” If one were to measure Nu(t) in the interior, then the sign of Nu would fluctuate between positive and negative. However, the time average would be always be positive. (This I know from my own work.)
 \end{enumerate}
 \end{myquotation}
-Referee is latching onto positive/negativeness of Nu, rather than high/low transport.
-We went into a speculative state. We need to figure out what we're saying, how the ref got confused by what we said, and remove speculative nonsense.
-Hmm. Interesting point. Need to think about how to respond to this carefully.
+We have tightened up the discussion around the scaling laws, as requested by the
+other referee report. We have removed speculative statements which aimed to
+compare the scaling law of Nu found here with Nu elsewhere in order to keep
+the focus of our paper on AE rather than Nu scaling for our system setup.
+
+Fig. 2 is not aiming to point out the sign of Nu (positive vs. negative), but
+rather aiming to show the flow morphology at times of high heat transport and
+low heat transport.
+
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
@@ -355,9 +425,10 @@ $\,$\\\vspace{-1.25cm}
 \item Have the authors studied convection with fixed temperature and no-slip conditions at the top and bottom surfaces? Have they compared the AE and SE results for that case?
 \end{enumerate}
 \end{myquotation}
-We have not. We've used no-slip at both surfaces, but only mixed thermal boundary conditions. We can do fixed T boundary conditions, but that would require a different treatment of the total flux.
-We don't forsee major difficulties in this being done, but it was different enough
-from the mainline approach of the paper that we didn't do it.
+We have not. We've used no-slip at both surfaces, 
+but only mixed thermal boundary conditions. 
+We don't forsee major difficulties in AE being applied to fixed T boundary 
+conditions, but felt that such a study was outside the scope of this work.
 
 
 
