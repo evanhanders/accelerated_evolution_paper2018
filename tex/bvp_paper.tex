@@ -262,7 +262,7 @@ Variables are time-evolved on a dealiased Chebyshev (vertical)
 and Fourier (horizontal, periodic) domain in which the
 physical grid dimensions are 3/2 the size of the coefficient grid.  
 We study 2D and 3D convection in which the domain is a cartesian box, 
-whose dimensionless vertical extent is $z \in [-1/2, 1/2]$, 
+whose dimensionless vertical extent is $z \in [0, 1]$, 
 and which is horizontally periodic with an extent of $x, y \in [0, \Gamma]$,
 where $\Gamma = 2$ is the aspect ratio, as has been previously studied
 \cite{goluskin&all2014, johnston&doering2009}. 
@@ -270,13 +270,13 @@ In 2D simulations, we set $v = \partial_y = 0$.
 We specify no-slip, impenetrable boundary conditions at both the top and
 bottom boundary,
 \begin{equation}
-u = v = w = 0 \, \, \text{at}\,\,z = \pm 1/2,
+u = v = w = 0 \, \, \text{at}\,\,z = \pm 0,1,
 \label{eqn:vel_bcs}
 \end{equation}
 and we use mixed thermal boundary conditions, such that
 \begin{equation}
-T_1 = 0 \,\,\text{at}\,\, z=+1/2, \qquad
-\frac{\partial T_1}{\partial z} = 0\,\,\text{at}\,\,z=-1/2.
+T_1 = 0 \,\,\text{at}\,\, z=1, \qquad
+\frac{\partial T_1}{\partial z} = 0\,\,\text{at}\,\,z=0.
 \label{eqn:temp_bcs}
 \end{equation}
 For this choice of boundary conditions, the critical value of Ra at which
@@ -291,7 +291,7 @@ thermal profile and the flux through the domain are fixed at a boundary
 (see section \ref{sec:ae}).
 
 The initial temperature profile is linearly unstable,
-$T_0(z) = -z$. On top of this profile, we fill $T_1$ with
+$T_0(z) = 0.5 - z$. On top of this profile, we fill $T_1$ with
 random white noise whose magnitude is $10^{-6}\mathcal{P}$, and which is
 vertically tapered so as to match the thermal boundary conditions.
 This ensures that the initial perturbations are much smaller than the
@@ -692,6 +692,39 @@ show very good agreement and small values of the KS statistic.
 
 \section{Computational Benefits of AE}
 \label{sec:speedups}
+
+\begin{table}
+\caption{
+}
+\label{table:speed}
+\begin{center}
+\begin{tabularx}{\textwidth}{ X X X X }
+\hline																	
+$S$	&	nz, nx, ny	&	$t_{\text{sim,AE}}/t_{\text{sim,SE}}$	&	
+$t_{\text{CPU,AE}}/t_{\text{CPU,SE}}$		\\
+\hline \hline \multicolumn{4}{c}{\vspace{-0.2cm}}\\
+\multicolumn{4}{c}{\vspace{0.1cm}2D Runs} \\
+\hline
+$10^1$	&	32,	64	&	2.32    & \\
+$10^2$	&	64,	128	&	0.905   & 2.03  & 4.369 &  2.152    \\
+$10^3$	&	128,256	&	0.24    & 0.387 & 20.63 &  53.25    \\
+$10^4$	&	256,512	&	0.084   & 0.15  & 180.82&  1205.25  \\
+$10^5$	&	512,1024&	0.036   & 0.115 & 2757.73& 24061.75 \\
+\\ \hline \hline \multicolumn{4}{c}{\vspace{-0.2cm}}\\
+\multicolumn{4}{c}{\vspace{0.1cm}3D Runs} \\
+\hline
+$10^1$	&	32,	64$\times$64	& 2.29	& 106.15/61.5\\
+$10^2$	&	64,	128$\times$128	& 0.69	& 111.92/185.35\\
+$10^3$	&	128,256$\times$256	& 0.21	& 1426.39/6985.18\\
+$10^4$	&	256,512$\times$512	& 0.068	& 23063.77/331,717\\
+\hline																	
+\end{tabularx}
+\end{center}
+\end{table}
+
+
+
+
 The small differences between the SE and AE solutions for the case studied in 
 Figs. \ref{fig:time_trace}, \ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison},
 show the extreme power of AE.  In addition to the fact that AE runs require much

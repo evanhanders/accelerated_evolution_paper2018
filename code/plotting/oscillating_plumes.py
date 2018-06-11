@@ -24,7 +24,7 @@ from scipy.interpolate import interp1d
 
 
 
-base_dir = '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
+base_dir = '/home/evanhanders/research/papers/accelerated_evolution/code/runs/bvp_post'
 subdir = 'rayleigh_benard_2D_mixed_noSlip_Ra1.30e8_Pr1_a2/'
 subdir2 = 'rayleigh_benard_2D_mixed_noSlip_Ra1.30e10_Pr1_a2/'
 full_dir = base_dir + '/' + subdir
