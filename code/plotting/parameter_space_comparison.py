@@ -37,10 +37,10 @@ MARKERSIZE=[5,4,5,7]
 
 fields = ['Nu', 'Re', 'IE']
 base_dirs = [
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/3d/base_post',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/3d/bvp_post'
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/base_post',
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/bvp_post',
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/3d/base_post',
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/3d/bvp_post'
             ]
 
 info = OrderedDict()
@@ -198,7 +198,7 @@ for i,k in enumerate(fields):
     elif k == 'Re':
         ax.annotate(r'$\mathrm{(b)}$', (2e3, 5e3), fontsize=10)
         label_end = '-{:.3g}'.format(pRe)
-        label_end = '$\\langle\\mathrm{Re}\\rangle$'#\\mathrm{ Ra}^{' + label_end + '}$'
+        label_end = '$\\langle\\mathrm{Pe}\\rangle$'#\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end))
         ax.set_ylim(1, 2e4)
 #        ax.set_title(r'$\langle\mathrm{Re}\rangle \mathrm{Ra}^{-1/2}$', fontsize=10)
@@ -297,4 +297,4 @@ for i,k in enumerate(fields):
     [t.set_fontsize(10) for t in ax.get_xticklabels()]
     [t.set_fontsize(10) for t in ax.get_yticklabels()]
 
-plt.savefig('parameter_space_comparison.png'.format(k), dpi=200, bbox_inches='tight')
+plt.savefig('parameter_space_comparison.png'.format(k), dpi=400, bbox_inches='tight')

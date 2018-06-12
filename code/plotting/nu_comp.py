@@ -108,17 +108,17 @@ ax3.set_ylim(9e-1, 1e3)
 ax3.set_xticks([11200, 11400])
 ax3.set_xticklabels(("11200", "11400"))
 
-ax1.annotate("AE", xy=(950, 5e2))
-ax3.annotate("SE", xy=(11385, 5e2))
+ax1.annotate("AE", xy=(955, 5e2))
+ax3.annotate("SE", xy=(11360, 5e2))
 
 ax2.set_xlabel("Time (freefall units)")
-ax2.xaxis.set_label_coords(0.8, -0.125)
-ax2.set_ylabel("Nu")
-ax1.set_ylabel("Nu")
+ax2.xaxis.set_label_coords(0.76, -0.2)
+ax1.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
+ax2.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
 
-ax1.axvline(77 , c='k', ls='--')
-ax1.axvline(278, c='k', ls='--')
-ax1.axvline(360.6, c='k', ls='--')
+#ax1.axvline(77 , c='k', ls='--')
+#ax1.axvline(278, c='k', ls='--')
+#ax1.axvline(360.6, c='k', ls='--')
 
 
 ax1_2 = ax1.twinx()
@@ -134,14 +134,14 @@ ax1_2.set_yscale('log')
 ax2_2.set_yscale('log')
 ax3_2.set_yscale('log')
 
-ax3_2.set_ylabel(r'$\langle T \rangle - T_{top}$', color='b')
-ax1_2.set_ylabel(r'$\langle T \rangle - T_{top}$', color='b')
+ax3_2.set_ylabel(r'$\langle T \rangle - T_{top}$', color='b', rotation=270, labelpad=20)
+ax1_2.set_ylabel(r'$\langle T \rangle - T_{top}$', color='b', rotation=270, labelpad=20)
 for ax in [ax1_2, ax3_2]:
     ax.spines['right'].set_color('b')
     ax.tick_params(axis='y', colors='b')
 
 
-axs_share = [(ax1_2, time1[-1] + 100), (ax2_2, time2[-1]+10), (ax3_2, time2[-1]+20)]
+axs_share = [(ax1_2, time1[-1] + 100), (ax2_2, 11410), (ax3_2, 11410)]
 for ax, t in axs_share:
     ax.set_ylim(2e-2, 5e-1)
 #    plt.axes(ax)
@@ -187,7 +187,9 @@ ax2_2.axhline(T_final + 0.5, ls='--', c='blue')
 ax1.axhline(Nu_final, ls='--', c='k')
 ax2.axhline(Nu_final, ls='--', c='k')
 
-
-
+#AE arrows
+ax1.arrow(120, 6.5e2, -19, 0, fc='k', ec='k', head_width=150, head_length=15)
+ax1.arrow(320, 1.7e0, -19, 0, fc='k', ec='k', head_width=0.4, head_length=15)
+ax1.arrow(360, 10, 0, -3.5, fc='k', ec='k', head_width=8, head_length=2.5)
 
 plt.savefig('nu_v_time.png', bbox_inches='tight', dpi=300)

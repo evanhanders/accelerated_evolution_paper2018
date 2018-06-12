@@ -8,22 +8,42 @@
 \usepackage{setspace}
 
 \begin{document}
-%----------------------------------------------------------------------------------------
-%	LETTER CONTENT
-%----------------------------------------------------------------------------------------
-\noindent
-Dear Editor,
-$\,$\newline
-
 \newenvironment{myquotation}{
 \begin{quotation}
 \itshape
 }{ 
 \end{quotation}
 }
+%----------------------------------------------------------------------------------------
+%	LETTER CONTENT
+%----------------------------------------------------------------------------------------
+\noindent
+Dear Eckart, other PRFluids editors, and anonymous referees,
+$\,$\newline
 
 \begin{singlespace}
-Short cover letter blah blah.
+We return a new draft of our manuscript, ``Accelerated evolution in
+convective simulations,'' addressing the concerns of the referee reports.
+We would like to point out a few major changes in this version of the manuscript.
+A new section, ``Computational time-savings of AE'' has been added after the
+results section and before the conclusion section. In this section, we directly
+compare the computational cost of AE and SE for select simulations and we discuss
+the computational benefits of AE.  Furthermore, the final section of our paper
+is now titled ``Discussion \& Conclusions;'' we have removed a vast amount
+of speculation regarding extensions of AE from this section and have added
+a paragraph containing some caveats regarding challenges that users will face in
+extending AE to more difficult systems.  In addition to these changes in the text,
+we have added a new Fig. 2 which compares the evolution of Nu and the
+mean temperature in AE and SE, and we have added some accompanying text for this
+figure to the results section.  Small changes in the text throughout the paper have
+been made for clarity where these changes were requested by the reports.
+
+We feel that the clarity and scientific content of the paper have been greatly
+improved by the referee reports, and we thank the referees for their honest 
+critiques and attention to detail. We hope that the changes made have clarified
+and cleaned up the areas of concern raised in both referee reports.  Below we
+include our responses to the reports. The original text of the reports is included
+in italics, and our responses follow inline in unitalicized blocks.
 
 $\,$\newline
 \noindent
@@ -35,10 +55,7 @@ Evan H. Anders, Benjamin P. Brown, \& Jeffrey S. Oishi
 
 %\end{singlespace}
 
-$\,$
-\newline
-$\,$
-\newline
+\newpage
 \noindent
 \Large{\textbf{Response to first referee:}}\newline$\,$\newline\indent
 
@@ -62,18 +79,7 @@ to the business to find some potentially time-saving help, even though
 the ideas are not original. I think the most important issue with this
 paper is that its claims of more universal applicability are somewhat
 naive. I would suggest they temper these assertions substantially.
-\end{myquotation}
-So this is the summary / takeaway paragraph. I think we need to
-in some way \emph{prove} that such a prescription can be useful in
-more complex situations. This is one of the biggest points we need to
-address from this referee report: either temper our claims or prove them.
 
-Don't bring in my special knowledge that other people don't get from
-reading the paper.
-
-Tone it down.
-
-\begin{myquotation}
 Basic questions:
 
 How confident can one be that the BVP puts you closer to a nonlinear
@@ -89,20 +95,10 @@ not be so successful perhaps? This is again a factor in my hesitation
 about the total applicability of this technique across many problems
 beyond the one the authors present.
 \end{myquotation}
-Questions: (1) how confident that it puts you closer? (2) are there multiple states?
-(1) Fairly confident. Gets you closer to the nonlinear saturated state that you are
-IN. Puts you closer to ONE. Not necessarily the one you would evolve towards. But
-initial conditions also mess with your final state.
-(2) No, it's not possible to guarantee. We have seen multiple states and
-slow evolution from one to another. When you're on a solution branch, doing AE
-generally keeps you on that same solution branch, but there's no guarantee that it's
-the same solution as you would achieve through a fully thermal evolution. We should
-say this in the discussion section, this will also help temper usefulness claims.
-
-Yeah, this is a good question. I don't know the answer to this immediately.
-I think we need to make some sort of clear distinction between ``AE works
-perfectly always'' and ``AE is better than running from initial conditions.''
-
+We are confident that the BVP puts us closer to a nonlinear saturated state
+than we were before. It is true that there may be multiple stable states, and there
+is no guarantee that the BVP puts the solution into the same stable state as
+SE. We have mentioned this in our conclusion.
 
 \begin{myquotation}
 Here are some more comments in chronological order, not order of
@@ -220,8 +216,12 @@ Does continued iteration of AE not get rid of this? If not, then this
 is significant, because it would take a thermal relaxation time again
 to correct this issue.
 \end{myquotation}
-We have added some discussion of our stopping criterion to appendix describing
-the AE method, and we have discussed this problem in our new conclusion section.
+We have added a paragraph to the ``accelerated evolution recipe'' appendix.
+In it, we discuss the fact that AE can be iteratively solved until you converge
+to a desired fractional percentage, and that we were only aiming for O(1\%) in this
+paper.  It is true that it will likely take a thermal relaxation time to evolve 
+from the 1\% off state to the true state, but that slow evolution does not
+appreciably change the dynamics.
 
 \begin{myquotation}
 I felt like I wanted a section at the end of this section that
@@ -230,10 +230,10 @@ over SE. There is a bit of it here, and some of it in the discussion,
 and some more details in the appendix, which seems a bit scattered. I
 would be tempted to agglomerate it all here in a separate section.
 \end{myquotation}
-We have added a new section V., ``Computational Benefits of AE'', to explicitly
-
-state speed increases of AE vs. SE. This section contains a small table which
-explicitly compares computational cost of select AE and SE runs in 2D and 3D.
+We have added a new section V., ``Computational Time-savings of AE.''
+We have combined the relevant information from the results section and the 
+conclusion section previously here, and we have added some information on a few
+additional runs in a new table. 
 
 \begin{myquotation}
 V.
@@ -273,13 +273,13 @@ problems in their eagerness to extol the virtues of their scheme.
 I think the claims of this method working in many more situations need
 to be examined more thoroughly before being made so boldly here.
 \end{myquotation}
-We agree that our intial conclusion section was over-eager. We have removed
-our hopeful speculation and leave future work to
-prove if AE is useful in more complex situations (fully compressible,
-penetrative convection, etc.). The discussion section now includes a discussion
-of difficulties that the AE method faces, and future work.
+We agree that our intial conclusion section was over-eager. We have 
+greatly reduced the amount of text spent on speculation surrounding
+extensions of the AE method, and have added a paragraph warning the
+reader that not all extensions will be as simple (or guaranteed to work)
+as the case studied here.
 
-
+\newpage
 \noindent
 \Large{\textbf{Response to second referee:}}\newline$\,$\newline\indent
 \begin{myquotation}
@@ -305,7 +305,7 @@ t_{\text{KH}} = \frac{E_g}{L},
 $$
 where $E_g$ is the gravitational energy in a system, and $L$ is the luminosity
 (energy output / time). Basically it is a timescale that astronomers and
-astrophysicists use to estimate the timescale thermal evolution of a system 
+astrophysicists use to estimate the timescale of thermal evolution of a system 
 (e.g., a star). Since the point we were trying to make is that ``the mean 
 thermodynamic structure of the Sun evolves \emph{really} slowly,''
 we have removed this jargon and said this more clearly in paragraph 2 of the intro.
@@ -320,12 +320,13 @@ $\,$\\\vspace{-1.25cm}
 We misspoke. We have not specifically seen hysteresis effects (nor have we seen
 this in the literature).  We meant to say that in simulations where there are
 multiple solution branches (e.g., a convective roll and a shearing solution),
-bootstrapping to different parameters will likely ensure that you stay on the 
-same solution branch, even at the higher parameters. Particularly, in our own
+bootstrapping a solution on one branch to different parameters with the same
+solution branches will result in a solution on the 
+same solution branch. Particularly, in our own
 work in stratified atmospheres, atmospheres trend toward shearing states, and then
 stay stuck in those states as we bootstrap to higher Ra.
 
-We have corrected our error, and made our meaning clearer.
+We have corrected our error and made our meaning clearer.
 
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -334,12 +335,13 @@ $\,$\\\vspace{-1.25cm}
 \item It is true that direct numerical simulation of turbulent thermal convection is expensive. However, the highest Ra simulation run by Stevens et al. reaches a stationary state in a few hundreds of free-fall times. Hence, what is the necessity of running simulations for ``thousands or millions of free-fall times''?
 \end{enumerate}
 \end{myquotation}
-The convective flows reach a statistically stationary state quickly, particularly
-in Boussinesq systems, but here we are discussing the thermal equilibration
-of systems which have some sort of thermal stratification. Even if the convective 
-flows reach a state that is relatively statistically stationary quickly, the
-temperature (and/or density) stratification of the convecting atmosphere can take
-much longer to equilibrate, especially in the high Pe regime.
+We have added a new Fig. 2 to address this question. In general, the convective
+flows and heat transport (e.g., Nu) reach their final, time-stationary mean
+value very quickly (see panels (a) and (b) of Fig. 2). However, the thermal 
+structure of the system can still be slowly evolving for long timescales
+despite the flows being relatively statistically stationary. The purpose of
+running for many, many free-fall times is to converge the thermal profile of
+the domain to ensure that the full system is in a steady state.
 
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -353,8 +355,9 @@ $\,$\\\vspace{-1.25cm}
 \end{enumerate}
 \end{enumerate}
 \end{myquotation}
+
 (a) In the simple case studied in this problem, where $F_B$ is constant in time
-and space, the functional form of $\xi \propto F_{tot}^{-1}$, and depnds only
+and space, the functional form of $\xi \propto F_{tot}^{-1}$, and depends only
 on the fluxes of the convective system. Since $F_{tot}$ can
 have a large z-dependence (e.g., Fig. 1b), $\xi$, too, has a z-dependence. 
 $\xi$ is simply a height-dependent scaling that we use to appropriately
@@ -368,7 +371,7 @@ We assume that $F_{tot} \sim F_{conv} \sim w (T - \langle T \rangle )$.
 As such, we assume that $\xi \propto (w^{-1/2}, (T - \langle T \rangle )^{-1/2})$,
 and that scaling both the temperature fields and the temperature fluctuations 
 around the mean profile will reduce the convective flux in the proper way.
-We scale $\langle \bm{u}\times\bm{\omega}\rangle$ by $\xi$, as it is
+We scale $\langle u\times \omega\rangle$ by $\xi$, as it is
 nondimensionally of order $u^2 / L$, and so if the velocities must be multiplied
 by $\sqrt{\xi}$, this term must be multiplied by $\xi$.
 
@@ -386,7 +389,7 @@ $$
 So, the imposed heat flux at the bottom is 0.
 \end{enumerate}
 \end{myquotation}
-Our boundary condition is that fluctuations in the temperature derivative at the
+Our boundary condition is that \emph{fluctuations} in the temperature derivative at the
 bottom of the domain are zero. Which is to say that 
 $\partial T_0 / \partial z = -1 =$ constant. We could increase the heat flux at
 the bottom to match the heat flux at the top, but in that case we would be solving
@@ -400,8 +403,9 @@ $\,$\\\vspace{-1.25cm}
 \item Could the authors construct plots of Nu vs. t (like in figure 2) for both AE and SE starting from t = 0? I would like to understand how Nu(t) evolves with time in the AE cases.
 \end{enumerate}
 \end{myquotation}
-Sure, we can do send the referee that plot. I don't think we should change the 
-figure as is, though.
+We have created this plot as part of a reponse to point 4. Please refer to the
+new Fig. 2 in the text.
+
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
@@ -409,14 +413,16 @@ $\,$\\\vspace{-1.25cm}
 \item I diasgree with the authors’ statement that “Previous studies in 2D convection may have avoided these time-varying Nu states by using bootstrapping techniques...” If one were to measure Nu(t) in the interior, then the sign of Nu would fluctuate between positive and negative. However, the time average would be always be positive. (This I know from my own work.)
 \end{enumerate}
 \end{myquotation}
-We have tightened up the discussion around the scaling laws, as requested by the
+The purpose of the previous Fig. 2 (now Fig. 3) was merely to show why we have
+such large error bars on Nu in our Nu v. Ra plot (Fig. 4). Our aim is to show
+the nature of the flow morphologies at times of high and low heat transport;
+the instantaneous sign of Nu (positive or negative) is not what we are trying
+to point out.
+
+We have clarified the discussion around the scaling laws, as requested by the
 other referee report. We have removed speculative statements which aimed to
 compare the scaling law of Nu found here with Nu elsewhere in order to keep
 the focus of our paper on AE rather than Nu scaling for our system setup.
-
-Fig. 2 is not aiming to point out the sign of Nu (positive vs. negative), but
-rather aiming to show the flow morphology at times of high heat transport and
-low heat transport.
 
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
