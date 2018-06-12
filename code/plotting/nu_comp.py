@@ -36,7 +36,7 @@ full_dir3 = base_dir + '/' + subdir3
 
 fig = plt.figure(figsize=(8, 4))
 gs     = gridspec.GridSpec(*(1000,1000))
-gs_info = (((30,0), 450, 1000), ((550, 0), 420, 660), ((550, 680), 420, 320) )
+gs_info = (((550,0), 420, 1000), ((30, 0), 420, 660), ((30, 680), 420, 320) )
 axs = []
 for i in range(len(gs_info)):
     axs.append(plt.subplot(gs.new_subplotspec(*gs_info[i])))
@@ -108,11 +108,11 @@ ax3.set_ylim(9e-1, 1e3)
 ax3.set_xticks([11200, 11400])
 ax3.set_xticklabels(("11200", "11400"))
 
-ax1.annotate("AE", xy=(955, 5e2))
-ax3.annotate("SE", xy=(11360, 5e2))
+ax3.annotate("(a) SE", xy=(11330, 5e2))
+ax1.annotate("(b) AE", xy=(925, 5e2))
 
-ax2.set_xlabel("Time (freefall units)")
-ax2.xaxis.set_label_coords(0.76, -0.2)
+ax1.set_xlabel("Time (freefall units)")
+#ax2.xaxis.set_label_coords(0.76, -0.2)
 ax1.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
 ax2.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
 
@@ -124,8 +124,13 @@ ax2.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
 ax1_2 = ax1.twinx()
 ax2_2 = ax2.twinx()
 ax3_2 = ax3.twinx()
-
-ax1_2.plot(time,  T+0.5,   c='b', lw=2)
+t1=76.8
+t2=278.3
+t3=360.6
+ax1_2.plot(time[time<t1],  T[time<t1]+0.5,   c='b', lw=2)
+ax1_2.plot(time[(time>=t1)*(time<t2)],  T[(time>=t1)*(time<t2)]+0.5,   c='b', lw=2)
+ax1_2.plot(time[(time>=t2)*(time<t3)],  T[(time>=t2)*(time<t3)]+0.5,   c='b', lw=2)
+ax1_2.plot(time[time>=t3],  T[time>=t3]+0.5,   c='b', lw=2)
 ax1_2.plot(time3, T3+0.5, c='b', lw=2)
 ax2_2.plot(time2, T2+0.5, c='b', lw=2)
 ax3_2.plot(time2, T2+0.5, c='b', lw=2)
@@ -191,5 +196,4 @@ ax2.axhline(Nu_final, ls='--', c='k')
 ax1.arrow(120, 6.5e2, -19, 0, fc='k', ec='k', head_width=150, head_length=15)
 ax1.arrow(320, 1.7e0, -19, 0, fc='k', ec='k', head_width=0.4, head_length=15)
 ax1.arrow(360, 10, 0, -3.5, fc='k', ec='k', head_width=8, head_length=2.5)
-
-plt.savefig('nu_v_time.png', bbox_inches='tight', dpi=300)
+plt.savefig('nu_v_time.png', bbox_inches='tight', dpi=400)
