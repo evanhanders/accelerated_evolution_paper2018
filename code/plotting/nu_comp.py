@@ -34,7 +34,7 @@ full_dir2 = base_dir + '/' + subdir2
 full_dir3 = base_dir + '/' + subdir3
 
 
-fig = plt.figure(figsize=(8, 6))
+fig = plt.figure(figsize=(8, 4))
 gs     = gridspec.GridSpec(*(1000,1000))
 gs_info = (((30,0), 450, 1000), ((550, 0), 420, 660), ((550, 680), 420, 320) )
 axs = []
@@ -103,10 +103,10 @@ ax2.set_xticks([200, 400, 600])
 
 #ax3.set_xscale('log')
 ax3.set_yscale('log')
-ax3.set_xlim(11115, 1.1435e4)
+ax3.set_xlim(11400-320, 11400)
 ax3.set_ylim(9e-1, 1e3)
-ax3.set_xticks([11235, 11435])
-ax3.set_xticklabels(("11235", "11435"))
+ax3.set_xticks([11200, 11400])
+ax3.set_xticklabels(("11200", "11400"))
 
 ax1.annotate("AE", xy=(950, 5e2))
 ax3.annotate("SE", xy=(11385, 5e2))
@@ -141,22 +141,33 @@ for ax in [ax1_2, ax3_2]:
     ax.tick_params(axis='y', colors='b')
 
 
-axs_share = [ax1_2, ax2_2, ax3_2]
-for ax in axs_share:
-    ax.set_ylim(2e-2, 1e0)
+axs_share = [(ax1_2, time1[-1] + 100), (ax2_2, time2[-1]+10), (ax3_2, time2[-1]+20)]
+for ax, t in axs_share:
+    ax.set_ylim(2e-2, 5e-1)
+#    plt.axes(ax)
+#    y_ticks = np.array([2e-2, 1e-1, 5e-1])
+#    plt.yticks(y_ticks, (r'$2\cdot 10^{-2}$', r'$10^{-2}$', r'$5\cdot 10^{-1}$'))
+    if ax == ax2_2:
+        continue
+    plt.axes(ax)
+    ax.set_yticks((1e-1,))
+    ax.set_yticklabels((r'$10^{-1}$',))
+    trans = ax.get_xaxis_transform() # x in data untis, y in axes fraction
+    ax.annotate(r'$2\cdot 10^{-2}$', xy=(t, 0.03), xycoords=trans, color='blue')
+    ax.annotate(r'$5\cdot 10^{-1}$', xy=(t, 0.94), xycoords=trans, color='blue')
 
 axs[1].spines['right'].set_visible(False)
-axs_share[1].spines['right'].set_visible(False)
+ax2_2.spines['right'].set_visible(False)
 axs[2].spines['left'].set_visible(False)
-axs_share[2].spines['left'].set_visible(False)
+ax3_2.spines['left'].set_visible(False)
 axs[2].axes.get_yaxis().set_visible(False)
-axs_share[1].axes.get_yaxis().set_visible(False)
-axs_share[2].yaxis.tick_right()
+ax2_2.axes.get_yaxis().set_visible(False)
+ax3_2.yaxis.tick_right()
 axs[2].set_yticks([])
 
 
 
-for tick in axs_share[1].get_yticklabels():
+for tick in ax2_2.get_yticklabels():
     tick.set_size(0)
 for tick in axs[2].get_yticklabels():
     tick.set_size(0)

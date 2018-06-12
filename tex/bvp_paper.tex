@@ -469,6 +469,11 @@ and is defined as
  = \frac{\angles{wT - \mathcal{P}\partial_z T}}{\angles{- \mathcal{P} \partial_z T}},
 \end{equation}
 where the volume average of a quantity, $\eta$, is shown as $\angles{\eta}$.
+The time evolution of Nu in AE and SE is compared to the mean temperature evolution
+in Fig.~\ref{fig:nu_v_time}. The mean value of Nu evolves towards its final value
+rapidly compared to the mean temperature. Thus, if Nu is the primary metric of 
+the evolved flows being measured, it is unnecessary to run for a full thermal
+time, and previous authors have taken advantage of this (CITE).
 When $S < 10^{3.67}$ in 2D and for all runs in 3D, 
 the evolved system is characterized by a time-stationary value of Nu, and is thus
 in a state of constant convective heat transport.
@@ -481,7 +486,10 @@ direction (Fig.~\ref{fig:oscillating_plumes}, Ia \& IIa, where cold elements fal
 However, when wrongly-signed temperature perturbations are entrained in an upflow or downflow
 with oppositely signed fluid, Nu is suppressed (Fig.~\ref{fig:oscillating_plumes}, Ib and IIb, 
 where warm fluid is pulled down by the downflow
-lane, and cool fluid is drawn up by the upflow lane). The plumes in these
+lane, and cool fluid is drawn up by the upflow lane). High-transport and 
+low-transport states exhibit smaller Nu fluctuations away from the 
+mean once the system reaches thermal equilibrium (Fig. \ref{fig:nu_v_time}).
+The plumes in these
 systems naturally oscillate horizontally over time, switching between transport being dominated
 by a counterclockwise cell, as pictured in Fig.~\ref{fig:oscillating_plumes}, and
 a clockwise cell. Our choice of no-slip
@@ -497,7 +505,15 @@ This time-dependent behavior of Nu is not seen strongly in our 3D solutions,
 however most 3D simulations we conducted were at low $S$ compared to the runs in
 which this behavior was observed in 2D.
 
-\begin{figure}[t!]
+\begin{figure}[b]
+\includegraphics[width=\textwidth]{./figs/nu_v_time.png}
+\caption{Here we compare the time evolution of the mean temperature and the
+Nusselt number for the 2D SE and AE run shown in Fig.~\ref{fig:time_trace}.
+\label{fig:nu_v_time} }
+\end{figure}
+
+
+\begin{figure}[t]
 \includegraphics[width=\textwidth]{./figs/oscillating_plumes.png}
 \caption{The time variation of the Nusselt number is shown for two AE cases at
 $S = 10^5$ (top) and $S = 10^7$ (bottom). On the left, the instantaneous value of Nu
@@ -514,7 +530,7 @@ for IIa\&b was chosen to better display the convective dynamics.
 \label{fig:oscillating_plumes} }
 \end{figure}
 
-\begin{figure}[b!]
+\begin{figure}[t!]
 \includegraphics[width=\textwidth]{./figs/parameter_space_comparison.png}
 \caption{Volume- and time-averaged measurements of the Nusselt number (Nu), the
 RMS Reynolds number (Re), and the mean temperature ($\angles{T}$) for AE runs are shown in (a)-(c).
@@ -670,7 +686,7 @@ of the full roll system in the -$x$ direction in the AE run than in the SE run.
 This migration does not appear to affect the vertical transport appreciably.
 
 
-\begin{figure}[t]
+\begin{figure}[b!]
 \includegraphics[width=\textwidth]{./figs/pdf_comparison.png}
 \caption{Probability distribution functions (PDFs) of (a) the vertical velocity, (b) the horizontal velocity, and (c) nonlinear
 convective transport are shown for 2D runs achieved through SE (blue) and AE (red)
@@ -689,7 +705,7 @@ show very good agreement and small values of the KS statistic.
 % SPEEDINESS OF AE vs SE
 %%%%%%%%%%%
 %%%%%%%%%%%%
-
+\newpage$\,$\newpage
 \section{Computational Benefits of AE}
 \label{sec:speedups}
 
@@ -698,38 +714,53 @@ show very good agreement and small values of the KS statistic.
 }
 \label{table:speed}
 \begin{center}
-\begin{tabularx}{\textwidth}{ X X X X }
+\begin{tabularx}{\textwidth}{ X X X X X X}
 \hline																	
 $S$	&	nz, nx, ny	&	$t_{\text{sim,AE}}/t_{\text{sim,SE}}$	&	
-$t_{\text{CPU,AE}}/t_{\text{CPU,SE}}$		\\
-\hline \hline \multicolumn{4}{c}{\vspace{-0.2cm}}\\
-\multicolumn{4}{c}{\vspace{0.1cm}2D Runs} \\
+$t_{\text{CPU,AE}}/t_{\text{CPU,SE}}$ & $t_{\text{CPU,AE}}$ & $t_{\text{CPU, SE}}$		\\
+\hline \hline \multicolumn{6}{c}{\vspace{-0.2cm}}\\
+\multicolumn{6}{c}{\vspace{0.1cm}2D Runs} \\
 \hline
-$10^1$	&	32,	64	&	2.32    & \\
 $10^2$	&	64,	128	&	0.905   & 2.03  & 4.369 &  2.152    \\
 $10^3$	&	128,256	&	0.24    & 0.387 & 20.63 &  53.25    \\
 $10^4$	&	256,512	&	0.084   & 0.15  & 180.82&  1205.25  \\
 $10^5$	&	512,1024&	0.036   & 0.115 & 2757.73& 24061.75 \\
-\\ \hline \hline \multicolumn{4}{c}{\vspace{-0.2cm}}\\
-\multicolumn{4}{c}{\vspace{0.1cm}3D Runs} \\
+\hline \hline \multicolumn{6}{c}{\vspace{-0.2cm}}\\
+\multicolumn{6}{c}{\vspace{0.1cm}3D Runs} \\
 \hline
-$10^1$	&	32,	64$\times$64	& 2.29	& 106.15/61.5\\
-$10^2$	&	64,	128$\times$128	& 0.69	& 111.92/185.35\\
-$10^3$	&	128,256$\times$256	& 0.21	& 1426.39/6985.18\\
-$10^4$	&	256,512$\times$512	& 0.068	& 23063.77/331,717\\
+$10^1$	&	32,	64$\times$64	& 2.29	& 1.73  &   106.15      &   61.5\\
+$10^2$	&	64,	128$\times$128	& 0.69	& 0.6   &   111.92      &   185.35\\
+$10^3$	&	128,256$\times$256	& 0.21	& 0.2   &   1426.39     &   6985.18\\
+$10^4$	&	256,512$\times$512	& 0.068	& 0.07  &   23063.77    &   331,717\\
 \hline																	
 \end{tabularx}
 \end{center}
 \end{table}
 
 
+The primary reason to use AE, rather than evolving all solutions through SE,
+is because of the computational timesaving of such an approach. In table 
+\ref{table:speed}, we compare simulation time and cpu-hour cost for select
+2D and 3D runs in which AE and SE solutions were compared. Times reported
+for AE and SE runs do not include the time over which measurements were taken
+in the equilibrated state, but rather represent the time required to reach a
+fully equilibrated state under the AE or SE formalism. All simulations
+were performed on Broadwell nodes on NASA's Pleiades supercomputer 
+(Intel Xeon E5-2680v4 processors). The key metric which highlights the usefulness
+of AE is the number of cpu-hours used for the AE run in units of cpu-hours used
+for the SE run ($t_{\text{CPU,AE}}/t_{\text{CPU,SE}}$). We see that at low
+resolution and low supercriticality, $t_{\text{CPU,AE}}/t_{\text{CPU,SE}} > 1$,
+and AE is not useful. However, as $S$ grows, $t_{\text{CPU,AE}}/t_{\text{CPU,SE}}$
+shrinks. At the highest supercriticalities for which AE and SE were compared
+in this work, AE runs cost roughly an order of magnitude less computing time 
+than SE runs.
+ The additional computational expense of 3D runs compared
+to 2D runs implies that 3D studies can greatly benefit from the proper implementation of AE.
 
 
-The small differences between the SE and AE solutions for the case studied in 
-Figs. \ref{fig:time_trace}, \ref{fig:temp_comparison}, \& \ref{fig:pdf_comparison},
-show the extreme power of AE.  In addition to the fact that AE runs require much
-less total simulation time (see e.g., Fig.~\ref{fig:time_trace}a\&c and the time
-values in the green highlighted regions), the first application of AE in a given
+
+While storing information about the mean state for the AE solve marginally
+decreases the rate at which our solver timesteps, the first application of AE in a given
 simulation (Fig.~\ref{fig:time_trace}c, at the arrow labeled ``1'') drastically
 increases the average timestep by immediately progressing the simulation into
 a more converged state. For the $S = 10^5$ case we examined in detail, the
@@ -737,9 +768,6 @@ average time step grew by a factor of 2-3 due to the decreased convective
 velocities from the transient state to the evolved state. 
 At $S = 10^7$, the AE solve immediately improved the timestep size 
 by nearly a factor of 4.
-Thus, AE achieves converged solutions in few simulation time units,
-while also taking less real world time per simulation time unit, when compared
-to the slowly converging SE state at the same simulation time.
 
 
 
@@ -764,42 +792,9 @@ As discussed, AE is equally applicable in 2D and 3D; here we have restricted mos
 to extend our parameter space coverage.
 At the largest values of $S$ in which AE and SE are compared in this work, we find
 time savings of nearly an order of magnitude. 
-For example, in 2D and at $S = 10^5$, the
-AE run took 10.78 wall hours on 256 cores ($2.8\cdot 10^3$ cpu-hours) while the 
-SE run took 94 wall hours ($2.4\cdot 10^4$ cpu-hours). In 3D and at $S = 10^4$,
-the AE run took 2.81 wall hours on 8192 cores ($2.3 \cdot 10^4$ cpu-hours),
-while the SE run took 37.9 wall hours, or ($3.1 \cdot 10^5$ cpu-hours). As $S$ increases,
-and the thermal time, $t_{\kappa}$, simultaneously increases, we anticipate the 
-computational and wall hour time
-savings to further increase.  The additional computational expense of 3D runs compared
-to 2D runs implies that 3D studies can greatly benefit from the proper implementation of AE.
 
-Here we studied \RB convection with mixed thermal boundary
-conditions as a test case for the AE method. There are many axes of complexity
-which are beyond the scope of this work, but into which future work should explore
-the correctness of AE. For example, the efficacy of AE at higher aspect ratios
-where multiple stable solution branches exist at a given value of Ra should be
-examined in order to determine if AE and SE obtain the same solution. 
-
-Some assumptions which inform the AE solution, for example that the convection
-intially occupies the same space as the evolved convection, are large. It is
-unclear if such an assumption would hold in more complex studies, such as those
-of penetrative convection. However, techniques similar to AE have long been used
-in such studies \cite{hurlburt&all1986}, so the careful testing of such a 
-technique in domains with paired stable-unstable layers is key.
-
-While over short timescales the AE method does not perfectly achieve the same
-thermodynamic profile as the SE method (see e.g., the offset between the PDFs
-in Fig.~\ref{fig:temp_comparison}b), the AE solution is \emph{close} to the SE
-solution, and is achievable on dynamical timescales, which are computationally
-tractable at high Ra, while thermal timescales (SE) are intractable. Thus,
-while the AE solution is still evolving towards the SE solution over long thermal
-timescales, the change in the structure over time is small 
-(O(0.5\%), Fig.~\ref{fig:temp_comparison}c), and the dynamics of the AE solution 
-and SE solution, which are often the most interesting part of a 
-convective simulation to measure, are not massively different (e.g., 
-Fig.~\ref{fig:parameter_space_comparison}d-f).
-
+Here we studied the simplest possible case for the application of AE:
+\RB convection at low aspect ratio with mixed thermal boundary. 
 We anticipate that
 this technique will be powerful in its extensions to more complicated studies.
 To achieve AE in more complicated systems, one need only derive 
@@ -809,21 +804,43 @@ the convective dynamics
 and couple those equations with knowledge of the boundary conditions
 and current dynamics as described in
 section \ref{sec:ae} and appendix \ref{appendix:recipe}.
-While in-depth studies of AE extensions are beyond the 
-scope of this paper, we will briefly discuss
-avenues in which AE should be explored and tested in order
-to push interesting studies of various convective phenomena into
-the astrophysically-interesting, high-Ra regime.
+In general, AE should be useful in studies where there are two disparate
+timescales which must both be resolved and which cannot be overcome through
+clever timestepping techniques.  Some avenues in which extensions of AE could
+be beneficial for expanding the available parameter space of exploration
+include studies of internally heated convection \cite{goluskin2016},
+convection with height-dependent conductivities \cite{kapyla&all2017},
+penetrative convection \cite{hurlburt&all1986,brandenburg&all2005,couston&all2017},
+or fully compressible, stratified convection \cite{anders&brown2017}.
 
+We conclude by noting that AE should be extended to these more complicated
+studies with care. 
+While AE was extremely effective in this simple case studied here
+(where the aspect ratio was low, 
+the bounds of the convective domain were pre-defined,
+and the solutions were simple rolls),
+this may not be the case for more complicated systems. For example, at
+higher aspect ratios, multiple stable solution branches of various numbers of
+convective rolls may exist, and there is no guarantee that AE and SE will
+arrive at the same solution. 
+Some assumptions which inform the AE solution, such as the assumption
+that the convection
+intially occupies the same space as the evolved convection, may not hold in
+studies of penetrative convection, despite the fact that similar methods have
+long been used in those studies \cite{hurlburt&all1986}.
+Our work here should serve as a basis for determining if AE techniques are
+valid and effective in more complex studies of convection.
 
 \begin{acknowledgments}
+We thank the two anonymous referees whose careful comments greatly 
+improved the clarity and scientific content of this paper.
 EHA acknowledges the support of the University of Colorado's George 
 Ellery Hale Graduate Student Fellowship.
 This work was additionally supported by  NASA LWS grant number NNX16AC92G.  
 Computations were conducted 
-with support by the NASA High End Computing (HEC) Program through the NASA 
+with the support of the NASA High End Computing (HEC) Program through the NASA 
 Advanced Supercomputing (NAS) Division at Ames Research Center on Pleiades
-with allocations GID s1647 and GID g26133.
+with allocation GID s1647.
 \end{acknowledgments}
 
 
@@ -941,6 +958,19 @@ part because a third BVP generally did not greatly alter the solution
 (as in Fig.~\ref{fig:time_trace}c, arrow 3). We wait 50 freefall times after
 the final AE BVP solve of each run before beginning to take measurements.
 
+In general, the user of the AE method should choose some threshold
+fractional change of the mean temperature profile, $f$, such that once
+an AE solution differs from the DNS mean profile by less than $f$, the simulation
+is considered converged and the iterative AE adjustments may be stopped. In
+other words, once
+\begin{equation}
+\frac{|\angles{T}_{\text{DNS}} - \angles{T}_{\text{AE}}|}{|\angles{T}_{\text{DNS}}|} < f,
+\end{equation}
+the solution is converged. In this work, we chose our number of AE iterations
+such that $f \approx 10^{-2}$, except at $S = 10^7$, where we stopped after one AE
+iteration due to higher computational expense. In general, the user of AE could
+set $f$ smaller, and in doing so reduce the separation between the AE and SE
+solutions, which can be seen in e.g., Fig.~\ref{fig:temp_comparison}.
 
 
 
