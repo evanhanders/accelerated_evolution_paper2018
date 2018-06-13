@@ -95,17 +95,15 @@ would have been impossible a decade ago are now widely accessible.
 
 Unfortunately, astrophysical convective systems are stiff in more than one 
 timescale. Specifically, the Peclet number (Pe), the ratio of the thermal
-diffusion timescale to the advective velocity timescale, is large.
-This further stiffness arises as a result of the thermodynamic structure 
-evolving over the course of thermal timescales which are much larger than
-the relevant dynamical advective
-timescales. In order to reach thermal equilibration, a steady state in which
-the thermal structure of the atmosphere is no longer evolving over time,
-many dynamical timescales must be simulated.
-Transport by convection is a highly nonlinear process,
-and this makes addressing the stiffness much more challenging; even fully
-implicit  methods remain bound by the nonlinear flow timescales
+diffusion timescale to the convective velocity timescale, is large.
+In a high Pe system, many convective dynamical timescales must pass before 
+the domain reaches thermal equilibrium, a steady state in which
+evolution of the thermal structure of the convective region has ceased.
+Fully implicit methods cannot be used to address the stiffness resulting from
+the discrepancy between convective and thermal timescales; convective flows are
+highly nonlinear, and implicit methods are bound by the nonlinear flow timescales
 \cite{viallet&all2011, viallet&all2013, viallet&all2016}. 
+
 Resolving dynamics in atmospheres which are sufficiently
 thermally equilibrated remains a challenging problem.
 Solar convection is a prime example of this phenomenon, as
@@ -181,7 +179,10 @@ In section \ref{sec:experiment}, we describe our convective simulations and
 numerical methods. In section \ref{sec:ae}, we describe the procedure for 
 achieving accelerated evolution. In
 section \ref{sec:results}, we compare accelerated evolution solutions
-to solutions obtained from standard evolution through a full thermal diffusion timescale. Finally,
+to solutions obtained from standard evolution through a full thermal diffusion timescale. 
+In section \ref{sec:speedups}, we compare the numerical cost of accelerated
+solutions to solutions that are evolved through a thermal diffusion timescale.
+Finally,
 in section \ref{sec:extensions}, we offer concluding remarks and
 discuss extensions of the methods presented here.
 
@@ -271,10 +272,11 @@ In 2D simulations, we set $v = \partial_y = 0$.
 We specify no-slip, impenetrable boundary conditions at both the top and
 bottom boundary,
 \begin{equation}
-u = v = w = 0 \, \, \text{at}\,\,z = \pm 0,1,
+u = v = w = 0 \, \, \text{at}\,\,z = 0,1.
 \label{eqn:vel_bcs}
 \end{equation}
-and we use mixed thermal boundary conditions, such that
+The temperature is fixed at the top boundary, and the flux is fixed at the
+bottom boundary, such that
 \begin{equation}
 T_1 = 0 \,\,\text{at}\,\, z=1, \qquad
 \frac{\partial T_1}{\partial z} = 0\,\,\text{at}\,\,z=0.
@@ -345,8 +347,9 @@ at the same parameters. The same linear growth phase occurs, but shortly after
 the peak of convective transient we accelerate the convergence of the atmosphere
 through the process which we describe below. We adjust the 1D vertical profile of
 the atmosphere three times, as denoted by the three labeled
-arrows in the graph numbered 1-3.  After the third profile adjustment, we find that
-the atmosphere is nearly in its converged state and we begin to sample the evolved
+arrows in the graph numbered 1-3.  The third profile adjustment associated with
+arrow 3 is small enough (see appendix \ref{appendix:recipe}) that we assume
+the atmosphere is sufficiently converged, and we begin to sample the evolved
 convective dynamics.
 
 The horizontally averaged profiles of the vertical conductive flux, 
@@ -367,7 +370,7 @@ evolution is slow in SE (Fig.~\ref{fig:time_trace}a), but AE (Fig.~\ref{fig:time
 can rapidly advance a system whose fluxes are in a strongly disequilibrium state (Fig.~\ref{fig:time_trace}b),
 into a near-equilibrium state, as shown in Fig.~\ref{fig:time_trace}d. In
 this final state both boundaries conduct the same amount of flux.
-The converged state achieved through AE is at most 5\% different from the SE solution, 
+The converged fluxes achieved through AE is at most 5\% different from the SE solution, 
 as shown in Fig.~\ref{fig:time_trace}e. 
 This is a very small difference considering the short timescales on which convergence
 is reached and the strongly disequilibrium state used to inform the AE process.
@@ -386,8 +389,9 @@ are shown in (d). The difference between
 the fluxes in the AE and SE solutions is shown in (e). \label{fig:time_trace} }
 \end{figure}
 
-In order to adjust the temperature profle to achieve AE, we calculate the total flux,
+In order to adjust the temperature profile to achieve AE, we calculate the total flux,
 F$_{\text{tot}} =$ F$_{\text{E}}$ + F$_{\kappa}$, and then derive the profiles
+\vspace{-0.5cm}
 \begin{equation}
 f_{\text{E}}(z) = \frac{\text{F}_{\text{E}}}{\text{F}_{\text{tot}}},\qquad
 f_{\kappa}(z) = \frac{\text{F}_{\kappa}}{\text{F}_{\text{tot}}},
@@ -402,18 +406,24 @@ convection, and thus that the extent of the early thermal boundary layers
 will not change significantly over the course of the atmosphere's evolution.
 Under this assumption, in order to reach the converged state, 
 the flux through the atmosphere must be decreased by some amount,
+\vspace{-0.5cm}
 \begin{equation}
 \xi(z,t) \equiv \frac{\text{F}_{\text{B}}}{\text{F}_{\text{tot}}},
 \label{eqn:xi}
 \end{equation}
 where $\text{F}_{\text{B}} = \mathcal{P}$ is the amount of flux that enters the
-bottom of the atmosphere. $\xi$ is a general depth-dependent scaling factor which
+atmosphere at the bottom, fixed-flux boundary.
+$\xi$ is a general depth-dependent scaling factor which
 tells us roughly how much larger F$_\text{E}$ is in the interior than it should
-be in the thermally equilibrated state.
+be in the thermally equilibrated state (e.g., in Fig.~\ref{fig:time_trace}b,
+F$_{\text{tot}} \sim$ F$_{\text{E}} \sim 15\mathcal{P}$ just below the upper boundary layer, 
+but in the equilibrated state 
+it should just be $\mathcal{P}$, so $\xi \sim 1/15$ at that depth).
 
 In a time-stationary state, the horizontal- and time-average of
 Eqns.~(\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}), neglecting terms which
 vanish due to symmetry, are
+\vspace{-0.5cm}
 \begin{gather}
 \frac{\partial}{\partial z}\angles{\varpi}_{x,y} - \angles{T_1}_{x,y}\hat{z} = \angles{\bm{u}\times\bm{\omega}}_{x,y, \text{ ev}},
 	\label{eqn:bouss_BVP_momentum}
@@ -437,15 +447,19 @@ $\text{F}_{\text{B}}$ would not be precisely known \emph{a priori}.
 
 Thus, the AE method occurs in the following steps. First, we pause a convective simulation and
 construct $\xi(z)$ from measured flux profiles in the convective domain.
-We solve a 1D boundary value problem consisting of
+We solve a 1D boundary value problem (BVP) consisting of
 Eqns.~(\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy})
 to obtain an evolved thermodynamic profile, and its corresponding conductive flux.
+As the AE BVP solve only adjusts $\angles{T}$ and $\angles{\varpi}$, we must
+also appropriately adjust the temperature perturbations around the mean and the
+convective velocity flows, or else F$_{\text{E}}$ would be left unchanged, and
+would still be in a strongly disequilibrium state (e.g., Fig.~\ref{fig:time_trace}b).
 To consistently modify the convective enthalpy flux, we multiply both the velocity field,
 $\bm{u}$, and the temperature perturbations around the mean profile, $T - \angles{T}_{x,y}$,
 by $\sqrt{\xi}$; this diminishes the magnitude of these perturbations, and the
 flux they carry, appropriately. This scaling of variables with $\sqrt{\xi}$ is also
 the reason that we multiply $\angles{\bm{u}\times\bm{\omega}}_{x, y}$ by $\xi$
-before solving for the evolved temperature profile.
+to construct $\angles{\bm{u}\times\bm{\omega}}_{x, y\text{, ev}}$.
 After adjusing the fields of a simulation in this manner, we continue timestepping forward.
 For specifics on the precise implementation of the AE method, we refer
 the reader to appendix \ref{appendix:recipe}.
