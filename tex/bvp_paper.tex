@@ -474,21 +474,16 @@ the reader to appendix \ref{appendix:recipe}.
 \label{sec:results}
 
 
-\begin{figure}[t]
+\begin{figure}[b]
 \includegraphics[width=\textwidth]{./figs/nu_v_time.png}
-\caption{Here we compare the time evolution of the mean temperature and the
-Nusselt number in SE (a) and AE (b) for the simulations shown in 
-Fig.~\ref{fig:time_trace}. The mean value of Nu (black) is shown vs. time in both
-panels, and a centered boxcar moving average with a span of 50 freefall time
-units is overplotted as a thick, dashed line.  The mean value of the temperature
-(blue) is overplotted. We see that the mean value of Nu rapidly approaches its
-mean equilibrium value (plotted as a dashed horizontal black line), signifying
-that the convective motions roughly reach a statistically stationary state quickly
-compared to the temperature profile, which takes much longer to trend towards its
-equilibrium value. Regardless, we see that the fluctuations of Nu about the mean
-value are much smaller in the final equilibrated state than in the early state
-which is not in thermal equilibrium, and that the post-AE flows capture this
-proper Nu amplitude variation.
+\caption{The time evolution of Nu (black) and $\angles{T} - T_{\text{top}}$ (blue)
+are shown for simulations at $S = 10^5$ in SE (a) and AE (b).
+A moving average of Nu, using a centered boxcar with a span of 50 freefall time
+units, is overplotted as a thick, dashed line. 
+We see that the mean value of Nu reaches its equilibrium value quickly
+compared to $\angles{T}$.
+Regardless, fluctuations of Nu about the mean
+value are much smaller in the thermally equilibrated state.
 The times at which AE solves occur are denoted by arrows in (b),
 and the grey boxed region is examined in more detail in Fig. \ref{fig:oscillating_plumes}.
 \label{fig:nu_v_time} }
@@ -512,33 +507,38 @@ and is defined as
 \end{equation}
 where the volume average of a quantity, $\eta$, is shown as $\angles{\eta}$.
 The time evolution of Nu in AE and SE is compared to the mean temperature evolution
-in Fig.~\ref{fig:nu_v_time}. The mean value of Nu evolves towards its final value
-rapidly compared to the mean temperature, as shown by the thick, dashed moving
-average.  As a result, if one is primarily measuring the mean value of Nu in
-a convective system, a full SE run through $t_\kappa$ or the AE procedure may not
-be necessary (e.g., \cite{stevens&all2010}). 
-Regardless, the variations around the mean value in Nu do change significantly
-over the course of thermal equilibration (Fig.~\ref{fig:nu_v_time}a). At early
-times, variations in Nu about the mean are much larger than they are at later times,
-and the use of AE seems to progress the fluctuations in Nu about the mean to
-a state which is consistent with the equilibrated SE fluctuations.
+in Fig.~\ref{fig:nu_v_time}. In Fig.~\ref{fig:nu_v_time}a, we show the evolution
+of the SE run at $S = 10^5$. The black trace shows the instantaneous value of
+Nu, and the overplotted thick dashed line shows a moving time average of Nu. The
+time average is taken using a center boxcar window whose width is 50 $t_{\text{ff}}$.
+The mean value of Nu evolves towards its final value (shown in the horizontal
+dashed black line) rapidly compared to the mean system temperature (shown in
+blue), which approaches its evolved state (horizontal dashed blue line) slowly.
+As such, it is possible to measure the statistically stationary mean value of
+Nu after a few hundred freefall times, 
+as has been done previously \cite{stevens&all2010}. However, the fluctuations
+around the mean value are larger at early times when the system is not thermally
+equilibrated. In Fig.~\ref{fig:nu_v_time}b, we show the AE traces of Nu and mean
+temperature at $S = 10^5$. The times at which AE solves are completed are marked
+by arrows. Nu reaches its evolved mean value slightly more rapidly than in the SE case,
+but the early, large fluctuations away from the mean that we see in the SE
+case are not observed after the AE solves.
 
 When $S < 10^{3.67}$ in 2D and for all runs in 3D, 
 the evolved system is characterized by a time-stationary value of Nu, and is thus
 in a state of constant convective heat transport.
 At larger $S$ in 2D, the value of Nu varies significantly over time even in the
-equilibrated state,
-as shown by the time traces for $S = 10^5$ (top, left) and $S = 10^7$ (bottom, left) for two
-AE runs in Fig.~\ref{fig:oscillating_plumes}. We find that these systems exhibit
+equilibrated state (as seen in Fig.~\ref{fig:nu_v_time}). We examine the shaded
+region of Fig.~\ref{fig:nu_v_time}b in more detail in the top left
+panel of Fig.~\ref{fig:oscillating_plumes}, as well as a comparable time trace
+at $S = 10^7$ (bottom, left). We find that these systems exhibit
 large Nu during
 states in which temperature fluctuations travel in their natural buoyant
 direction (Fig.~\ref{fig:oscillating_plumes}, Ia \& IIa, where cold elements fall and hot elements rise).
 However, when wrongly-signed temperature perturbations are entrained in an upflow or downflow
 with oppositely signed fluid, Nu is suppressed (Fig.~\ref{fig:oscillating_plumes}, Ib and IIb, 
 where warm fluid is pulled down by the downflow
-lane, and cool fluid is drawn up by the upflow lane). High-transport and 
-low-transport states exhibit smaller Nu fluctuations away from the 
-mean once the system reaches thermal equilibrium (Fig. \ref{fig:nu_v_time}).
+lane, and cool fluid is drawn up by the upflow lane).
 The plumes in these
 systems naturally oscillate horizontally over time, switching between transport being dominated
 by a counterclockwise cell, as pictured in Fig.~\ref{fig:oscillating_plumes}, and
@@ -630,13 +630,14 @@ reported in Fig.~\ref{fig:parameter_space_comparison}a-c is nearly identical to 
 2D simulations. Errors between AE and SE solutions in 3D fall within the same range as
 errors in 2D in Fig.~\ref{fig:parameter_space_comparison}d-f. AE is therefore
 equally effective in both 2D and 3D, and we restrict much of our study to 2D here
-in order to more thoroughly sample paramtere space.
+in order to more thoroughly sample parameter space.
 
 The measurements presented in Fig.~\ref{fig:parameter_space_comparison} demonstrate
 that AE can be powerfully employed in parameter space studies in which
 large numbers of simulations are compared in a volume-averaged sense.  We now turn
 our examination to a more direct comparison of AE and SE for 2D convection at
-$S = 10^5$, the time and flux evolution of which was shown in Fig.~\ref{fig:time_trace}.
+$S = 10^5$, the time, flux, and Nu evolution of which was shown in 
+Figs.~\ref{fig:time_trace}, \ref{fig:nu_v_time}, \& \ref{fig:oscillating_plumes}.
 All comparisons that follow for these two runs occur over the times shaded in
 green in Fig.~\ref{fig:time_trace}a\&c. Measurements are sampled every
 0.1 freefall time units for 500 total freefall time units.
@@ -682,7 +683,7 @@ is evident in the asymmetry of the AE PDF near the maxima
 in Fig.~\ref{fig:temp_comparison}b and also
 the trend of the mean temperature over time in Fig.~\ref{fig:time_trace}c.
 
-One means of comparing two
+One method of comparing two
 PDFs to determine if they are drawn from the same underlying
 sample distribution is through the use of a Kolmogorov-Smirnov (KS) test \cite{wall&jenkins2012}.
 We calculate the KS statistic for a PDF of some value, $q$, as
@@ -706,7 +707,9 @@ Fortunately, $\KS{T}$ is very small away from the maxima,
 indicating that the temperature fluctuations off of the maxima, which are the primary
 drivers of convective transport, are nearly identical.
 
-In addition to comparing the thermodynamic state achieved by the SE and AE methods,
+In addition to adjusting the 1D thermal profile, the AE method also scales the
+simulations velocities and temperature fluctuations by $\sqrt{\xi}$. 
+In Fig.~\ref{fig:pdf_comparison}
 we examine the velocities and heat transport found in the evolved states.
 Shown are the PDFs of 
 vertical velocity ($w$, Fig.~\ref{fig:pdf_comparison}a), horizontal velocity ($u$, Fig. \ref{fig:pdf_comparison}b),
@@ -720,7 +723,7 @@ and $\KSstat{w(T - \angles{T}_{x,y})} = 0.0263$.
 The difference in vertical velocity
 and heat transport between AE and SE is negligible, which is unsurprising in light of
 the Nu measurements of Fig.~\ref{fig:parameter_space_comparison}a\&d.
-this also confirms that the large $\KSstat{T}$ in Fig.~\ref{fig:temp_comparison}d is
+This also confirms that the large $\KSstat{T}$ in Fig.~\ref{fig:temp_comparison}d is
 not of concern, and that the AE run achieves the proper convective solution.
 The horizontal velocity shows some small deviation between the two simulations, and this
 likely relates to the precise configuration of the convective plumes (e.g., Fig.~\ref{fig:oscillating_plumes}).
@@ -754,12 +757,12 @@ show very good agreement and small values of the KS statistic.
 \label{sec:speedups}
 
 \begin{table}
-\caption{We provide details regarding the computational cost of select
-AE and SE runs in 2D and 3D. For each run, we quote the supercriticality
-($S$), the coefficient resolution (nz, nx, ny), the number of CPUs used
-to perform the calculation ($N_{\text{CPU}}$), the number of CPU-hours
-used to perform the run ($t_{\text{CPU,AE/SE}}$), and the ratio of CPU-hours
-used in the AE run compared to the SE run.
+\caption{Shown are details regarding the computational cost of select
+AE and SE runs in 2D and 3D. The supercriticality
+($S$), coefficient resolution (nz, nx, ny), number of CPUs used
+to perform the calculation ($N_{\text{CPU}}$), number of CPU-hours
+used to perform the run ($t_{\text{CPU,AE/SE}}$), and ratio of CPU-hours
+used in the AE run compared to the SE run are provided.
 }
 \label{table:speed}
 \begin{center}

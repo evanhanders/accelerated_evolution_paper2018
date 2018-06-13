@@ -113,8 +113,10 @@ ax1.annotate("(b) AE", xy=(925, 5e2))
 
 ax1.set_xlabel("Time (freefall units)")
 #ax2.xaxis.set_label_coords(0.76, -0.2)
-ax1.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
-ax2.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
+#ax1.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
+#ax2.set_ylabel(r"$\langle$"+"Nu"+r"$\rangle$")
+ax1.set_ylabel("Nu")
+ax2.set_ylabel("Nu")
 
 #ax1.axvline(77 , c='k', ls='--')
 #ax1.axvline(278, c='k', ls='--')
