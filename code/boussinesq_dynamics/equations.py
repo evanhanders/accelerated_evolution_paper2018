@@ -378,7 +378,7 @@ class BoussinesqEquations(Equations):
             self.problem.add_bc("right(p) = 0", condition="(nx == 0) and (ny == 0)")
             self.problem.add_bc("right(w) = 0", condition="(nx != 0) or  (ny != 0)")
         else:
-            self.problem.add_bc("right(p) = 0")
+            self.problem.add_bc("right(w) = 0")
         self.dirichlet_set.append('w')
         
     def set_IC(self, solver, A0=1e-6, **kwargs):
@@ -595,7 +595,6 @@ class BoussinesqEquations3D(BoussinesqEquations):
             w_z  - z-derivative of w
         """
         super(BoussinesqEquations3D, self).__init__(*args, dimensions=dimensions, **kwargs)
-#        self.variables=['T1','T1_z','p','u','v', 'w','u_z', 'v_z', 'w_z']
         self.variables=['T1','T1_z','p','u','v', 'w','Ox', 'Oy', 'Oz']
 
 
@@ -624,7 +623,6 @@ class BoussinesqEquations3D(BoussinesqEquations):
         self.problem.substitutions['UdotGrad(A, A_z)'] = '(u * dx(A) + v * dy(A) + w * A_z)'
         self.problem.substitutions['Lap(A, A_z)'] = '(dx(dx(A)) + dy(dy(A)) + dz(A_z))'
 
-#        self.problem.substitutions['Oy']          = '(dz(u) - dx(w))'
         self.problem.substitutions['v_fluc'] = '(v - plane_avg(v))'
         super(BoussinesqEquations3D, self)._set_subs()
 
@@ -681,26 +679,6 @@ class BoussinesqEquations3D(BoussinesqEquations):
         self._set_parameters(Rayleigh, Prandtl)
         self._set_subs()
 
-
-        # 3D Boussinesq hydrodynamics
-#        logger.debug('Adding Eqn: Incompressibility constraint')
-#        self.problem.add_equation("dx(u) + dy(v) + w_z = 0")
-#        logger.debug('Adding Eqn: Energy')
-#        self.problem.add_equation("dt(T1) - P*Lap(T1, T1_z) + w*T0_z   = -UdotGrad(T1, T1_z)")
-#        logger.debug('Adding Eqn: Momentum, x')
-#        self.problem.add_equation("dt(u)  - R*Lap(u, u_z) + dx(p)       =  -UdotGrad(u, u_z) ")
-#        logger.debug('Adding Eqn: Momentum, x')
-#        self.problem.add_equation("dt(v)  - R*Lap(v, v_z) + dy(p)       =  -UdotGrad(v, v_z) ")
-#        logger.debug('Adding Eqn: Momentum, z')
-#        self.problem.add_equation("dt(w)  - R*Lap(w, w_z) + dz(p) - T1  =  -UdotGrad(w, w_z) ")
-#        logger.debug('Adding Eqn: T1_z defn')
-#        self.problem.add_equation("T1_z - dz(T1) = 0")
-#        logger.debug('Adding Eqn: u_z defn')
-#        self.problem.add_equation("u_z  - dz(u) = 0")
-#        logger.debug('Adding Eqn: v_z defn')
-#        self.problem.add_equation("v_z  - dz(v) = 0")
-#        logger.debug('Adding Eqn: w_z defn')
-#        self.problem.add_equation("w_z  - dz(w) = 0")
 
         logger.debug('Adding Eqn: Incompressibility constraint')
         self.problem.add_equation("dx(u) + dy(v) + dz(w) = 0")
