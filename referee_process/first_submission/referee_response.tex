@@ -31,25 +31,27 @@ compare the computational cost of AE and SE for select simulations and we discus
 the computational benefits of AE.  Furthermore, the final section of our paper
 is now titled ``Discussion \& Conclusions;'' we have removed a vast amount
 of speculation regarding extensions of AE from this section and have added
-a paragraph containing some caveats regarding challenges that users will face in
-extending AE to more difficult systems.  In addition to these changes in the text,
-we have added a new Fig. 2 which compares the evolution of Nu and the
-mean temperature in AE and SE, and we have added some accompanying text for this
-figure to the results section.  Small changes in the text throughout the paper have
-been made for clarity where these changes were requested by the reports.
+a brief paragraph containing some caveats regarding challenges that users will face in
+extending AE to more complex systems.  In addition to these changes in the text,
+we have added a new Fig. 2 which compares the evolution of Nu vs time to the
+evolution of the
+mean temperature vs. time in AE and SE, 
+and we have added some accompanying text to the results section for this
+figure.  Small changes in the text throughout the paper have
+been made where these changes were requested by the reports.
 
 We feel that the clarity and scientific content of the paper have been greatly
 improved by the referee reports, and we thank the referees for their honest 
-critiques and attention to detail. We hope that the changes made have clarified
-and cleaned up the areas of concern raised in both referee reports.  Below we
-include our responses to the reports. The original text of the reports is included
+critiques and attention to detail. We hope that the changes made have
+cleaned up the areas of concern raised in both referee reports.  Below we
+include our responses to the reports; the original text of the reports is included
 in italics, and our responses follow inline in unitalicized blocks.
 
 $\,$\newline
 \noindent
 Sincerely,
 
-Evan H. Anders, Benjamin P. Brown, \& Jeffrey S. Oishi
+Evan H. Anders, Benjamin P. Brown, and Jeffrey S. Oishi
 
 
 
@@ -96,10 +98,12 @@ about the total applicability of this technique across many problems
 beyond the one the authors present.
 \end{myquotation}
 All of the statistical tests that we have performed in this work point towards
-the evolved AE solution and SE solution being consistent.
-It is true that there may be multiple stable states, and there
-is no guarantee that the BVP puts the solution into the same stable state as
-SE. We have included this caveat in our final discussion section.
+the evolved AE solution and SE solution being consistent for the simple problem
+studied here.
+It is true that convective systems may have multiple stable states, and there
+is no guarantee that the AE BVP puts the solution into the same stable state as an
+SE evolution. We have included this caveat in the final paragraph of the paper's
+Discussions \& Conclusions section.
  
 \begin{myquotation}
 Here are some more comments in chronological order, not order of
@@ -133,8 +137,8 @@ when both the thermal profile and the flux through the domain are
 fixed at a boundary'' is never revisited or explained, unless I missed
 it?
 \end{myquotation}
-We have clarified this in the second to last pargraph of section III 
-(and added a forward reference to this part of the text). 
+We have clarified this in the second to last pargraph of section III,
+and added a forward reference to section III by this quoted sentence. 
 
 \begin{myquotation}
 Section III.
@@ -157,7 +161,7 @@ horizontal where the mean field equations contain some other terms?
 \end{myquotation}
 We are fairly confident that this prescription will work for more complex
 initial temperature profiles ($\text{F}_{\text{B}}$ will need to pick up some
-height dependence in the defintion of $\chi$, for simple internally heated
+height dependence in the defintion of $\xi$ for simple internally heated
 systems, for example). It would be useful to test AE in such a case, but such
 studies are beyond the scope of this work, and we leave it to future work
 to determine if this method is valid in such cases.   
@@ -198,7 +202,7 @@ sufficient to make the point about the AE scheme.
 \end{myquotation}
 We feel that it is important to show that AE works across some swath of parameter
 space, in order to demonstrate its robustness for the problem presented here.
-We have trimmed the text of the scaling laws section and reduced speculation in
+We have trimmed the text of the scaling laws section in
 order to keep the paper on topic. We have also replaced Re with Pe in this
 section in order to reinforce the point that we are interested in high Pe
 convection (since Pr = 1, Re = Pe numerically, so only labels have changed).
@@ -222,7 +226,7 @@ In it, we discuss the fact that AE can be iteratively solved until you converge
 to a desired criterion, and that we were only aiming for O(1\%) in this
 paper. With a smaller convergence criterion, the user
 could get closer to the evolved SE solution, decreasing the separation
-between the temperature PDFs seen in what is now Fig. 5. 
+between the temperature PDFs seen in Fig. 5 (previously Fig. 4). 
 However, smaller convergence criteria
 come with significant computational cost (the horizontal averages must be
 better converged, and likely more iterative solves must be performed). 
@@ -277,8 +281,8 @@ problems in their eagerness to extol the virtues of their scheme.
 I think the claims of this method working in many more situations need
 to be examined more thoroughly before being made so boldly here.
 \end{myquotation}
-%contained too much speculation.
-We agree that our intial conclusion section was over-eager. We have 
+We agree that our intial conclusion section contained too much speculation.
+We have 
 greatly reduced the amount of text spent on speculation surrounding
 extensions of the AE method, and have added a paragraph warning the
 reader that not all extensions will be as simple (or guaranteed to work)
@@ -342,7 +346,7 @@ We have added a new Fig. 2 to address this question. In general, we find that
 the heat transport reaches its final, time-stationary mean
 value very quickly (see panels (a) and (b) of Fig. 2). However, the thermal 
 structure, kinetic energy, and fluctuations of heat transport away from the mean
-can still slowly evolve for long timescales
+can still slowly evolve over long timescales
 despite the flows being relatively statistically stationary. The purpose of
 running for many, many free-fall times is to converge the thermal profile of
 the domain to ensure that the full system is in a steady state.
@@ -372,12 +376,14 @@ adjust our velocity, temperature, etc.
 (c) Physically, $\xi$ is a scaling factor that tells us how much larger the flux
 is in the interior than it should be. 
 We assume that $F_{tot} \sim F_{conv} \sim w (T - \langle T \rangle )$.
-As such, we assume that $\xi \propto (w^{-1/2}, (T - \langle T \rangle )^{-1/2})$,
-and that scaling both the temperature fields and the temperature fluctuations 
-around the mean profile will reduce the convective flux in the proper way.
+As such, if we must scale $F_{tot}$ by a factor of $\xi$, we are equivalently
+scaling
+$\bm{u}$ and $T - \langle T\rangle$ by $\sqrt{\xi}$ to reduce the convective flux.
 We scale $\langle u\times \omega\rangle$ by $\xi$, as it is
 nondimensionally of order $u^2 / L$, and so if the velocities must be multiplied
-by $\sqrt{\xi}$, this term must be multiplied by $\xi$.
+by $\sqrt{\xi}$, this term must be multiplied by $\xi$. We have added a short
+paragraph before Eqns (12) and (13), as well as some text shortly after those
+equations, containing this information.
 
 We cannot rigorously derive $\xi$ from first principles. Its form, and the use of
 it here, are the result of our experience and familiarity with convection. 
@@ -435,7 +441,8 @@ $\,$\\\vspace{-1.25cm}
 We have not. We've used no-slip at both surfaces, 
 but only mixed thermal boundary conditions. 
 We don't forsee major difficulties in AE being applied to fixed T boundary 
-conditions, and have added a brief discussion in section III challenges that
+conditions, and have added a brief discussion shortly after Eqns (12) and (13)
+in section III of challenges that
 fixed flux or fixed temperature boundary conditions pose.
 
 

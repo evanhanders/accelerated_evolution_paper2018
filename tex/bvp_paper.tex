@@ -420,10 +420,20 @@ F$_{\text{tot}} \sim$ F$_{\text{E}} \sim 15\mathcal{P}$ just below the upper bou
 but in the equilibrated state 
 it should just be $\mathcal{P}$, so $\xi \sim 1/15$ at that depth).
 
-In a time-stationary state, the horizontal- and time-average of
-Eqns.~(\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}), neglecting terms which
-vanish due to symmetry, are
-\vspace{-0.5cm}
+In order to properly reduce F$_\text{E}$, we note that, upon removing 
+terms which vanish due to symmetry, the convective enthalpy flux is carried
+solely by the velocity field coupling to perturbations in temperature around
+the mean temperature profile, or F$_\text{E} \propto \{w, T-\angles{T}_{x,y}\}$.
+As the evolved enthalpy flux should be roughly $\xi$F$_\text{E}$, we reduce 
+the velocity, $\bm{u}$,
+and temperature perturbations about the mean state, $T-\angles{T}_{x,y}$,
+ by $\sqrt{\xi}$. 
+
+To properly reduce the conductive flux, we examine the 
+time-stationary state, horizontally- and time-averaged
+Eqns.~(\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}); after 
+neglecting terms which vanish due to symmetry, these equations become
+\vspace{-0.2cm}
 \begin{gather}
 \frac{\partial}{\partial z}\angles{\varpi}_{x,y} - \angles{T_1}_{x,y}\hat{z} = \angles{\bm{u}\times\bm{\omega}}_{x,y, \text{ ev}},
 	\label{eqn:bouss_BVP_momentum}
@@ -431,16 +441,19 @@ vanish due to symmetry, are
 \frac{\partial}{\partial z}\text{F}_{\text{E, ev}} - \mathcal{P}\frac{\partial^2}{\partial z^2} \angles{T_1}_{x,y} = 0.
 	\label{eqn:bouss_BVP_energy}
 \end{gather}
-Here, we construct $\angles{\bm{u}\times\bm{\omega}}_{x, y,\text{ ev}} =
-\xi(z) \angles{\bm{u}\times\bm{\omega}}_{x, y}$ and $\text{F}_{\text{E, ev}} = \xi(z) \text{F}_{\text{E}}$
-from our unevolved state, and solve for $\angles{\varpi}_{x,y}$ and $\angles{T_1}_{x,y}$.
+Here, we construct  $\text{F}_{\text{E, ev}} = \xi \text{F}_{\text{E}}$ 
+and $\angles{\bm{u}\times\bm{\omega}}_{x, y,\text{ ev}} =
+\xi \angles{\bm{u}\times\bm{\omega}}_{x, y}$, where we scale 
+$\angles{\bm{u}\times\bm{\omega}}_{x, y} \propto \bm{u}^2$, by $\xi$ because we
+scaled $\bm{u}$ by $\sqrt{\xi}$ in order to reduce the convective enthalpy flux.
+With these profiles, we solve for $\angles{\varpi}_{x,y}$ and $\angles{T_1}_{x,y}$.
 Convective flows
 are perturbations around a thermal profile defined by these equations in the proper evolved, 
-statistically stationary state. Furthermore, under the proper specification of
+statistically stationary state, so the proper specification of
 F$_{\text{conv, ev}}$ and $\angles{\bm{u}\times\bm{\omega}}_{x,y\text{, ev}}$,
-\emph{the mean thermodynamic structure of the system is fully specified}. 
+fully specifies the mean thermodynamic structure of the system. 
 Our choice of fixing the temperature at the top boundary and the flux at the bottom
-boundary ensures that there is a unique solution for $T_1$ given the evolved
+boundary ensures that there is a unique solution for $\angles{T_1}$ given the evolved
 fluxes. If flux were fixed at both boundaries, there would be infinitely many
 temperature solutions. If temperature were fixed at both boundaries, 
 $\text{F}_{\text{B}}$ would not be precisely known \emph{a priori}.
@@ -452,14 +465,7 @@ Eqns.~(\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy})
 to obtain an evolved thermodynamic profile, and its corresponding conductive flux.
 As the AE BVP solve only adjusts $\angles{T}$ and $\angles{\varpi}$, we must
 also appropriately adjust the temperature perturbations around the mean and the
-convective velocity flows, or else F$_{\text{E}}$ would be left unchanged, and
-would still be in a strongly disequilibrium state (e.g., Fig.~\ref{fig:time_trace}b).
-To consistently modify the convective enthalpy flux, we multiply both the velocity field,
-$\bm{u}$, and the temperature perturbations around the mean profile, $T - \angles{T}_{x,y}$,
-by $\sqrt{\xi}$; this diminishes the magnitude of these perturbations, and the
-flux they carry, appropriately. This scaling of variables with $\sqrt{\xi}$ is also
-the reason that we multiply $\angles{\bm{u}\times\bm{\omega}}_{x, y}$ by $\xi$
-to construct $\angles{\bm{u}\times\bm{\omega}}_{x, y\text{, ev}}$.
+convective velocity flows.
 After adjusing the fields of a simulation in this manner, we continue timestepping forward.
 For specifics on the precise implementation of the AE method, we refer
 the reader to appendix \ref{appendix:recipe}.
@@ -883,7 +889,9 @@ and the solutions were simple rolls),
 this may not be the case for more complicated systems. For example, at
 higher aspect ratios, multiple stable solution branches 
 may exist, and there is no guarantee that AE and SE will
-arrive at the same solution. 
+arrive at the same solution. Studies whose horizontal boundaries are not periodic may need
+a much more careful treatment of the adjustment of the mean temperature profile,
+especially near the side walls.
 Some assumptions which inform the AE solution, such as the assumption
 that the convection
 intially occupies the same space as the evolved convection, may not hold in

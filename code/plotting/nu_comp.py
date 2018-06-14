@@ -76,10 +76,10 @@ Nu_final = np.mean(nu2[-1000:])
 
 
 #Add horizontal final values
-ax1_2.axhline(T_final + 0.5,  c='blue')
-ax2_2.axhline(T_final + 0.5,  c='blue')
-ax1.axhline(Nu_final, c='dimgrey')
-ax2.axhline(Nu_final, c='dimgrey')
+ax1_2.axhline(T_final + 0.5,  c='blue', dashes=(2,2))
+ax2_2.axhline(T_final + 0.5,  c='blue', dashes=(2,2))
+ax1.axhline(Nu_final, c='dimgrey', dashes=(5,1))
+ax2.axhline(Nu_final, c='dimgrey', dashes=(5,1))
 
 
 
