@@ -22,7 +22,7 @@ Dear Eckart, other PRFluids editors, and anonymous referees,
 $\,$\newline
 
 \begin{singlespace}
-We return a new draft of our manuscript, ``Accelerated evolution in
+We return our revised manuscript, ``Accelerated evolution in
 convective simulations,'' addressing the concerns of the referee reports.
 We would like to point out a few major changes in this version of the manuscript.
 A new section, ``Computational time-savings of AE'' has been added after the
@@ -95,11 +95,12 @@ not be so successful perhaps? This is again a factor in my hesitation
 about the total applicability of this technique across many problems
 beyond the one the authors present.
 \end{myquotation}
-We are confident that the BVP puts us closer to a nonlinear saturated state
-than we were before. It is true that there may be multiple stable states, and there
+All of the statistical tests that we have performed in this work point towards
+the evolved AE solution and SE solution being consistent.
+It is true that there may be multiple stable states, and there
 is no guarantee that the BVP puts the solution into the same stable state as
-SE. We have mentioned this in our conclusion.
-
+SE. We have included this caveat in our final discussion section.
+ 
 \begin{myquotation}
 Here are some more comments in chronological order, not order of
 importance.
@@ -207,7 +208,7 @@ When discussing the PDFs, the author refer to the ``modes" of the PDF?
 This sounds a bit odd to me. Do they mean the peaks? The phrase
 ``temperature fluctuations off of the modes'' is particularly baffling!
 \end{myquotation}
-We have replaced ``modes'' with ``maxima'' for clarity.
+We have replaced ``modes'' with ``maxima.''
 
 \begin{myquotation}
 The fact that the mean temperature profile is off by a constant factor
@@ -218,10 +219,13 @@ to correct this issue.
 \end{myquotation}
 We have added a paragraph to the ``accelerated evolution recipe'' appendix.
 In it, we discuss the fact that AE can be iteratively solved until you converge
-to a desired fractional percentage, and that we were only aiming for O(1\%) in this
-paper.  It is true that it will likely take a thermal relaxation time to evolve 
-from the 1\% off state to the true state, but that slow evolution does not
-appreciably change the dynamics.
+to a desired criterion, and that we were only aiming for O(1\%) in this
+paper. With a smaller convergence criterion, the user
+could get closer to the evolved SE solution, decreasing the separation
+between the temperature PDFs seen in what is now Fig. 5. 
+However, smaller convergence criteria
+come with significant computational cost (the horizontal averages must be
+better converged, and likely more iterative solves must be performed). 
 
 \begin{myquotation}
 I felt like I wanted a section at the end of this section that
@@ -273,6 +277,7 @@ problems in their eagerness to extol the virtues of their scheme.
 I think the claims of this method working in many more situations need
 to be examined more thoroughly before being made so boldly here.
 \end{myquotation}
+%contained too much speculation.
 We agree that our intial conclusion section was over-eager. We have 
 greatly reduced the amount of text spent on speculation surrounding
 extensions of the AE method, and have added a paragraph warning the
@@ -301,14 +306,14 @@ $\,$\\\vspace{-1.25cm}
 \end{myquotation}
 The Kelvin-Helmholtz timescale is 
 $$
-t_{\text{KH}} = \frac{E_g}{L},
+t_{\text{KH}} = \frac{E}{L},
 $$
-where $E_g$ is the gravitational energy in a system, and $L$ is the luminosity
-(energy output / time). Basically it is a timescale that astronomers and
-astrophysicists use to estimate the timescale of thermal evolution of a system 
+where $E$ is the thermal energy in a system, and $L$ is the luminosity
+(energy output / time). It is an estimate of the timescale
+of thermal evolution of a system 
 (e.g., a star). Since the point we were trying to make is that ``the mean 
 thermodynamic structure of the Sun evolves \emph{really} slowly,''
-we have removed this jargon and said this more clearly in paragraph 2 of the intro.
+we have removed this jargon and said this more clearly in paragraph 3 of the intro.
 
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -321,10 +326,8 @@ We misspoke. We have not specifically seen hysteresis effects (nor have we seen
 this in the literature).  We meant to say that in simulations where there are
 multiple solution branches (e.g., a convective roll and a shearing solution),
 bootstrapping a solution on one branch to different parameters with the same
-solution branches will result in a solution on the 
-same solution branch. Particularly, in our own
-work in stratified atmospheres, atmospheres trend toward shearing states, and then
-stay stuck in those states as we bootstrap to higher Ra.
+solution branches tends to result in a solution on the 
+same solution branch. 
 
 We have corrected our error and made our meaning clearer.
 
@@ -335,10 +338,11 @@ $\,$\\\vspace{-1.25cm}
 \item It is true that direct numerical simulation of turbulent thermal convection is expensive. However, the highest Ra simulation run by Stevens et al. reaches a stationary state in a few hundreds of free-fall times. Hence, what is the necessity of running simulations for ``thousands or millions of free-fall times''?
 \end{enumerate}
 \end{myquotation}
-We have added a new Fig. 2 to address this question. In general, the convective
-flows and heat transport (e.g., Nu) reach their final, time-stationary mean
+We have added a new Fig. 2 to address this question. In general, we find that
+the heat transport reaches its final, time-stationary mean
 value very quickly (see panels (a) and (b) of Fig. 2). However, the thermal 
-structure of the system can still be slowly evolving for long timescales
+structure, kinetic energy, and fluctuations of heat transport away from the mean
+can still slowly evolve for long timescales
 despite the flows being relatively statistically stationary. The purpose of
 running for many, many free-fall times is to converge the thermal profile of
 the domain to ensure that the full system is in a steady state.
@@ -419,10 +423,7 @@ the nature of the flow morphologies at times of high and low heat transport;
 the instantaneous sign of Nu (positive or negative) is not what we are trying
 to point out.
 
-We have clarified the discussion around the scaling laws, as requested by the
-other referee report. We have removed speculative statements which aimed to
-compare the scaling law of Nu found here with Nu elsewhere in order to keep
-the focus of our paper on AE rather than Nu scaling for our system setup.
+We have clarified the discussion in this portion of the paper.
 
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
@@ -434,7 +435,8 @@ $\,$\\\vspace{-1.25cm}
 We have not. We've used no-slip at both surfaces, 
 but only mixed thermal boundary conditions. 
 We don't forsee major difficulties in AE being applied to fixed T boundary 
-conditions, but felt that such a study was outside the scope of this work.
+conditions, and have added a brief discussion in section III challenges that
+fixed flux or fixed temperature boundary conditions pose.
 
 
 

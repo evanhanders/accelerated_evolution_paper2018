@@ -764,39 +764,44 @@ to perform the calculation ($N_{\text{CPU}}$), number of CPU-hours
 used to perform the run ($t_{\text{CPU,AE/SE}}$), and ratio of CPU-hours
 used in the AE run compared to the SE run are provided.
 }
+\setlength{\tabcolsep}{12pt}
 \label{table:speed}
 \begin{center}
-\begin{tabularx}{\textwidth}{ X X X X X X }
+\begin{tabularx}{0.72\textwidth}{ c r r c c c }
 \hline																	
-$S$	&	nz, nx$\times$ny	&	$N_{\text{CPU}}$	&	
-$t_{\text{CPU,AE}}$ & $t_{\text{CPU, SE}}$ &$t_{\text{CPU,AE}}/t_{\text{CPU,SE}}$\\
+$S$	&	nz$\times$nx$\times$ny	&	$N_{\text{CPU}}$	&	
+$t_{\text{CPU, SE}}$ & $t_{\text{CPU, AE}}$ &$t_{\text{CPU,AE}}/t_{\text{CPU,SE}}$\\
 \hline \hline \multicolumn{6}{c}{\vspace{-0.2cm}}\\
 \multicolumn{6}{c}{\vspace{0.1cm}2D Runs} \\
 \hline
-$10^2$	&	64,	128	&	32    & 4.369 &  2.152    & 2.03  \\
-$10^3$	&	128,256	&	64    & 20.63 &  53.25    & 0.387 \\
-$10^4$	&	256,512	&	128   & 180.82&  1205.25  & 0.15  \\
-$10^5$	&	512,1024&	256   & 2757.73& 24061.75 & 0.115 \\
+%2 sig figs, scientific notation, swap SE and AE, right justify Ncpu, 2 sig figs ratio, right justify communicates biggerness. 
+$10^2$	&	64$\times$128	&	32    &  2.2              & 4.4               &     2.0  \\
+$10^3$	&	128$\times$256	&	64    &  53               & 21                &     0.39 \\
+$10^4$	&	256$\times$512	&	128   &  1.2$\times 10^3$ & 1.8$\times 10^2$  &     0.15  \\
+$10^5$	&	512$\times$1024&	256   &  2.4$\times 10^4$ & 2.8$\times 10^3$  &     0.12 \\
 \hline \hline \multicolumn{6}{c}{\vspace{-0.2cm}}\\
 \multicolumn{6}{c}{\vspace{0.1cm}3D Runs} \\
 \hline
-$10^1$	&	32,	64$\times$64	& 512    &   106.15      &   61.5    & 1.73\\
-$10^2$	&	64,	128$\times$128	& 512    &   111.92      &   185.35  & 0.6 \\
-$10^3$	&	128,256$\times$256	& 2048   &   1426.39     &   6985.18 & 0.2 \\
-$10^4$	&	256,512$\times$512	& 8192   &   23063.77    &   331,717 & 0.07\\
+$10^1$	&	32$\times$64$\times$64	    & 512       &   62                 &        1.1$\times 10^2$   & 1.7\\
+$10^2$	&	64$\times$128$\times$128	& 512       &   1.9$\times 10^2$   &        1.1$\times 10^2$   & 0.60 \\
+$10^3$	&	128$\times$256$\times$256	& 2048      &   7.0$\times 10^3$   &        1.4$\times 10^3$   & 0.20 \\
+$10^4$	&	256$\times$512$\times$512	& 8192      &   3.3$\times 10^5$   &        2.3$\times 10^4$   & 0.070\\
 \hline																	
 \end{tabularx}
 \end{center}
 \end{table}
 
 
-The primary reason to use AE, rather than evolving all solutions through SE,
-is because of the computational timesaving of such an approach. In table 
+Computational timesaving is the primary reason to use AE rather than 
+evolving all solutions through SE.
+In table 
 \ref{table:speed}, we compare cpu-hour cost for select
 2D and 3D runs in which AE and SE solutions were compared. Times reported
-for AE and SE runs do not include the time over which measurements were taken
-in the equilibrated state, but rather represent the time required to reach a
-fully equilibrated state under the AE or SE formalism. All simulations
+for AE and SE runs only include the time required to reach an equilibrated
+state, and do not include the time over which measurements were taken
+in the equilibrated state (e.g., the green shaded regions of
+Fig.~\ref{fig:time_trace}a\&c are not included in the $S = 10^5$ times).
+All simulations
 were performed on Broadwell nodes on NASA's Pleiades supercomputer 
 (Intel Xeon E5-2680v4 processors). The key metric which highlights the usefulness
 of AE is the number of cpu-hours used for the AE run in units of cpu-hours used
@@ -807,17 +812,18 @@ shrinks. At the highest supercriticalities for which AE and SE were compared
 in this work, AE runs cost roughly an order of magnitude less computing time 
 than SE runs.
  The additional computational expense of 3D runs compared
-to 2D runs implies that 3D studies can greatly benefit from the proper implementation of AE.
+to 2D runs implies that 3D studies can greatly benefit from AE.
 
 
 
-While storing information about the mean state for the AE solve marginally
-decreases the rate at which our solver timesteps, the first application of AE in a given
-simulation (Fig.~\ref{fig:time_trace}c, at the arrow labeled ``1'') drastically
-increases the average timestep by immediately progressing the simulation into
-a more converged state. For the $S = 10^5$ case we examined in detail, the
-average time step grew by a factor of 2-3 due to the decreased convective
-velocities from the transient state to the evolved state. 
+Storing information about the mean state for the AE solve marginally
+decreases the rate at which our solver timesteps. However, 
+the first application of AE in a given simulation 
+(e.g., Fig.~\ref{fig:time_trace}c, at the arrow labeled ``1'') drastically
+increases the average timestep by fastforwarding the simulation into
+a more stable state with lower convective velocities. 
+For the $S = 10^5$ case we examined in detail, the
+average time step grew by a factor of 2-3.
 At $S = 10^7$, the AE solve immediately improved the timestep size 
 by nearly a factor of 4.
 
@@ -846,7 +852,7 @@ At the largest values of $S$ in which AE and SE are compared in this work, we fi
 time savings of nearly an order of magnitude. 
 
 Here we studied the simplest possible case for the application of AE:
-\RB convection at low aspect ratio with mixed thermal boundary. 
+\RB convection at low aspect ratio with mixed thermal boundary conditions. 
 We anticipate that
 this technique will be powerful in its extensions to more complicated studies.
 To achieve AE in more complicated systems, one need only derive 
@@ -875,16 +881,16 @@ While AE was extremely effective in this simple case studied here
 the bounds of the convective domain were pre-defined,
 and the solutions were simple rolls),
 this may not be the case for more complicated systems. For example, at
-higher aspect ratios, multiple stable solution branches of various numbers of
-convective rolls may exist, and there is no guarantee that AE and SE will
+higher aspect ratios, multiple stable solution branches 
+may exist, and there is no guarantee that AE and SE will
 arrive at the same solution. 
 Some assumptions which inform the AE solution, such as the assumption
 that the convection
 intially occupies the same space as the evolved convection, may not hold in
 studies of penetrative convection, despite the fact that similar methods have
 long been used in those studies \cite{hurlburt&all1986}.
-Our work here should serve as a basis for determining if AE techniques are
-valid and effective in more complex studies of convection.
+Our work here serves as a basis for determining if AE techniques are
+effective in more complex studies of convection.
 
 \begin{acknowledgments}
 We thank the two anonymous referees whose careful comments greatly 
@@ -909,7 +915,7 @@ conducted in this work.
 and coefficient resolution (nz, nx, and ny are the number of coefficients in the
 z, x, and y directions respectively).
 Simulation run times required to reach convergence
-are reported for the SE solutions ($t_{\text{therm}}$) and the AE solutions ($t_{\text{AE}}$).
+are reported for the SE solutions ($t_{\text{SE}}$) and the AE solutions ($t_{\text{AE}}$).
 The amount of time over which simulations measurements were taken in the evolved
 state is listed ($t_{\text{avg}}$). All times are in freefall time units.  
 The volume-averaged Nusselt number (Nu) of the
@@ -919,38 +925,38 @@ while information pertaining to 3D runs is in the lower part of the table.
 }
 \label{table:run_parameters}
 \begin{center}
-\begin{tabularx}{\textwidth}{ X X X X | X X X | X X }
+\begin{tabularx}{\textwidth}{ X X r | X X X | X X }
 \hline																	
-$S$	&	Ra	&	nz	&	nx, ny	&	$t_{\text{therm}}$	&	$t_{\text{AE}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{SE}}$	&	Nu$_{\text{AE}}$	\\
-\hline \hline \multicolumn{9}{c}{\vspace{-0.2cm}}\\
-\multicolumn{9}{c}{\vspace{0.1cm}2D Runs} \\
+$S$	&	Ra	&	nz$\times$nx$\times$ny$\,\,\,\,\,\,\,$	&	$t_{\text{SE}}$	&	$t_{\text{AE}}$	&	$t_{\text{avg}}$	&	Nu$_{\text{SE}}$	&	Nu$_{\text{AE}}$	\\
+\hline \hline \multicolumn{8}{c}{\vspace{-0.2cm}}\\
+\multicolumn{8}{c}{\vspace{0.1cm}2D Runs} \\
 \hline
-$10^{1/3}$	&	$2.79 \cdot 10^3$	&	32	&	64	&	$52.8$	&	$340$	&	100	&	1.46	&	1.46	\\
-$10^{2/3}$	&	$6.01 \cdot 10^3$	&	32	&	64	&	$77.6$	&	$282$	&	100	&	1.95	&	1.95	\\
-$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64	&	$114$	&	$265$	&	100	&	2.43	&	2.42	\\
-$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$	&	32	&	64	&	$167$	&	$251$	&	100	&	2.54	&	2.54	\\
-$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$	&	32	&	64	&	$245$	&	$245$	&	100	&	3.14	&	3.14	\\
-$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128	&	$360$	&	$326$	&	100	&	3.8	&	3.8	\\
-$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$	&	64	&	128	&	$528$	&	$248$	&	100	&	4.71	&	4.71	\\
-$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$	&	64	&	128	&	$776$	&	$251$	&	100	&	5.5	&	5.5	\\
-$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256	&	$1.14 \cdot 10^3$	&	$268$	&	200	&	6.4	&	6.33	\\
-$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$	&	128	&	256	&	$1.67 \cdot 10^3$	&	$247$	&	500	&	6.87	&	6.95	\\
-$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$	&	256	&	512	&	$2.45 \cdot 10^3$	&	$275$	&	500	&	7.54	&	7.59	\\
-$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512	&	$3.60 \cdot 10^3$	&	$301$	&	500	&	8.83	&	8.83	\\
-$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$	&	256	&	512	&	$5.28 \cdot 10^3$	&	$317$	&	500	&	10.13	&	10.14	\\
-$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$	&	256	&	512	&	$7.76 \cdot 10^3$	&	$326$	&	500	&	11.65	&	11.69	\\
-$10^5$	&	$1.30 \cdot 10^8$	&	512	&	1024	&	$1.14 \cdot 10^4$	&	$411$	&	500	&	14.02	&	14.18	\\
-$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$	&	512	&	1024	&	$1.67 \cdot 10^4$	&	$391$	&	500	&	---	&	16.21	\\
-$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$	&	512	&	1024	&	$2.45 \cdot 10^4$	&	$453$	&	500	&	---	&	18.58	\\
-$10^6$	&	$1.30 \cdot 10^9$	&	1024	&	2048	&	$3.60 \cdot 10^4$	&	$436$	&	500	&	---	&	22.13	\\
-$10^7$	&	$1.30 \cdot 10^{10}$	&	2048	&	4096	&	$1.14 \cdot 10^5$	&	$183$	&	170	&	---	&	38.29	\\
-\\ \hline \hline \multicolumn{9}{c}{\vspace{-0.2cm}}\\
-\multicolumn{9}{c}{\vspace{0.1cm}3D Runs} \\
+$10^{1/3}$	    &	$2.79 \cdot 10^3$       &	32$\times$64$\,\,\,\,\,\,\,$&	$52.8$	&	$340$	&	100	&	1.46	&	1.46	\\
+$10^{2/3}$	    &	$6.01 \cdot 10^3$       &	32$\times$64$\,\,\,\,\,\,\,$&	$77.6$	&	$282$	&	100	&	1.95	&	1.95	\\
+$10^1$	        &	$1.30 \cdot 10^4$       &  	32$\times$64$\,\,\,\,\,\,\,$&	$114$	&	$265$	&	100	&	2.43	&	2.42	\\
+$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$       &	32$\times$64$\,\,\,\,\,\,\,$&	$167$	&	$251$	&	100	&	2.54	&	2.54	\\
+$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$       &	32$\times$64$\,\,\,\,\,\,\,$&	$245$	&	$245$	&	100	&	3.14	&	3.14	\\
+$10^2$	        &	$1.30 \cdot 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$360$	&	$326$	&	100	&	3.8	&	3.8	\\
+$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$528$	&	$248$	&	100	&	4.71	&	4.71	\\
+$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$776$	&	$251$	&	100	&	5.5	&	5.5	\\
+$10^3$	        &	$1.30 \cdot 10^6$       &	128$\times$256$\,\,\,\,\,\,\,$&	$1.14 \cdot 10^3$	&	$268$	&	200	&	6.4	&	6.33	\\
+$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$       &	128$\times$256$\,\,\,\,\,\,\,$&	$1.67 \cdot 10^3$	&	$247$	&	500	&	6.87	&	6.95	\\
+$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$       &	256$\times$512$\,\,\,\,\,\,\,$&	$2.45 \cdot 10^3$	&	$275$	&	500	&	7.54	&	7.59	\\
+$10^4$	        &	$1.30 \cdot 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$3.60 \cdot 10^3$	&	$301$	&	500	&	8.83	&	8.83	\\
+$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$5.28 \cdot 10^3$	&	$317$	&	500	&	10.13	&	10.14	\\
+$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$7.76 \cdot 10^3$	&	$326$	&	500	&	11.65	&	11.69	\\
+$10^5$	        &	$1.30 \cdot 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$1.14 \cdot 10^4$	&	$411$	&	500	&	14.02	&	14.18	\\
+$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$1.67 \cdot 10^4$	&	$391$	&	500	&	---	&	16.21	\\
+$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$2.45 \cdot 10^4$	&	$453$	&	500	&	---	&	18.58	\\
+$10^6$	        &	$1.30 \cdot 10^9$       &	1024$\times$2048$\,\,\,\,\,\,\,$	&	$3.60 \cdot 10^4$	&	$436$	&	500	&	---	&	22.13	\\
+$10^7$	        &	$1.30 \cdot 10^{10}$	&	2048$\times$4096$\,\,\,\,\,\,\,$	&	$1.14 \cdot 10^5$	&	$183$	&	170	&	---	&	38.29	\\
+\\ \hline \hline \multicolumn{8}{c}{\vspace{-0.2cm}}\\
+\multicolumn{8}{c}{\vspace{0.1cm}3D Runs} \\
 \hline
-$10^1$	&	$1.30 \cdot 10^4$	&	32	&	64$\times$64	&	$114$	&	$261$	&	100	&	2.42	&	2.42	\\
-$10^2$	&	$1.30 \cdot 10^5$	&	64	&	128$\times$128	&	$360$	&	$249$	&	100	&	3.97	&	4	\\
-$10^3$	&	$1.30 \cdot 10^6$	&	128	&	256$\times$256	&	$1.14 \cdot 10^3$	&	$243$	&	500	&	6.27	&	6.27	\\
-$10^4$	&	$1.30 \cdot 10^7$	&	256	&	512$\times$512	&	$3.60 \cdot 10^3$	&	$244$	&	500	&	9.92	&	9.88	\\
+$10^1$          &	$1.30 \cdot 10^4$	&	32$\times$64$\times$64$\,\,\,\,\,\,\,$   &	$114$	&	$261$	&	100	&	2.42	&	2.42	\\
+$10^2$          &	$1.30 \cdot 10^5$	&	64$\times$128$\times$128$\,\,\,\,\,\,\,$   &	$360$	&	$249$	&	100	&	3.97	&	4	\\
+$10^3$          &	$1.30 \cdot 10^6$	&	128$\times$256$\times$256$\,\,\,\,\,\,\,$	&	$1.14 \cdot 10^3$	&	$243$	&	500	&	6.27	&	6.27	\\
+$10^4$          &	$1.30 \cdot 10^7$	&	256$\times$512$\times$512$\,\,\,\,\,\,\,$	&	$3.60 \cdot 10^3$	&	$244$	&	500	&	9.92	&	9.88	\\
 \hline																	
 \end{tabularx}
 \end{center}
@@ -1013,19 +1019,19 @@ part because a third BVP generally did not greatly alter the solution
 (as in Fig.~\ref{fig:time_trace}c, arrow 3). We wait 50 freefall times after
 the final AE BVP solve of each run before beginning to take measurements.
 
-In general, the user of the AE method should choose some threshold
-fractional change of the mean temperature profile, $f$, such that once
-an AE solution differs from the DNS mean profile by less than $f$, the simulation
-is considered converged and the iterative AE adjustments may be stopped. In
-other words, once
+In general, to use AE, a threshold, $f$, should be chosen. When the fractional
+change of the mean temperature profile from an AE BVP solve becomes less than $f$,
+the solution can be considered converged on its chosen solution branch.
+In other words, once
 \begin{equation}
 \frac{|\angles{T}_{\text{DNS}} - \angles{T}_{\text{AE}}|}{|\angles{T}_{\text{DNS}}|} < f,
 \end{equation}
 the solution is converged. In this work, we chose our number of AE iterations
-such that $f \approx 10^{-2}$, except at $S = 10^7$, where we stopped after one AE
-iteration due to higher computational expense. In general, the user of AE could
+such that $f \approx 10^{-2}$.  In general, the user of AE could
 set $f$ smaller, and in doing so reduce the separation between the AE and SE
-solutions, which can be seen in e.g., Fig.~\ref{fig:temp_comparison}.
+solutions, which can be seen in e.g., Fig.~\ref{fig:temp_comparison}a\&b. However,
+smaller values of $f$ require additional AE BVP solves, and likely require smaller values
+of $P$, resulting in longer wait times while the horizontal averages are computed.
 
 
 
