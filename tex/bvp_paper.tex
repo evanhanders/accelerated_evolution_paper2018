@@ -45,7 +45,7 @@
 \title{Accelerated evolution of convective simulations}
 
 \begin{abstract}
-High Rayleigh number, turbulent convection is a classic system with a large timescale
+High Peclet number, turbulent convection is a classic system with a large timescale
 separation between flow speeds and equilibration time.
 In this paper, we present a method of achieving Accelerated Evolution (AE) of convective simulations which
 fast-forwards through the long thermal evolution of these systems, and we test the
@@ -53,9 +53,10 @@ validity of this method. The AE procedure involves measuring the dynamics of con
 early in a simulation and using its characteristics to adjust the mean thermodynamic
 profile within the domain towards its evolved state. We study \RB convection as a test case for AE.  
 Evolved flow properties of AE solutions are measured to be within a few percent
-of solutions which are reached through standard evolution over a full thermal timescale. 
-We conclude with a discussion of useful extensions of AE, including 
-stratified, compressible convection or stellar structure models.
+of solutions which are reached through Standard Evolution (SE) over a full thermal timescale.
+At the highest values of the Rayleigh number at which we compare SE and AE,
+we find that AE solutions require roughly an order of magnitude fewer cpu-hours
+to compute than SE solutions.
 \end{abstract}
 \maketitle
 
@@ -99,8 +100,8 @@ diffusion timescale to the convective velocity timescale, is large.
 In a high Pe system, many convective timescales must pass before 
 the domain reaches thermal equilibrium, a steady state in which
 evolution of the thermal structure of the convective region has ceased.
-As the timestep size of implicit methods is bound to the fastest nonlinear flows,
-(convection) fully implicit methods cannot be used to address this form of stiffness
+As the timestep size of implicit methods is bound to the fastest nonlinear flows
+(convection), fully implicit methods cannot be used to address this form of stiffness
 \cite{viallet&all2011, viallet&all2013, viallet&all2016}. 
 
 Resolving dynamics in atmospheres which are sufficiently
@@ -413,23 +414,12 @@ the flux through the atmosphere must be decreased by some amount,
 \end{equation}
 where $\text{F}_{\text{B}} = \mathcal{P}$ is the amount of flux that enters the
 atmosphere at the bottom, fixed-flux boundary.
-$\xi$ is a general depth-dependent scaling factor which
-tells us roughly how much larger F$_\text{E}$ is in the interior than it should
-be in the thermally equilibrated state (e.g., in Fig.~\ref{fig:time_trace}b,
-F$_{\text{tot}} \sim$ F$_{\text{E}} \sim 15\mathcal{P}$ just below the upper boundary layer, 
+For example, in Fig.~\ref{fig:time_trace}b,
+F$_{\text{tot}} \approx 19\mathcal{P}$ at the upper boundary,
 but in the equilibrated state 
-it should just be $\mathcal{P}$, so $\xi \sim 1/15$ at that depth).
+it should just be $\mathcal{P}$, so $\xi \approx 1/19$ at that depth.
 
-In order to properly reduce F$_\text{E}$, we note that, upon removing 
-terms which vanish due to symmetry, the convective enthalpy flux is carried
-solely by the velocity field coupling to perturbations in temperature around
-the mean temperature profile, or F$_\text{E} \propto \{w, T-\angles{T}_{x,y}\}$.
-As the evolved enthalpy flux should be roughly $\xi$F$_\text{E}$, we reduce 
-the velocity, $\bm{u}$,
-and temperature perturbations about the mean state, $T-\angles{T}_{x,y}$,
- by $\sqrt{\xi}$. 
-
-To properly reduce the conductive flux, we examine the 
+To reduce the conductive flux by $\xi$, we examine the 
 time-stationary state, horizontally- and time-averaged
 Eqns.~(\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}); after 
 neglecting terms which vanish due to symmetry, these equations become
@@ -442,23 +432,36 @@ neglecting terms which vanish due to symmetry, these equations become
 	\label{eqn:bouss_BVP_energy}
 \end{gather}
 Here, we construct  $\text{F}_{\text{E, ev}} = \xi \text{F}_{\text{E}}$ 
-and $\angles{\bm{u}\times\bm{\omega}}_{x, y,\text{ ev}} =
-\xi \angles{\bm{u}\times\bm{\omega}}_{x, y}$, where we scale 
-$\angles{\bm{u}\times\bm{\omega}}_{x, y} \propto \bm{u}^2$, by $\xi$ because we
-scaled $\bm{u}$ by $\sqrt{\xi}$ in order to reduce the convective enthalpy flux.
-With these profiles, we solve for $\angles{\varpi}_{x,y}$ and $\angles{T_1}_{x,y}$.
-Convective flows
-are perturbations around a thermal profile defined by these equations in the evolved, 
-statistically stationary state. Thus, the specification of
-F$_{\text{conv, ev}}$ and $\angles{\bm{u}\times\bm{\omega}}_{x,y\text{, ev}}$
-fully specifies the mean thermodynamic structure of the system. 
+and $\angles{\bm{u}\times\bm{\omega}}_{x, y,\text{ ev}}
+= \xi\angles{\bm{u}\times\bm{\omega}}_{x, y}$.
+Using these profiles and 
+Eqns. (\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy}),
+we solve for $\angles{\varpi}_{x,y}$ and $\angles{T_1}_{x,y}$.
 Our choice of fixing the temperature at the top boundary and the flux at the bottom
-boundary ensures that there is a unique solution for $\angles{T_1}$ given the evolved
+boundary ensures that there is a unique solution for $\angles{T_1}_{x,y}$ given the evolved
 fluxes. If flux were fixed at both boundaries, there would be infinitely many
 temperature solutions. If temperature were fixed at both boundaries, 
 $\text{F}_{\text{B}}$ would not be precisely known \emph{a priori}.
 
-Thus, the AE method occurs in the following steps. First, we pause a convective simulation and
+Solving the above equations adjusts the mean thermal state and 
+$\text{F}_{\kappa}$ of the atmosphere while leaving $\text{F}_{\text{E}}$
+unchanged. In the  
+bulk of the domain, convective enthalpy flux dominates transport, and so there we
+assume that $\text{F}_{\text{tot}} \approx \text{F}_{\text{E}}$. Upon 
+removing terms which vanish due to symmetry, we note that the convective
+enthalpy flux is carried solely by the velocity field and perturbations in
+temperature away from the mean state, $\text{F}_{\text{E}} = 
+\angles{w(T - \angles{T})}$.
+In order to instantaneously decrease the convective enthalpy flux in a manner
+which is consistent with the conductive flux, 
+we multiply both the velocity, $\bm{u}$,
+and temperature perturbations about the mean state, $T-\angles{T}_{x,y}$,
+ by $\sqrt{\xi}$. This scaling of the velocity field is the reason that we
+multiply $\angles{\bm{u}\times\bm{\omega}}_{x, y}$, which is nondimensionally
+of order $u^2/L$, by $\xi$ while constructing
+$\angles{\bm{u}\times\bm{\omega}}_{x, y,\text{ ev}}$.
+
+In general, the AE method occurs in the following steps. First, we pause a convective simulation and
 construct $\xi(z,t)$ from measured flux profiles in the convective domain.
 We solve a 1D boundary value problem (BVP) consisting of
 Eqns.~(\ref{eqn:bouss_BVP_momentum}) \& (\ref{eqn:bouss_BVP_energy})
@@ -667,7 +670,7 @@ Cumulative Distribution Functions (CDFs)
 of point-by-point measurements of the temperature field.
 (c) The percentage difference between the mean temperature profiles as a function of height.
 The difference between the mean profiles is very small, O(0.5\%).
-(d) $\KS{T}$, as defined in Eqn.~\ref{eqnks_profile}, is shown. The small
+(d) $\KS{T}$, as defined in Eqn.~\ref{eqn:ks_profile}, is shown. The small
 difference in the mean interior temperature between AE and SE
 results in a large difference between the two temperature distributions near the values
 of the temperature maxima.  The spread of temperature around the maxima, which includes the 
@@ -808,7 +811,7 @@ Computational time-saving is the primary reason to use AE rather than
 evolving all solutions through SE.
 In table 
 \ref{table:speed}, we compare cpu-hour cost for select
-2D and 3D runs in which AE and SE solutions were compared. Times reported
+2D and 3D runs in which both AE and SE solutions were computed. Times reported
 for AE and SE runs only include the time required to reach an equilibrated
 state, and do not include the time over which measurements were taken
 in the equilibrated state (e.g., the green shaded regions of
