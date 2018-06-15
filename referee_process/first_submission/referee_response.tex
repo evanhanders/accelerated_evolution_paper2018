@@ -25,7 +25,7 @@ $\,$\newline
 We return our revised manuscript, ``Accelerated evolution in
 convective simulations,'' addressing the concerns of the referee reports.
 We would like to point out a few major changes in this version of the manuscript.
-A new section, ``Computational time-savings of AE'' has been added after the
+A brief new section, ``Computational time-savings of AE'' has been added after the
 results section and before the conclusion section. In this section, we directly
 compare the computational cost of AE and SE for select simulations and we discuss
 the computational benefits of AE.  Furthermore, the final section of our paper
@@ -137,7 +137,7 @@ when both the thermal profile and the flux through the domain are
 fixed at a boundary'' is never revisited or explained, unless I missed
 it?
 \end{myquotation}
-We have clarified this in the second to last pargraph of section III,
+We have clarified this in the third to last pargraph of section III,
 and added a forward reference to section III by this quoted sentence. 
 
 \begin{myquotation}
@@ -239,8 +239,9 @@ and some more details in the appendix, which seems a bit scattered. I
 would be tempted to agglomerate it all here in a separate section.
 \end{myquotation}
 We have added a new section V., ``Computational Time-savings of AE.''
-We have combined the relevant information from the results section and the 
-conclusion section previously here, and we have added some information on a few
+We have combined the relevant information which was previously in the results 
+section and the conclusion section here, 
+and we have added some information on a few
 additional runs in a new table. 
 
 \begin{myquotation}
@@ -300,7 +301,7 @@ $\,$\\\vspace{-1.25cm}
 All three of these phrases are equivalent, and we have replaced all mentions of
 thermal equilibration, relaxation, and thermal convergence with ``thermal
 equilibration'' or ``thermally equilibrated'' throughout the paper. This term
-is explained in pargraph 2 of the introduction.
+is explained in paragraph 2 of the introduction.
 \begin{myquotation}
 $\,$\\\vspace{-1.25cm}
 \begin{enumerate}
@@ -369,7 +370,9 @@ and space, the functional form of $\xi \propto F_{tot}^{-1}$, and depends only
 on the fluxes of the convective system. Since $F_{tot}$ can
 have a large z-dependence (e.g., Fig. 1b), $\xi$, too, has a z-dependence. 
 $\xi$ is simply a height-dependent scaling that we use to appropriately
-adjust our velocity, temperature, etc.
+adjust our velocity, temperature, etc. We have added a sentence after the 
+definition of $\xi$ giving an example of its value for the case presented in
+Fig. 1.
 
 (b) We have changed $\xi(z) \rightarrow \xi(z, t)$.
 
@@ -378,12 +381,11 @@ is in the interior than it should be.
 We assume that $F_{tot} \sim F_{conv} \sim w (T - \langle T \rangle )$.
 As such, if we must scale $F_{tot}$ by a factor of $\xi$, we are equivalently
 scaling
-$\bm{u}$ and $T - \langle T\rangle$ by $\sqrt{\xi}$ to reduce the convective flux.
+$u$ and $T - \langle T\rangle$ by $\sqrt{\xi}$ to reduce the convective flux.
 We scale $\langle u\times \omega\rangle$ by $\xi$, as it is
 nondimensionally of order $u^2 / L$, and so if the velocities must be multiplied
 by $\sqrt{\xi}$, this term must be multiplied by $\xi$. We have added a short
-paragraph before Eqns (12) and (13), as well as some text shortly after those
-equations, containing this information.
+paragraph after Eqns (12) and (13) containing this information.
 
 We cannot rigorously derive $\xi$ from first principles. Its form, and the use of
 it here, are the result of our experience and familiarity with convection. 
