@@ -1,0 +1,114 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[aps, 11pt, singlecolumn]{revtex4-1} % Set the font size (10pt, 11pt and 12pt) and paper size (letterpaper, a4paper, etc)
+\usepackage{natbib}
+\bibliographystyle{apsrev}
+\usepackage{setspace}
+
+\begin{document}
+\newenvironment{myquotation}{
+\begin{quotation}
+\itshape
+}{ 
+\end{quotation}
+}
+%----------------------------------------------------------------------------------------
+%	LETTER CONTENT
+%----------------------------------------------------------------------------------------
+\noindent
+Dear Eckart, other PRFluids editors, and anonymous referees,
+$\,$\newline
+
+\begin{singlespace}
+We return our revised manuscript, ``Accelerated evolution in convective simulations,''
+clarifying the paper where requested by the report of referee 1. 
+Aside from these changes, the 
+final pargaraph of the introductory section of the 
+manuscript now contains references to the works of
+Julien et al 1998 (ref 16) and Sprague et al 2006 (ref 17), whose studies of
+rapidly rotating, asymptotically reduced convection 
+we felt should be mentioned in this work.
+
+We appreciate the very careful work of the referees in improving the clarity of
+this manuscript. Below ew include our responses to the report; the original
+text of the report is included in italics, and our response follows inline in
+unitalicized blocks.
+
+$\,$\newline
+\noindent
+Sincerely,
+
+Evan H. Anders, Benjamin P. Brown, and Jeffrey S. Oishi
+
+
+
+%\end{singlespace}
+
+\newpage
+\noindent
+\Large{\textbf{Response to first referee:}}\newline$\,$\newline\indent
+
+\begin{myquotation}
+I am ok with the paper being published now.   There are a small number of things
+that could be done that would still help the clarity of the paper:
+
+Intro:  This is perhaps a bit nit-picky, but the authors talk about
+“equilibration times” whereas perhaps they should be more precise and refer to
+what they really mean, i.e. the thermal relaxation time.   There is no natural
+timescale that is the equilibration time, since this depends on where you start
+from.  One of the points made in the intro is that one way around the thermal
+relaxation problem is to start near the true solution by “bootstrapping”, but
+this requires a guess at the nonlinear solution which is hard in a turbulent
+system.  So the problem really arises because, without such a guess, the
+simulation follows the full evolution from unstable equilibrium to stable
+equilibrium which have very different thermal profiles.  The equilibration time
+is therefore just the thermal relaxation time, which is one of the many
+timescales that the authors refer too.  I think it is better to just talk in
+terms of widely separated timescales (a stiff problem) and be specific that the
+one they are interested in is the stiffness between convective and thermal
+relaxation, i.e. high Pe problems.
+\end{myquotation}
+This is a good (and subtle) point. Where appropriate, we have changed the text
+to refer to thermal relaxation rather than thermal equilibration throughout.
+
+\begin{myquotation}
+In referring to reference [16], I think it is more accurate to say that this is
+one EXAMPLE of where this technique has been used MANY times before.
+\end{myquotation}
+Ref. 16 (which is now ref. [18], due to the addition of the sentence before it
+which calls out new refs [16, 17]) is now appropriately called out as an example
+of where a similar technique has been used before.
+
+\begin{myquotation}
+Sect III para 2:  ``proper'' -- I think you mean ``nonlinear'' or ``saturated''
+\end{myquotation}
+Correct! ``proper'' $\rightarrow$ ``saturated''.
+
+\begin{myquotation}
+Sect IV para 2: ``oscillatory nature is stable''  -- I am not sure what this means!
+\end{myquotation}
+The plumes oscillate for long timescales (the oscillatory motions do not
+eventually give way to stationary plumes). We have modified this sentence to
+better explain our meaning.
+
+\begin{myquotation}
+My personal opinion is that I still think the section about the scaling laws is
+weird to have here, in the sense that it interrupts the flow of the paper.  But
+it is not wrong, so I guess it can stay!
+
+Sect VI:  I think this section has improved in the more cautionary and less
+speculative way as suggested.  I would add a comment to the penultimate line
+that says that there could be issues with sound waves in compressible
+calculations which are very sensitive to pressure mismatches.
+\end{myquotation}
+A sentence explaining this point has been added where suggested.
+
+\end{singlespace}
+
+
+
+
+\bibliography{../../biblio.bib}
+\end{document}

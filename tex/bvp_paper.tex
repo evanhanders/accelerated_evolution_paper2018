@@ -46,7 +46,7 @@
 
 \begin{abstract}
 High Peclet number, turbulent convection is a classic system with a large timescale
-separation between flow speeds and equilibration time.
+separation between flow speeds and the thermal relaxation time.
 In this paper, we present a method of achieving Accelerated Evolution (AE) of convective simulations which
 fast-forwards through the long thermal evolution of these systems, and we test the
 validity of this method. The AE procedure involves measuring the dynamics of convection
@@ -71,7 +71,7 @@ to compute than SE solutions.
 Astrophysical convection occurs in the presence of disparate timescales. 
 Studying realistic models of natural systems through direct numerical
 simulations is infeasible due to the
-large separation between various flow timescales and equilibration times.
+large separation between various flow timescales and relaxation times.
 Stiffness in astrophysical systems can manifest in multiple ways, some of which can
 be handled by clever choices of numerical algorithms, and some which cannot.
 For example,
@@ -98,18 +98,18 @@ Unfortunately, astrophysical convective systems are stiff in more than one
 timescale. Specifically, the Peclet number (Pe), the ratio of the thermal
 diffusion timescale to the convective velocity timescale, is large.
 In a high Pe system, many convective timescales must pass before 
-the domain reaches thermal equilibrium, a steady state in which
+the domain thermally relaxes into a steady state in which
 evolution of the thermal structure of the convective region has ceased.
 As the timestep size of implicit methods is bound to the fastest nonlinear flows
 (convection), fully implicit methods cannot be used to address this form of stiffness
 \cite{viallet&all2011, viallet&all2013, viallet&all2016}. 
 
 Resolving dynamics in atmospheres which are sufficiently
-thermally equilibrated therefore remains a challenging problem.
+thermally relaxed therefore remains a challenging problem.
 Solar convection is a prime example of this phenomenon, as
 dynamical timescales in the solar convective zone are relatively short 
 (convection overturns every $\sim 5$ minutes at the solar surface)
-compared to the Sun's thermal evolution timescale, which is O($10^7$) years
+compared to the Sun's thermal relaxation timescale, which is O($10^7$) years
 \cite{stix2003}.  
 In such a system, it is impossible to resolve the convective dynamics while also
 meaningfully evolving the thermal structure of the system using
@@ -129,12 +129,12 @@ turbulent motions requires finer grid meshes and smaller timesteps.
 Thus, the progression of simulations into the high-Ra
 regime of natural convection is slowed by two simultaneous effects: timestepping
 through a single convective overturn time becomes more computationally expensive
-and the number of overturn times required for systems to reach thermal equilibrium
+and the number of overturn times required for systems to thermally relax
 grows.
 
 The vast difference between convective and thermal timescales has long plagued
 numericists studying convection, and an abundance of approaches has been employed to
-study thermally equilibrated solutions. One popular method for accelerating the convergence
+study thermally relaxed solutions. One popular method for accelerating the convergence
 of high-Ra solutions is by ``bootstrapping'' -- the process of using the flow
 fields in a converged solution at low Ra as initial conditions for a simulation at high
 Ra.  This method has been used with great success \cite{johnston&doering2009, verzicco&camussi1997},
@@ -155,26 +155,35 @@ authors often choose initial conditions which are not in a classic, hydrostatic,
 conductive state. Rather, either through knowledge of low-Ra solutions \cite{couston&all2017}
 or broader convective theories such as Mixing Length Theory
 \cite{brandenburg&all2005}, initial conditions can be adjusted such that the stratification
-within the convective domain is closer to an equilibrium state than the largely
+within the convective domain is closer to a relaxed state than the largely
 unstable hydrostatic state.
 
 Despite the numerous methods that have been used,
-the most straightforward way to achieve a thermally equilibrated solution
+the most straightforward way to achieve a thermally relaxed solution
 is to evolve a convective simulation through a thermal timescale. Some modern
 studies do just that \cite{featherstone&hindman2016}.
 Such evolution is computationally 
 \emph{expensive}, and state-of-the-art simulations at the highest values of Ra
 can only reasonably be run
 for hundreds of freefall timescales \cite{stevens&all2011}, much less the
-thousands or millions of freefall times required for thermal equilibration.
+thousands or millions of freefall times required for thermal relaxation.
 
 In this work, we study a method of achieving accelerated evolution of
-convective simulations. We couple measurements of the dynamics of unequilibrated
+convective simulations. 
+Our technique is similar in essence to the approach used in asymptotically 
+reduced models of rapidly rotating convection, in which the
+slowly evolving mean temperature profile is timestepped separately from the
+fast convective dynamics \cite{julien&all1998, sprague&all2006}. 
+We couple measurements of the dynamics of unstable, evolving
 convective simulations with knowledge about energy balances in the desired solution
-to self-consistently adjust the mean vertical thermodynamic profile towards its evolved state. 
-While a technique of this kind has been used previously \cite{hurlburt&all1986},
+to instantaneously and self-consistently adjust the mean vertical thermodynamic 
+profile toward its relaxed state. 
+While a technique of this kind has been used by many studies previously 
+(e.g., \cite{hurlburt&all1986}),
 the details of implementation, the convergence properties, and whether or not the
-accelerated evolution state corresponds to a standard evolution state are not documented.
+thermally relaxed state achieved from 
+accelerated evolution corresponds to the relaxed state in standard evolution 
+are not documented.
 In section \ref{sec:experiment}, we describe our convective simulations and
 numerical methods. In section \ref{sec:ae}, we describe the procedure for 
 achieving accelerated evolution. In
@@ -334,8 +343,8 @@ in Fig.~\ref{fig:time_trace}c.
 In Fig.~\ref{fig:time_trace}a, the time evolution of the SE simulation is shown.
 The KE grows exponentially from white noise during the
 first $\sim 25$ $t_{\text{ff}}$. The solution then saturates and begins to slowly
-equilibrate towards the proper isothermal profile in the interior of the domain.
-This slow equilibration is evident in the behavior of the blue line, which measures
+relax toward the saturated isothermal profile in the interior of the domain.
+This slow relaxation is evident in the behavior of the blue line, which measures
 $\angles{T} - T_{\text{top}}$, where \angles{T} is the volume-average of $T$, and
 $T_{\text{top}} = -0.5$ is the temperature at the upper boundary.
 The mean atmospheric temperature and
@@ -416,7 +425,7 @@ where $\text{F}_{\text{B}} = \mathcal{P}$ is the amount of flux that enters the
 atmosphere at the bottom, fixed-flux boundary.
 For example, in Fig.~\ref{fig:time_trace}b,
 F$_{\text{tot}} \approx 19\mathcal{P}$ at the upper boundary,
-but in the equilibrated state 
+but in the relaxed state 
 it should just be $\mathcal{P}$, so $\xi \approx 1/19$ at that depth.
 
 To reduce the conductive flux by $\xi$, we examine the 
@@ -488,10 +497,10 @@ the reader to appendix \ref{appendix:recipe}.
 are shown for simulations at $S = 10^5$ in SE (a) and AE (b).
 A moving average of Nu, using a centered boxcar with a span of 50 freefall time
 units, is overplotted as a grey line. 
-We see that the mean value of Nu reaches its equilibrium value quickly
+We see that the mean value of Nu reaches its relaxed value quickly
 compared to $\angles{T}$.
 Regardless, fluctuations of Nu about the mean
-value are much smaller in the thermally equilibrated state.
+value are much smaller in the thermally relaxed state.
 The times at which AE solves occur are denoted by arrows in (b),
 and the grey boxed region is examined in more detail in Fig. \ref{fig:oscillating_plumes}.
 \label{fig:nu_v_time} }
@@ -526,18 +535,18 @@ As such, it is possible to measure the statistically stationary mean value of
 Nu after only a few hundred simulated freefall times, 
 as has been done previously \cite{stevens&all2010}. However, fluctuations in
 Nu around the mean value at early times have both a larger magnitude and higher
-frequency than the fluctuations in the equilibrated state.
+frequency than the fluctuations in the relaxed state.
 In Fig.~\ref{fig:nu_v_time}b, we show the AE traces of Nu and
 $\angles{T}-T_{\text{top}}$ at $S = 10^5$. The times at which AE solves occur are marked
 by arrows. Nu reaches its evolved mean value slightly more rapidly than in the SE case,
 and the frequency and magnitude of fluctuations in Nu away from the mean resemble the
-final equilibrated state of SE.
+final relaxed state of SE.
 
 When $S < 10^{3.67}$ in 2D and for all runs in 3D, 
 the evolved system is characterized by a time-stationary value of Nu, and is thus
 in a state of constant convective heat transport.
 At larger $S$ in 2D, the value of Nu varies significantly over time even in the
-equilibrated state (as seen in Fig.~\ref{fig:nu_v_time}). We examine the shaded
+relaxed state (as seen in Fig.~\ref{fig:nu_v_time}). We examine the shaded
 region of Fig.~\ref{fig:nu_v_time}b in more detail in the top left
 panel of Fig.~\ref{fig:oscillating_plumes}, as well as a comparable time trace
 at $S = 10^7$ (bottom, left panel). We find that these systems exhibit
@@ -554,7 +563,8 @@ by a counterclockwise cell, as pictured in Fig.~\ref{fig:oscillating_plumes}, an
 a clockwise cell. Our choice of no-slip
 boundary conditions prevents the fluid from entering a full domain shearing state 
 \cite{goluskin&all2014}, and the
-oscillatory nature of the plumes is stable. However, thanks to our choice of periodic
+oscillatory motions of the plumes are a long-lived, stable phenomenon. 
+However, thanks to our choice of periodic
 boundary conditions and despite the no-slip conditions, the full system of the
 upflow and downflow plumes is free to slowly migrate to the left or right over time,
 and we observe this phenomenon in our solutions.
@@ -812,9 +822,9 @@ evolving all solutions through SE.
 In table 
 \ref{table:speed}, we compare cpu-hour cost for select
 2D and 3D runs in which both AE and SE solutions were computed. Times reported
-for AE and SE runs only include the time required to reach an equilibrated
+for AE and SE runs only include the time required to reach a relaxed
 state, and do not include the time over which measurements were taken
-in the equilibrated state (e.g., the green shaded regions of
+in that state (e.g., the green shaded regions of
 Fig.~\ref{fig:time_trace}a\&c are not included in the $S = 10^5$ times).
 All simulations
 were performed on Broadwell nodes on NASA's Pleiades supercomputer 
@@ -851,7 +861,7 @@ by nearly a factor of 4.
 \section{Discussion \& Conclusions}
 \label{sec:extensions}
 In this work we have studied a method of Accelerated Evolution (AE) which can
-be employed to achieve rapid thermal equilibration of convective simulations.  We compared
+be employed to achieve rapid thermal relaxation of convective simulations.  We compared
 this technique to the Standard Evolution (SE) of convection through a full thermal diffusion timescale,
 and we
 showed that AE rapidly obtains solutions whose dynamics are statistically similar to SE solutions.
@@ -900,7 +910,10 @@ Some assumptions which inform the AE solution, such as the assumption
 that the convection
 intially occupies the same space as the evolved convection, may not hold in
 studies of penetrative convection, despite the fact that similar methods have
-long been used in those studies \cite{hurlburt&all1986}.
+long been used in those studies \cite{hurlburt&all1986}. Extensions to 
+fully compressible convection in which there are two true thermodynamic
+variables \cite{anders&brown2017} must contain a very careful treatment of
+AE pressure adjustments, so as to avoid wave-launching pressure mismatches.
 Our work here serves as a basis for determining if AE techniques are
 effective in more complex studies of convection.
 
