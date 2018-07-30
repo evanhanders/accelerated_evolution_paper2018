@@ -47,13 +47,13 @@
 \begin{abstract}
 High Peclet number, turbulent convection is a classic system with a large timescale
 separation between flow speeds and the thermal relaxation time.
-In this paper, we present a method of achieving Accelerated Evolution (AE) of convective simulations which
-fast-forwards through the long thermal evolution of these systems, and we test the
-validity of this method. The AE procedure involves measuring the dynamics of convection
+In this paper, we present a method of
+fast-forwarding through the long thermal relaxation of convective simulations, and we test the
+validity of this method. This Accelerated Evolution (AE) method involves measuring the dynamics of convection
 early in a simulation and using its characteristics to adjust the mean thermodynamic
 profile within the domain towards its evolved state. We study \RB convection as a test case for AE.  
 Evolved flow properties of AE solutions are measured to be within a few percent
-of solutions which are reached through Standard Evolution (SE) over a full thermal timescale.
+of solutions which are reached through Standard Evolution (SE) over a full thermal diffusion timescale.
 At the highest values of the Rayleigh number at which we compare SE and AE,
 we find that AE solutions require roughly an order of magnitude fewer cpu-hours
 to compute than SE solutions.
@@ -135,8 +135,8 @@ grows.
 The vast difference between convective and thermal timescales has long plagued
 numericists studying convection, and an abundance of approaches has been employed to
 study thermally relaxed solutions. One popular method for accelerating the convergence
-of high-Ra solutions is by ``bootstrapping'' -- the process of using the flow
-fields in a converged solution at low Ra as initial conditions for a simulation at high
+of high-Ra solutions is by ``bootstrapping'' -- the process of using the relaxed flow
+fields and thermal structure of a low Ra solution as initial conditions for a simulation at high
 Ra.  This method has been used with great success \cite{johnston&doering2009, verzicco&camussi1997},
 but it is not without its faults.  In systems in which there are multiple
 stable solutions, such as a roll state and a shearing state of convection,
@@ -172,10 +172,10 @@ In this work, we study a method of achieving accelerated evolution of
 convective simulations. 
 Our technique is similar in essence to the approach used in asymptotically 
 reduced models of rapidly rotating convection, in which the
-slowly evolving mean temperature profile is timestepped separately from the
+mean temperature profile evolves separately from the
 fast convective dynamics \cite{julien&all1998, sprague&all2006}. 
 We couple measurements of the dynamics of unstable, evolving
-convective simulations with knowledge about energy balances in the desired solution
+convective simulations with knowledge about energy balances in the relaxed solution
 to instantaneously and self-consistently adjust the mean vertical thermodynamic 
 profile toward its relaxed state. 
 While a technique of this kind has been used by many studies previously 
@@ -220,7 +220,7 @@ The equations of motion are \cite{spiegel&veronis1960}:
 -\frac{1}{\rho_0}\grad P - g( 1 - \alpha T_1)\hat{z} + \nu\grad^2\bm{u}, 
 	\label{eqn:dim_bouss_momentum}
 \\
-\frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \kappa\grad^2 T_1,
+\frac{\partial T_1}{\partial t} + \bm{u}\cdot\grad(T_0 + T_1) = \kappa\grad^2 (T_0 + T_1),
 	\label{eqn:dim_bouss_energy}
 \end{gather}
 where $\bm{u} = u\bm{\hat{x}} + v\bm{\hat{y}} + w\bm{\hat{z}}$ is the velocity, 
@@ -268,7 +268,7 @@ Eqns.~(\ref{eqn:incompressible}), (\ref{eqn:bouss_momentum}), \& (\ref{eqn:bouss
 forward in time
 using an implicit-explicit (IMEX), third-order, four-stage 
 Runge-Kutta timestepping scheme RK443 \cite{ascher&all1997}. The code used to run the simulations
-in this work is included in the supplemental materials as a zip file.
+in this work is included in the supplemental materials as a zip file \cite{supp}.
 
 Variables are time-evolved on a dealiased Chebyshev (vertical)
 and Fourier (horizontal, periodic) domain in which the
@@ -325,7 +325,7 @@ spectral timestepping methods.
 \section{The method of Accelerated Evolution}
 \label{sec:ae}
 Here we describe a method of Accelerated Evolution (AE), which we use 
-to rapidly evolve the thermodynamic state of convective simulations.  
+to rapidly relax the thermodynamic state of convective simulations.  
 We compare this AE method to Standard Evolution
 (SE), in which we evolve the atmosphere from noise initial conditions
 for one thermal diffusion time,
@@ -348,7 +348,7 @@ This slow relaxation is evident in the behavior of the blue line, which measures
 $\angles{T} - T_{\text{top}}$, where \angles{T} is the volume-average of $T$, and
 $T_{\text{top}} = -0.5$ is the temperature at the upper boundary.
 The mean atmospheric temperature and
-kinetic energies are fully converged when $t = 4000$ $t_{\text{ff}}$ $= 0.35$ $t_{\kappa}$.
+kinetic energies are fully converged when $t = 4000t_{\text{ff}} = 0.35t_{\kappa}$.
 We show roughly the first thousand freefall time
 units of evolution, as well as the evolved thermodynamic state reached after a full
 thermal time of evolution.  In Fig.~\ref{fig:time_trace}c, similar traces are
@@ -363,12 +363,12 @@ the atmosphere is sufficiently converged, and we begin to sample the evolved
 convective dynamics.
 
 The horizontally averaged profiles of the vertical conductive flux, 
-F$_{\kappa} = \angles{-\kappa\grad(T_0 + T_1)}_{x,y}$, and the vertical convective enthalpy flux,
-F$_{\text{E}} = \angles{w(T_0 + T_1)}_{x,y}$, are the basis of the AE method.
+F$_{\kappa} = \angles{-\kappa\partial_z T}_{x,y}$, and the vertical convective enthalpy flux,
+F$_{\text{E}} = \angles{wT}_{x,y}$, are the basis of the AE method.
 Here we use $\angles{}_{x,y}$ to represent a horizontal average. We measure
 both of these fluxes early in a simulation, retrieving profiles such as
 those shown in Fig.~\ref{fig:time_trace}b.
-As the atmosphere evolves towards
+As the atmosphere relaxes towards
 the isothermal profile specified by the upper (cold) boundary condition, excess
 temperature throughout the atmosphere must leave the domain. This excess thermal
 energy leaves through the upper boundary, as seen in 
@@ -429,8 +429,8 @@ but in the relaxed state
 it should just be $\mathcal{P}$, so $\xi \approx 1/19$ at that depth.
 
 To reduce the conductive flux by $\xi$, we examine the 
-time-stationary state, horizontally- and time-averaged
-Eqns.~(\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}); after 
+horizontally- and time-averaged
+Eqns.~(\ref{eqn:bouss_momentum}) and (\ref{eqn:bouss_energy}) in the time-stationary state; after 
 neglecting terms which vanish due to symmetry, these equations become
 \vspace{-0.2cm}
 \begin{gather}
@@ -460,11 +460,11 @@ assume that $\text{F}_{\text{tot}} \approx \text{F}_{\text{E}}$. Upon
 removing terms which vanish due to symmetry, we note that the convective
 enthalpy flux is carried solely by the velocity field and perturbations in
 temperature away from the mean state, $\text{F}_{\text{E}} = 
-\angles{w(T - \angles{T})}$.
+\angles{w(T_1 - \angles{T_1})}$.
 In order to instantaneously decrease the convective enthalpy flux in a manner
 which is consistent with the conductive flux, 
 we multiply both the velocity, $\bm{u}$,
-and temperature perturbations about the mean state, $T-\angles{T}_{x,y}$,
+and temperature perturbations about the mean state, $T_1-\angles{T_1}_{x,y}$,
  by $\sqrt{\xi}$. This scaling of the velocity field is the reason that we
 multiply $\angles{\bm{u}\times\bm{\omega}}_{x, y}$, which is nondimensionally
 of order $u^2/L$, by $\xi$ while constructing
@@ -528,7 +528,7 @@ in Fig.~\ref{fig:nu_v_time}. In Fig.~\ref{fig:nu_v_time}a, we show the evolution
 of the SE run at $S = 10^5$. The black trace shows the instantaneous value of
 Nu, and the overplotted grey line shows a moving time average of Nu. The
 time average is taken using a centered boxcar window whose width is 50 $t_{\text{ff}}$.
-The mean value of Nu evolves towards its final value (dashed horizontal
+The mean value of Nu evolves towards its relaxed value (dashed horizontal
 grey line) rapidly compared to $\angles{T}-T_{\text{top}}$ (blue), 
 which approaches its evolved state (dashed horizontal blue line) slowly.
 As such, it is possible to measure the statistically stationary mean value of
@@ -748,25 +748,24 @@ show very good agreement and small values of the KS statistic.
 
 
 In addition to adjusting the 1D thermal profile, the AE method also scales the
-simulations velocities and temperature fluctuations by $\sqrt{\xi}$. 
+simulation velocities and temperature fluctuations by $\sqrt{\xi}$. 
 In Fig.~\ref{fig:pdf_comparison}
 we examine the velocities and heat transport found in the evolved states.
 Shown are the PDFs of 
 vertical velocity ($w$, Fig.~\ref{fig:pdf_comparison}a), horizontal velocity ($u$, Fig. \ref{fig:pdf_comparison}b),
-and the nonlinear vertical convective flux ($w(T - \angles{T}_{x,y})$, Fig.~\ref{fig:pdf_comparison}c). 
+and the nonlinear vertical convective flux ($w(T_1 - \angles{T_1}_{x,y})$, Fig.~\ref{fig:pdf_comparison}c). 
 Each PDF here shows a strong peak near zero due to the no-slip, impenetrable
 velocity boundary conditions (Eqn.~(\ref{eqn:vel_bcs})).
 The CDFs of each profile are overplotted, and corresponding KS profiles are
 shown in Fig.~\ref{fig:pdf_comparison}d-f.  We report
 $\KSstat{w} = 0.00615$, $\KSstat{u} = 0.0349$,
-and $\KSstat{w(T - \angles{T}_{x,y})} = 0.0263$.
+and $\KSstat{w(T_1 - \angles{T_1}_{x,y})} = 0.0263$.
 The difference in vertical velocity
 and heat transport between AE and SE is negligible, which is unsurprising in light of
 the Nu measurements of Fig.~\ref{fig:parameter_space_comparison}a\&d.
 This also confirms that the large $\KSstat{T}$ in Fig.~\ref{fig:temp_comparison}d is
-not of concern, and that the AE run achieves the proper convective solution.
-The horizontal velocity shows some small deviation between the two simulations, and this
-likely relates to the precise configuration of the convective plumes (e.g., Fig.~\ref{fig:oscillating_plumes}).
+not of concern, and that the AE run achieves the same relaxed convective solution
+as the SE run.
 We find that the difference in $\KS{u}$, which consistently has more probability
 of flows moving left (in the -$x$ direction), appears to be caused by a more prominent migration 
 of the full roll system in the -$x$ direction in the AE run than in the SE run. 
@@ -918,7 +917,8 @@ Our work here serves as a basis for determining if AE techniques are
 effective in more complex studies of convection.
 
 \begin{acknowledgments}
-We thank the two anonymous referees whose careful comments greatly 
+We thank Geoff Vasil, Daniel Lecoanet, 
+and the two anonymous referees whose careful comments greatly 
 improved the clarity and scientific content of this paper.
 EHA acknowledges the support of the University of Colorado's George 
 Ellery Hale Graduate Student Fellowship.
@@ -956,32 +956,32 @@ $S$	&	Ra	&	nz$\times$nx$\times$ny$\,\,\,\,\,\,\,$	&	$t_{\text{SE}}$	&	$t_{\text{
 \hline \hline \multicolumn{8}{c}{\vspace{-0.2cm}}\\
 \multicolumn{8}{c}{\vspace{0.1cm}2D Runs} \\
 \hline
-$10^{1/3}$	    &	$2.79 \cdot 10^3$       &	32$\times$64$\,\,\,\,\,\,\,$&	$52.8$	&	$340$	&	100	&	1.46	&	1.46	\\
-$10^{2/3}$	    &	$6.01 \cdot 10^3$       &	32$\times$64$\,\,\,\,\,\,\,$&	$77.6$	&	$282$	&	100	&	1.95	&	1.95	\\
-$10^1$	        &	$1.30 \cdot 10^4$       &  	32$\times$64$\,\,\,\,\,\,\,$&	$114$	&	$265$	&	100	&	2.43	&	2.42	\\
-$10^{1 + 1/3}$	&	$2.79 \cdot 10^4$       &	32$\times$64$\,\,\,\,\,\,\,$&	$167$	&	$251$	&	100	&	2.54	&	2.54	\\
-$10^{1 + 2/3}$	&	$6.01 \cdot 10^4$       &	32$\times$64$\,\,\,\,\,\,\,$&	$245$	&	$245$	&	100	&	3.14	&	3.14	\\
-$10^2$	        &	$1.30 \cdot 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$360$	&	$326$	&	100	&	3.8	&	3.8	\\
-$10^{2 + 1/3}$	&	$2.79 \cdot 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$528$	&	$248$	&	100	&	4.71	&	4.71	\\
-$10^{2 + 2/3}$	&	$6.01 \cdot 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$776$	&	$251$	&	100	&	5.5	&	5.5	\\
-$10^3$	        &	$1.30 \cdot 10^6$       &	128$\times$256$\,\,\,\,\,\,\,$&	$1.14 \cdot 10^3$	&	$268$	&	200	&	6.4	&	6.33	\\
-$10^{3 + 1/3}$	&	$2.79 \cdot 10^6$       &	128$\times$256$\,\,\,\,\,\,\,$&	$1.67 \cdot 10^3$	&	$247$	&	500	&	6.87	&	6.95	\\
-$10^{3 + 2/3}$	&	$6.01 \cdot 10^6$       &	256$\times$512$\,\,\,\,\,\,\,$&	$2.45 \cdot 10^3$	&	$275$	&	500	&	7.54	&	7.59	\\
-$10^4$	        &	$1.30 \cdot 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$3.60 \cdot 10^3$	&	$301$	&	500	&	8.83	&	8.83	\\
-$10^{4 + 1/3}$	&	$2.79 \cdot 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$5.28 \cdot 10^3$	&	$317$	&	500	&	10.13	&	10.14	\\
-$10^{4 + 2/3}$	&	$6.01 \cdot 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$7.76 \cdot 10^3$	&	$326$	&	500	&	11.65	&	11.69	\\
-$10^5$	        &	$1.30 \cdot 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$1.14 \cdot 10^4$	&	$411$	&	500	&	14.02	&	14.18	\\
-$10^{5 + 1/3}$	&	$2.79 \cdot 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$1.67 \cdot 10^4$	&	$391$	&	500	&	---	&	16.21	\\
-$10^{5 + 2/3}$	&	$6.01 \cdot 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$2.45 \cdot 10^4$	&	$453$	&	500	&	---	&	18.58	\\
-$10^6$	        &	$1.30 \cdot 10^9$       &	1024$\times$2048$\,\,\,\,\,\,\,$	&	$3.60 \cdot 10^4$	&	$436$	&	500	&	---	&	22.13	\\
-$10^7$	        &	$1.30 \cdot 10^{10}$	&	2048$\times$4096$\,\,\,\,\,\,\,$	&	$1.14 \cdot 10^5$	&	$183$	&	170	&	---	&	38.29	\\
+$10^{1/3}$	    &	$2.79 \times 10^3$       &	32$\times$64$\,\,\,\,\,\,\,$&	$52.8$	&	$340$	&	100	&	1.46	&	1.46	\\
+$10^{2/3}$	    &	$6.01 \times 10^3$       &	32$\times$64$\,\,\,\,\,\,\,$&	$77.6$	&	$282$	&	100	&	1.95	&	1.95	\\
+$10^1$	        &	$1.30 \times 10^4$       &  	32$\times$64$\,\,\,\,\,\,\,$&	$114$	&	$265$	&	100	&	2.43	&	2.42	\\
+$10^{1 + 1/3}$	&	$2.79 \times 10^4$       &	32$\times$64$\,\,\,\,\,\,\,$&	$167$	&	$251$	&	100	&	2.54	&	2.54	\\
+$10^{1 + 2/3}$	&	$6.01 \times 10^4$       &	32$\times$64$\,\,\,\,\,\,\,$&	$245$	&	$245$	&	100	&	3.14	&	3.14	\\
+$10^2$	        &	$1.30 \times 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$360$	&	$326$	&	100	&	3.8	&	3.8	\\
+$10^{2 + 1/3}$	&	$2.79 \times 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$528$	&	$248$	&	100	&	4.71	&	4.71	\\
+$10^{2 + 2/3}$	&	$6.01 \times 10^5$       &	64$\times$128$\,\,\,\,\,\,\,$&	$776$	&	$251$	&	100	&	5.5	&	5.5	\\
+$10^3$	        &	$1.30 \times 10^6$       &	128$\times$256$\,\,\,\,\,\,\,$&	$1.14 \times 10^3$	&	$268$	&	200	&	6.4	&	6.33	\\
+$10^{3 + 1/3}$	&	$2.79 \times 10^6$       &	128$\times$256$\,\,\,\,\,\,\,$&	$1.67 \times 10^3$	&	$247$	&	500	&	6.87	&	6.95	\\
+$10^{3 + 2/3}$	&	$6.01 \times 10^6$       &	256$\times$512$\,\,\,\,\,\,\,$&	$2.45 \times 10^3$	&	$275$	&	500	&	7.54	&	7.59	\\
+$10^4$	        &	$1.30 \times 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$3.60 \times 10^3$	&	$301$	&	500	&	8.83	&	8.83	\\
+$10^{4 + 1/3}$	&	$2.79 \times 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$5.28 \times 10^3$	&	$317$	&	500	&	10.13	&	10.14	\\
+$10^{4 + 2/3}$	&	$6.01 \times 10^7$       &	256$\times$512$\,\,\,\,\,\,\,$&	$7.76 \times 10^3$	&	$326$	&	500	&	11.65	&	11.69	\\
+$10^5$	        &	$1.30 \times 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$1.14 \times 10^4$	&	$411$	&	500	&	14.02	&	14.18	\\
+$10^{5 + 1/3}$	&	$2.79 \times 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$1.67 \times 10^4$	&	$391$	&	500	&	---	&	16.21	\\
+$10^{5 + 2/3}$	&	$6.01 \times 10^8$       &	512$\times$1024$\,\,\,\,\,\,\,$&	$2.45 \times 10^4$	&	$453$	&	500	&	---	&	18.58	\\
+$10^6$	        &	$1.30 \times 10^9$       &	1024$\times$2048$\,\,\,\,\,\,\,$	&	$3.60 \times 10^4$	&	$436$	&	500	&	---	&	22.13	\\
+$10^7$	        &	$1.30 \times 10^{10}$	&	2048$\times$4096$\,\,\,\,\,\,\,$	&	$1.14 \times 10^5$	&	$183$	&	170	&	---	&	38.29	\\
 \\ \hline \hline \multicolumn{8}{c}{\vspace{-0.2cm}}\\
 \multicolumn{8}{c}{\vspace{0.1cm}3D Runs} \\
 \hline
-$10^1$          &	$1.30 \cdot 10^4$	&	32$\times$64$\times$64$\,\,\,\,\,\,\,$   &	$114$	&	$261$	&	100	&	2.42	&	2.42	\\
-$10^2$          &	$1.30 \cdot 10^5$	&	64$\times$128$\times$128$\,\,\,\,\,\,\,$   &	$360$	&	$249$	&	100	&	3.97	&	4	\\
-$10^3$          &	$1.30 \cdot 10^6$	&	128$\times$256$\times$256$\,\,\,\,\,\,\,$	&	$1.14 \cdot 10^3$	&	$243$	&	500	&	6.27	&	6.27	\\
-$10^4$          &	$1.30 \cdot 10^7$	&	256$\times$512$\times$512$\,\,\,\,\,\,\,$	&	$3.60 \cdot 10^3$	&	$244$	&	500	&	9.92	&	9.88	\\
+$10^1$          &	$1.30 \times 10^4$	&	32$\times$64$\times$64$\,\,\,\,\,\,\,$   &	$114$	&	$261$	&	100	&	2.42	&	2.42	\\
+$10^2$          &	$1.30 \times 10^5$	&	64$\times$128$\times$128$\,\,\,\,\,\,\,$   &	$360$	&	$249$	&	100	&	3.97	&	4	\\
+$10^3$          &	$1.30 \times 10^6$	&	128$\times$256$\times$256$\,\,\,\,\,\,\,$	&	$1.14 \times 10^3$	&	$243$	&	500	&	6.27	&	6.27	\\
+$10^4$          &	$1.30 \times 10^7$	&	256$\times$512$\times$512$\,\,\,\,\,\,\,$	&	$3.60 \times 10^3$	&	$244$	&	500	&	9.92	&	9.88	\\
 \hline																	
 \end{tabularx}
 \end{center}
@@ -1024,7 +1024,7 @@ by $\sqrt{\xi}$ in the DNS to properly reduce the convective flux.
 We refer to this process as an ``AE BVP solve.''
 
 While the use of a single AE BVP solve rapidly advances the convecting state to
-one that is closer to the evolved state, we find that repeating this method 
+one that is closer to the relaxed state, we find that repeating this method 
 multiple times is the best way to
 ensure that the AE solution is truly converged. For all runs in 2D at $S < 10^5$, we
 set $t_{\text{transient}} = 50$, completed an AE BVP solve

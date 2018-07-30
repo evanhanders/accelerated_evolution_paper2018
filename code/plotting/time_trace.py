@@ -11,7 +11,9 @@ Options:
 
 
 import matplotlib   
+import matplotlib.style
 matplotlib.rcParams.update({'font.size': 11})
+matplotlib.style.use('classic')
 import matplotlib.pyplot as plt
 plt.rc('font',family='Times New Roman')
 from matplotlib.colors import ColorConverter
@@ -30,13 +32,13 @@ import dedalus.public as de
 
 
 base_dirs_pre = [
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_pre',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_pre'
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/base_pre',
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/bvp_pre'
             ]
 
 base_dirs_post = [
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/base_post',
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/bvp_post'
             ]
 fields = ['Nu', 'Re', 'IE', 'KE', 'TE']
 
@@ -180,7 +182,8 @@ axes[2].set_xlim(0, 910.6)
 x_ticks = [250, 500, 750, 1000]
 axes[0].set_xticks(x_ticks)
 x_ticks = [1.133e4, 1.133e4+250, 1.183e4]
-axes[1].set_xticks(x_ticks)
+plt.axes(axes[1])
+plt.xticks(x_ticks, ('11330', '11580', '11830'))
 x_ticks = [250, 500, 750]
 axes[2].set_xticks(x_ticks)
 axes[0].set_ylabel(r'$\mathrm{Kinetic\,\, Energy}$', labelpad=-10)
@@ -190,8 +193,8 @@ axes[0].xaxis.set_label_coords(0.24, -0.125)
 x, y = axes[0].xaxis.get_label().get_position()
 print(x, y)
 axes[0].xaxis.get_label().set_position((x/time_ratio, y))
-axes_share[1].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='blue', labelpad=15)
-axes_share[2].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='blue', labelpad=15)
+axes_share[1].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='blue', labelpad=20)
+axes_share[2].set_ylabel(r'$\langle T_1\rangle - T_{\mathrm{top}}$', rotation=270, color='blue', labelpad=20)
 #for tick in axes[2].get_yticklabels():
 #    tick.set_size(0)
 #axes[2].yaxis.set_ticks_position('none')
@@ -214,15 +217,16 @@ axes[0].plot((1,1+d/2, 1+d, 1 + 3*d/2), (1, 1+4*d, 1-4*d, 1), **kwargs)
 spines = ['bottom', 'top', 'right', 'left']
 axis_names   = ['x', 'y']
 
+plt.axes(axes_share[1])
 y_ticks = np.array([1e-2, 1e-1, 5e-1])
 plt.yticks(y_ticks, ('', r'$10^{-1}$', ''))
-plt.axes(axes_share[1])
+plt.axes(axes_share[2])
 y_ticks = np.array([1e-2, 1e-1, 5e-1])
 plt.yticks(y_ticks, ('', r'$10^{-1}$', ''))
 
 plt.axes(axes[0])
 y_ticks = np.array([3e-3, 1e-2, 1e-1])
-plt.yticks(y_ticks, (r'$3\cdot 10^{-3}$', r'$10^{-2}$', r'$10^{-1}$'))
+plt.yticks(y_ticks, (r'$3\times 10^{-3}$', r'$10^{-2}$', r'$10^{-1}$'))
 
 Ra=1.30e8
 t_therm = np.sqrt(Ra)
@@ -254,18 +258,18 @@ axes[2].xaxis.set_label_coords(0.1, -0.03)
 
 trans = axes_share[2].get_xaxis_transform() # x in data untis, y in axes fraction
 axes_share[2].annotate(r'$10^{-2}$', xy=(925, 0.03), xycoords=trans, color='blue')
-axes_share[2].annotate(r'$5\cdot 10^{-1}$', xy=(925, 0.94), xycoords=trans, color='blue')
+axes_share[2].annotate(r'$5\times 10^{-1}$', xy=(925, 0.94), xycoords=trans, color='blue')
 
 
 trans = axes[1].get_xaxis_transform() # x in data untis, y in axes fraction
 axes[1].annotate(r'$10^{-2}$', xy=(11840, 0.03), xycoords=trans, color='blue')
-axes[1].annotate(r'$5\cdot 10^{-1}$', xy=(11840, 0.94), xycoords=trans, color='blue')
+axes[1].annotate(r'$5\times 10^{-1}$', xy=(11840, 0.94), xycoords=trans, color='blue')
 
 
 trans = axes[0].get_xaxis_transform() # x in data untis, y in axes fraction
-ann = axes[0].annotate('(a)', xy=(-160, 0.98 ), xycoords=trans)
+ann = axes[0].annotate('(a)', xy=(-200, 0.98 ), xycoords=trans)
 trans = axes[2].get_xaxis_transform() # x in data untis, y in axes fraction
-axes[2].annotate('(c)', xy=(-75, 0.98), xycoords=trans)
+axes[2].annotate('(c)', xy=(-100, 0.98), xycoords=trans)
 
 
 
@@ -319,7 +323,7 @@ axes[-1].set_xlabel('z')
 [t.set_color('k') for t in axes[-1].get_xticklabels()]
 [t.set_color('k') for t in axes[-1].get_yticklabels()]
 trans = axes[-1].get_xaxis_transform() # x in data untis, y in axes fraction
-axes[-1].annotate('(b)', xy=(-0.18, 0.98), xycoords=trans)
+axes[-1].annotate('(b)', xy=(-0.22, 0.98), xycoords=trans)
 axes[-1].annotate(r'Transient', (0.015, 17), color='orange', fontsize=14)
 axes[-1].legend(loc='lower center', frameon=False, columnspacing=1, fontsize=10, ncol=3, borderpad=0)
 
@@ -352,7 +356,7 @@ axes[-1].plot(info[this_label]['z_profile'], enth,  c=f_conv_color, lw=2)
 axes[-1].plot(info[this_label]['z_profile'], kappa, c=f_cond_color, lw=2, label='SE')
 axes[-1].plot(info[this_label]['z_profile'], sum_f, c=f_sum_color, lw=2)
 trans = axes[-1].get_xaxis_transform() # x in data untis, y in axes fraction
-axes[-1].annotate('(d)', xy=(-0.225, 0.98), xycoords=trans)
+axes[-1].annotate('(d)', xy=(-0.25, 0.98), xycoords=trans)
 
 #Plot 3
 axes.append(plt.subplot(gs.new_subplotspec(*gs_info[2])))
@@ -367,7 +371,7 @@ axes[-1].set_yticks(y_ticks)
 axes[-1].set_ylabel(r'$(\mathrm{F}_{\mathrm{AE}} - \mathrm{F}_{\mathrm{SE}})/\mathcal{P}$')
 axes[-1].set_xlabel('z')
 trans = axes[-1].get_xaxis_transform() # x in data untis, y in axes fraction
-axes[-1].annotate('(e)', xy=(-0.225, 1), xycoords=trans)
+axes[-1].annotate('(e)', xy=(-0.25, 1), xycoords=trans)
 
 
 plt.savefig('time_trace.png'.format(k), bbox_inches='tight', dpi=200)

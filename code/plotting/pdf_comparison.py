@@ -76,8 +76,8 @@ COLORS_2=['peru', 'gold', 'teal']
 MARKERSIZE_2=[5,5,5]
 
 base_dirs_post = [
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/base_post',
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/bvp_post'
             ]
 ra_runs = '1.30e8'
 #ra_runs = '6.01e7'
@@ -266,7 +266,7 @@ axes[-1].plot(diff_x[(diff_y < 0)*(diff_x > 0.001)], -diff_y[(diff_y < 0)*(diff_
 axes[-1].set_xlim(-0.0013, 0.004)
 axes[-1].set_yscale('log')
 axes[-1].set_ylim(1e-4, 1e-1)
-axes[-1].set_xlabel(r'$w(T - \langle T\,\rangle_{x,y})$', labelpad=-4)
+axes[-1].set_xlabel(r'$w(T_1 - \langle T_1\rangle_{x,y})$', labelpad=-4)
 axes[-1].annotate(r'$\mathrm{(f)}$', (-1e-3, 1e-2), fontsize=10)
 for tick in axes[-1].get_xticklabels():
     tick.set_rotation(45)
@@ -275,4 +275,4 @@ for tick in axes[-1].get_xticklabels():
 
 
 
-plt.savefig('pdf_comparison.png'.format(k), bbox_inches='tight', dpi=200)
+plt.savefig('pdf_comparison.png'.format(k), bbox_inches='tight', dpi=400)

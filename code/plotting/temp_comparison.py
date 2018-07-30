@@ -87,8 +87,8 @@ COLORS_2=['peru', 'gold', 'teal']
 MARKERSIZE_2=[5,5,5]
 
 base_dirs_post = [
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/base_post',
-            '/home/evan/research/my_papers/bvp_initial_conditions_paper/code/runs/bvp_post'
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/base_post',
+            '/home/evanhanders/research/papers/accelerated_evolution/code/runs/bvp_post'
             ]
 ra_runs = '1.30e8'
 #ra_runs = '6.01e7'
@@ -220,4 +220,4 @@ axes[-1].annotate(r'$\mathrm{(d)}$', (-0.497, 1.5e-1), fontsize=10)
 print('for {}, max diff is {}'.format('T', max_diff))
 
 
-plt.savefig('temp_comparison.png'.format(k), bbox_inches='tight', dpi=200)
+plt.savefig('temp_comparison.png'.format(k), bbox_inches='tight', dpi=400)

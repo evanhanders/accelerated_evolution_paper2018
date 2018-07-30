@@ -166,15 +166,15 @@ for ax, t in axs_share:
     ax.set_ylim(2e-2, 5e-1)
 #    plt.axes(ax)
 #    y_ticks = np.array([2e-2, 1e-1, 5e-1])
-#    plt.yticks(y_ticks, (r'$2\cdot 10^{-2}$', r'$10^{-2}$', r'$5\cdot 10^{-1}$'))
+#    plt.yticks(y_ticks, (r'$2\times 10^{-2}$', r'$10^{-2}$', r'$5\cdot 10^{-1}$'))
     if ax == ax2_2:
         continue
     plt.axes(ax)
     ax.set_yticks((1e-1,))
     ax.set_yticklabels((r'$10^{-1}$',))
     trans = ax.get_xaxis_transform() # x in data untis, y in axes fraction
-    ax.annotate(r'$2\cdot 10^{-2}$', xy=(t, 0.03), xycoords=trans, color='blue')
-    ax.annotate(r'$5\cdot 10^{-1}$', xy=(t, 0.94), xycoords=trans, color='blue')
+    ax.annotate(r'$2\times 10^{-2}$', xy=(t, 0.03), xycoords=trans, color='blue')
+    ax.annotate(r'$5\times 10^{-1}$', xy=(t, 0.94), xycoords=trans, color='blue')
 
 axs[1].spines['right'].set_visible(False)
 ax2_2.spines['right'].set_visible(False)
