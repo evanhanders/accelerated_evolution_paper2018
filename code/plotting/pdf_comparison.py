@@ -131,7 +131,7 @@ axes[-1].fill_between(info[bvp_label]['w_xs_pdf'], 0, info[bvp_label]['w_pdf_pdf
 axes[-1].plot(info[bvp_label]['w_xs_pdf'], info[bvp_label]['w_pdf_pdf'], c='red')
 axes[-1].set_xlim(np.min(info[bvp_label]['w_xs_pdf']), np.max(info[bvp_label]['w_xs_pdf']))
 #axes[-1].set_xlabel('Vertical Velocity', labelpad=-1)
-axes[-1].set_ylabel('PDF')
+axes[-1].set_ylabel(r'$P(q)$')
 axes[-1].set_yscale('log')
 axes[-1].annotate(r'$\mathrm{(a)}$', (-0.145, 3e1), fontsize=10)
 axes[-1].set_ylim(1e-1, 1e2)
@@ -177,7 +177,7 @@ axes[-1].plot(diff_x[diff_y < 0], -diff_y[diff_y < 0], c='k', dashes=(3,1), lw=1
 axes[-1].set_xlim(-0.165, 0.165)
 axes[-1].set_yscale('log')
 axes[-1].set_ylim(1e-4, 1e-1)
-axes[-1].set_ylabel(r'KS$(q)$')
+axes[-1].set_ylabel(r'$D_{\mathrm{KS}}(q)$')
 axes[-1].set_xlabel('Vertical Velocity', labelpad=-2)
 axes[-1].annotate(r'$\mathrm{(d)}$', (-0.15, 1e-2), fontsize=10)
 for tick in axes[-1].get_xticklabels():
@@ -247,7 +247,7 @@ share.plot(wT_cdf_x_bvp, wT_cdf_y_bvp, c='darkred', dashes=(5,2), lw=2)
 share.plot(wT_cdf_x_base, wT_cdf_y_base, c='royalblue', dashes=(4,1.5), lw=2)
 share.set_ylim(0, 1.05)
 axes[-1].set_xlim(-0.0013, 0.004)
-share.set_ylabel('CDF', rotation=270, labelpad=10)
+share.set_ylabel(r'$F(q)$', rotation=270, labelpad=13)
 
 
 

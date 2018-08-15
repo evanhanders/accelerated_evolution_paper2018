@@ -191,7 +191,7 @@ for i,k in enumerate(fields):
     elif k == 'Nu':
         ax.annotate(r'$\mathrm{(a)}$', (2e3, 5e1), fontsize=10)
         label_end = '-{:.2g}'.format(pNu)
-        label_end = '$\\langle\\mathrm{Nu}\\rangle$'#\\mathrm{ Ra}^{' + label_end + '}$'
+        label_end = '$\\mathrm{Nu}$'#\\mathrm{ Ra}^{' + label_end + '}$'
         ax.set_ylabel(r'{}'.format(label_end))
         ax.set_ylim(1, 1e2)
 #        ax.set_ylim(2e-1, 5e-1)
